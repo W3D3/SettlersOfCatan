@@ -18,23 +18,24 @@ android:
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-21
+    - sys-img-armeabi-v7a-android-26
 
     # Additional components
 #    - extra-google-google_play_services
 #    - extra-google-m2repository
 #    - extra-android-m2repository
 #    - addon-google_apis-google-26
-env:
-  global:
-   # install timeout in minutes (2 minutes by default)
-    - ADB_INSTALL_TIMEOUT=8
+#env:
+#  global:
+#   # install timeout in minutes (2 minutes by default)
+#    - ADB_INSTALL_TIMEOUT=8
+# Emulator Management: Create, Start and Wait
 before_script:
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
+  - echo no | android create avd --force -n test -t android-26 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
-script:
-  - android list target
-  - ./gradlew testDebugUnitTest
-  - ./gradlew connectedAndroidTest
+#script:
+#  - android list target
+#  - ./gradlew testDebugUnitTest
+#  - ./gradlew connectedAndroidTest
