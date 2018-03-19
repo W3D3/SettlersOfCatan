@@ -38,3 +38,5 @@ script:
   - android list target
   - ./gradlew testDebugUnitTest
   #- ./gradlew connectedAndroidTest
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
