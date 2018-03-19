@@ -1,7 +1,6 @@
 language: android
-sudo: false
-jdk:
-  - oraclejdk8
+#jdk:
+#  - oraclejdk8
 android:
   components:
     # Uncomment the lines below if you want to
@@ -18,7 +17,7 @@ android:
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-26
+    #- sys-img-armeabi-v7a-android-26
 
     # Additional components
 #    - extra-google-google_play_services
@@ -30,12 +29,12 @@ android:
 #   # install timeout in minutes (2 minutes by default)
 #    - ADB_INSTALL_TIMEOUT=8
 # Emulator Management: Create, Start and Wait
-before_script:
-  - echo no | android create avd --force -n test -t android-26 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-#script:
-#  - android list target
-#  - ./gradlew testDebugUnitTest
-#  - ./gradlew connectedAndroidTest
+#before_script:
+#  - echo no | android create avd --force -n test -t android-26 --abi armeabi-v7a
+#  - emulator -avd test -no-audio -no-window &
+#  - android-wait-for-emulator
+#  - adb shell input keyevent 82 &
+script:
+  - android list target
+  - ./gradlew testDebugUnitTest
+  #- ./gradlew connectedAndroidTest
