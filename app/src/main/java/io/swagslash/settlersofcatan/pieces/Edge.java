@@ -2,6 +2,8 @@ package io.swagslash.settlersofcatan.pieces;
 
 import android.widget.EditText;
 
+import java.util.Set;
+
 import io.swagslash.settlersofcatan.Player;
 
 /**
@@ -16,7 +18,7 @@ public class Edge {
 
     private int id;
     private EdgeType unitType;
-    private int[] vertexIds;
+    private Set<Vertex> vertexes;
     private int ownerPlayerNumber = -1;
     private transient Board board;
 
@@ -26,8 +28,8 @@ public class Edge {
     public Edge(Board board, int id) {
         this.id = id;
         this.unitType = EdgeType.NONE;
-        vertexIds = new int[2];
-        vertexIds[0] = vertexIds[1] = -1;
+//        vertexIds = new int[2];
+//        vertexIds[0] = vertexIds[1] = -1;
         ownerPlayerNumber = -1;
         this.board = board;
     }
@@ -98,7 +100,7 @@ public class Edge {
         for (int i = 0; i < 2; i++) {
             // the player has an edgeUnit to an unoccupied vertex
             // or the player has an adjacent building
-            curVertex = board.getVertexById(vertexIds[i]);
+            //curVertex = board.getVertexById(vertexIds[i]);
 //            if (curVertex.hasCommunityOf(player) || (curVertex.isConnectedToEdgeUnitOwnedBy(player)
 //                    && !(curVertex.isOwnedByAnotherPlayer(player)))) {
 //                return true;

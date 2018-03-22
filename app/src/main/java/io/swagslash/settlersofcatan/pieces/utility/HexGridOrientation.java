@@ -1,7 +1,7 @@
 package io.swagslash.settlersofcatan.pieces.utility;
 
 /**
- * Created by logan on 2017-01-31.
+ * Defines the Orientation of a Hexagon Grid
  */
 
 class HexGridOrientation

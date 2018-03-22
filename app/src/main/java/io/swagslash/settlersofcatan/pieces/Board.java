@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
+import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 
 /**
  * Represents a Catan board that holds all the Hexes
@@ -20,13 +22,16 @@ public class Board {
     private List<Vertex> vertices;
     private List<Edge> edges;
     private List<Player> players;
+//    private CatanGrid catanGrid;
+    private HexGridLayout gridLayout;
 
     private boolean randomDiscard;
     private int winningPoints;
 
-    public Board(ArrayList<String> playerNames, boolean randomDiscard, int winningPoints) {
+    public Board(List<String> playerNames, boolean randomDiscard, int winningPoints) {
         this.randomDiscard = randomDiscard;
         this.winningPoints = winningPoints;
+        this.hexagons = new ArrayList<>();
 
         if(playerNames.size() < 2 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
@@ -60,7 +65,31 @@ public class Board {
         return vertices.get(vertexId);
     }
 
-    public void setupBoard() {
+    public List<Hex> getHexagons() {
+        return hexagons;
+    }
 
+    public void setupBoard(int diameter) {
+        if(diameter % 2 == 0) throw new UnsupportedOperationException("Cannot create a Catan board with even diameter.");
+
+        this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
+
+        //Center is always Desert?
+//        Hex centerHex = new Hex(this, Hex.TerrainType.DESERT, new AxialHexLocation(0,0));
+//        //ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(this.gridLayout, new AxialHexLocation(0, 0));
+//        centerHex.calculateVertices(gridLayout);
+
+        Integer start = ((Double)(-(Math.floor(diameter/2)))).intValue();
+        Integer end = ((Double)((Math.floor(diameter/2)))).intValue();
+        for (int q = start; q <= end; q ++)
+        {
+            for (int r = start; r <= end; r ++)
+            {
+                //TODO RANDOMIZE TERRAIN
+                Hex hex = new Hex(this, Hex.TerrainType.DESERT, new AxialHexLocation(q,r));
+                hex.calculateVertices(gridLayout);
+                hexagons.add(hex);
+            }
+        }
     }
 }

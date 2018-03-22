@@ -7,10 +7,13 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
+import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
+import io.swagslash.settlersofcatan.pieces.utility.HexUtility;
 
 import static org.junit.Assert.assertEquals;
 
@@ -64,6 +67,37 @@ public class HexagonTests {
         }
 
         assertEquals(10, pointSet.size());
+    }
 
+    @Test
+    public void hexagonGridProducesNoDuplicatePointsComplex() throws Exception {
+
+        HexGridLayout grid = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
+        ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(grid, new AxialHexLocation(0, 0));
+        // add a hexagon right next to it and one top right
+        hexPoints.addAll(HexGridLayout.polygonCorners(grid, new AxialHexLocation(1, 0)));
+        hexPoints.addAll(HexGridLayout.polygonCorners(grid, new AxialHexLocation(1, -1)));
+
+
+        HashSet<HexPoint> pointSet = new HashSet<>();
+
+        for (HexPoint point : hexPoints) {
+            if(!pointSet.contains(point))
+                pointSet.add(point);
+        }
+
+        assertEquals(13, pointSet.size());
+    }
+
+    @Test
+    public void catanGridProducesNoDuplicatePoints() throws Exception {
+
+        List<String> players = new ArrayList<>();
+        players.add("P1");
+        players.add("P2");
+        Board b = new Board(players, true, 10);
+        b.setupBoard(5);
+
+        assertEquals(53, HexUtility.getAllVertices(b.getHexagons()).size());
     }
 }

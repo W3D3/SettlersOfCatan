@@ -1,9 +1,15 @@
 package io.swagslash.settlersofcatan.pieces;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
+import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
+import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
+import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.pieces.utility.VertexDirection;
 
 /**
@@ -15,10 +21,11 @@ public class Hex {
     private int id;
     private NumberToken numberToken;
     private TerrainType terrainType;
+    private AxialHexLocation hexLocation;
     private Boolean hasRobber;
 
-    private List<Vertex> vertices = new ArrayList<>();
-    private List<Edge> edges = new ArrayList<>();
+    private HashMap<Integer, Vertex> vertices = new HashMap<>();
+    private Set<Edge> edges = new HashSet<>();
 
     private transient Board board;
 
@@ -26,10 +33,44 @@ public class Hex {
         FOREST, FIELD, HILL, MOUNTAIN, DESERT, PASTURE
     }
 
-    public Hex(Board board, TerrainType terrainType, int id) {
-        this.id = id;
+    public Hex(Board board, TerrainType terrainType, AxialHexLocation location) {
+        //this.id = id;
         this.terrainType = terrainType;
         this.board = board;
+        this.hexLocation = location;
+    }
+
+    public Set<Edge> getEdges() {
+        return edges;
+    }
+
+    public void calculateVertices(HexGridLayout gridLayout) {
+        ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(gridLayout, this.getHexLocation());
+        Integer direction = 0;
+        for (HexPoint point : hexPoints) {
+            this.vertices.put(direction, new Vertex(this.board, point));
+            direction++;
+        }
+    }
+
+    public Set<Vertex> getVerticesSet() {
+        return new HashSet<Vertex>(vertices.values());
+    }
+
+    public AxialHexLocation getHexLocation() {
+        return hexLocation;
+    }
+
+    public void setHexLocation(AxialHexLocation hexLocation) {
+        this.hexLocation = hexLocation;
+    }
+
+    public NumberToken getNumberToken() {
+        return numberToken;
+    }
+
+    public void setNumberToken(NumberToken numberToken) {
+        this.numberToken = numberToken;
     }
 
     public Resource getResourceProduced() {
@@ -48,8 +89,7 @@ public class Hex {
         }
     }
 
-    public void setVertex(VertexDirection direction, Vertex v) {
-        Integer d = direction.toInt();
-        vertices.set(d, v);
+    public void setVertex(Integer direction, Vertex v) {
+        vertices.put(direction, v);
     }
 }
