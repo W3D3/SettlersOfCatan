@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
+ * Axial Position of a Hex
  */
 
 public class AxialHexLocation

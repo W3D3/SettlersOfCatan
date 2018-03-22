@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 
@@ -20,4 +21,12 @@ public class HexUtility {
         }
         return vertices;
     }
+
+//    public static Set<Edge> getAllVertices(Collection<Hex> hexes) {
+//        Set<Vertex> vertices = new HashSet<>();
+//        for (Hex hex : hexes) {
+//            vertices.addAll(hex.getVerticesSet());
+//        }
+//        return vertices;
+//    }
 }
