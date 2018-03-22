@@ -29,6 +29,7 @@ before_script:
 
 script:
     - ./gradlew test
+    - ./gradlew jacocoTestReport
     - sonar-scanner
 
 addons:
@@ -45,7 +46,8 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
-
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 # benachrichtigungen per email auszuschalten
 #notifications:
 #  email: false
