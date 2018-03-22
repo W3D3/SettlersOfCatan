@@ -79,17 +79,22 @@ public class Board {
 //        //ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(this.gridLayout, new AxialHexLocation(0, 0));
 //        centerHex.calculateVertices(gridLayout);
 
-        Integer start = ((Double)(-(Math.floor(diameter/2)))).intValue();
-        Integer end = ((Double)((Math.floor(diameter/2)))).intValue();
-        for (int q = start; q <= end; q ++)
-        {
-            for (int r = start; r <= end; r ++)
-            {
-                //TODO RANDOMIZE TERRAIN
-                Hex hex = new Hex(this, Hex.TerrainType.DESERT, new AxialHexLocation(q,r));
-                hex.calculateVertices(gridLayout);
-                hexagons.add(hex);
-            }
+        for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
+            //TODO RANDOMIZE TERRAIN
+            Hex hex = new Hex(this, Hex.TerrainType.DESERT, location);
+            hex.calculateVertices(gridLayout);
+            hexagons.add(hex);
         }
+
+//        Integer start = ((Double)(-(Math.floor(diameter/2)))).intValue();
+//        Integer end = ((Double)((Math.floor(diameter/2)))).intValue();
+//        for (int q = start; q <= end; q ++)
+//        {
+//            for (int r = start; r <= end; r ++)
+//            {
+//
+//
+//            }
+//        }
     }
 }

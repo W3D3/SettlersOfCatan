@@ -98,6 +98,6 @@ public class HexagonTests {
         Board b = new Board(players, true, 10);
         b.setupBoard(5);
 
-        assertEquals(53, HexUtility.getAllVertices(b.getHexagons()).size());
+        assertEquals(54, HexUtility.getAllVertices(b.getHexagons()).size());
     }
 }
