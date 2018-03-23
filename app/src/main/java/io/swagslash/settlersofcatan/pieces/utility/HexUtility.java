@@ -14,13 +14,13 @@ import io.swagslash.settlersofcatan.pieces.Vertex;
 
 public class HexUtility {
 
-    public static Set<Vertex> getAllVertices(Collection<Hex> hexes) {
-        Set<Vertex> vertices = new HashSet<>();
-        for (Hex hex : hexes) {
-            vertices.addAll(hex.getVerticesSet());
-        }
-        return vertices;
-    }
+//    public static Set<Vertex> getAllVertices(Collection<Hex> hexes) {
+//        Set<Vertex> vertices = new HashSet<>();
+//        for (Hex hex : hexes) {
+//            vertices.addAll(hex.getVerticesSet());
+//        }
+//        return vertices;
+//    }
 
 //    public static Set<Edge> getAllVertices(Collection<Hex> hexes) {
 //        Set<Vertex> vertices = new HashSet<>();

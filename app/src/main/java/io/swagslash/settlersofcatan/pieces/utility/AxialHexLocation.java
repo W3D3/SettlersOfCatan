@@ -59,4 +59,14 @@ public class AxialHexLocation
         return false;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        AxialHexLocation loc = (AxialHexLocation) obj;
+        return loc.q == this.q && loc.r == this.r;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + q + "," + r + ")";
+    }
 }

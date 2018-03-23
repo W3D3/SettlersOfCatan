@@ -17,7 +17,16 @@ public class HexGridLayout
     public final HexGridOrientation hexGridOrientation;
     public final HexPoint size;
     public final HexPoint origin;
-    static public HexGridOrientation pointy = new HexGridOrientation(Math.sqrt(3.0), Math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, Math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
+    static public HexGridOrientation pointy = new HexGridOrientation(
+            Math.sqrt(3.0),
+            Math.sqrt(3.0) / 2.0,
+            0.0,
+            3.0 / 2.0,
+            Math.sqrt(3.0) / 3.0,
+            -1.0 / 3.0,
+            0.0,
+            2.0 / 3.0,
+            0.5);
     static public HexGridOrientation flat = new HexGridOrientation(3.0 / 2.0, 0.0, Math.sqrt(3.0) / 2.0, Math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, Math.sqrt(3.0) / 3.0, 0.0);
     static public HexPoint size_default = new HexPoint(0.48, 0.84 /(((Math.sqrt(3.0)/2.0)* -2.0) + ((Math.sqrt(3.0))*0.0)));
     static public HexPoint origin_default = new HexPoint(0.0, 0.0);
@@ -63,6 +72,11 @@ public class HexGridLayout
             HexPoint offset = HexGridLayout.hexCornerOffset(hexGridLayout, i);
             corners.add(new HexPoint(center.x + offset.x, center.y + offset.y));
         }
+        //FIXME DIRTY F'N HACK TO SWAP CORNERS
+        //BETTER FIX THE ORIENTATION STUFF I THINK...
+//        HexPoint temp = corners.get(2);
+//        corners.set(2, corners.get(5));
+//        corners.set(5, temp);
         return corners;
     }
 
