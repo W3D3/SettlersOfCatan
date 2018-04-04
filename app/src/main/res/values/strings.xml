@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SettlersOfCatan</string>
+    <string name="build_settlement">Build Settlement</string>
+    <string name="build_city">Build City</string>
+    <string name="build_street">Build Street</string>
+    <string name="victory_points">VP:</string>
+    <string name="cards">Cards</string>
 </resources>
