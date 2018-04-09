@@ -32,4 +32,7 @@ public class Inventory {
         this.resourceHand.put(resource.getResourceType(), count);
     }
 
+    public Map<Resource.ResourceType, Integer> getResourceHand() {
+        return resourceHand;
+    }
 }

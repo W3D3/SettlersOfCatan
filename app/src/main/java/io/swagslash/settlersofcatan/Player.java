@@ -36,6 +36,8 @@ public class Player {
         this.numOwnedCities = 0;
         this.numOwnedSettlements = 0;
         this.longestTradeRoute = 0;
+
+        this.inventory = new Inventory();
     }
 
     public int getPlayerNumber() {
