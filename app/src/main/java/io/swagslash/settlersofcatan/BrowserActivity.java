@@ -139,6 +139,7 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
     private void startRegistrationAndDiscovery() {
         Map<String, String> record = new HashMap<String, String>();
         record.put(TXTRECORD_PROP_AVAILABLE, "visible");
+        record.put("test", "test");
 
         WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance(
                 SERVICE_INSTANCE, SERVICE_REG_TYPE, record);
@@ -161,6 +162,14 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void discoverService() {
+
+
+        WifiP2pManager.DnsSdTxtRecordListener mapListener = new WifiP2pManager.DnsSdTxtRecordListener() {
+            @Override
+            public void onDnsSdTxtRecordAvailable(String s, Map<String, String> map, WifiP2pDevice wifiP2pDevice) {
+                Log.d(TAG, "Map found" + map.toString());
+            }
+        };
 
         /*
          * Register listeners for DNS-SD services. These are callbacks invoked
@@ -354,6 +363,8 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
             case R.id.btnStart:
                 createLobby();
                 break;
+
+
         }
     }
 
