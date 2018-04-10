@@ -3,6 +3,7 @@ package io.swagslash.settlersofcatan;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -30,6 +31,7 @@ import java.util.Map;
 import io.swagslash.settlersofcatan.network.wifi.ClientSocketHandler;
 import io.swagslash.settlersofcatan.network.wifi.GroupOwnerSocketHandler;
 import io.swagslash.settlersofcatan.network.wifi.LobbyService;
+import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.WiFiBroadCastReceiver;
 
 public class BrowserActivity extends AppCompatActivity implements Handler.Callback, LobbyServiceFragment.OnLobbyServiceClickListener, LobbyServiceFragment.OnListFragmentInteractionListener,
@@ -357,6 +359,7 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
     }
 
     public void createLobby(){
-        //TODO: Create Lobby
+        Intent i = new Intent(getApplicationContext(), LobbyActivity.class);
+        startActivity(i);
     }
 }

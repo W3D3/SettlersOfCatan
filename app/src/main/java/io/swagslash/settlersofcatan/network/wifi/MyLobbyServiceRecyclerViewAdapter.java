@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan;
+package io.swagslash.settlersofcatan.network.wifi;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,13 +7,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import io.swagslash.settlersofcatan.LobbyServiceFragment.OnListFragmentInteractionListener;
-import io.swagslash.settlersofcatan.network.wifi.LobbyService;
+import io.swagslash.settlersofcatan.R;
+import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment.OnListFragmentInteractionListener;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link io.swagslash.settlersofcatan.network.wifi.LobbyService} and makes a call to the

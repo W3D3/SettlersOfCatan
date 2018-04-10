@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan;
+package io.swagslash.settlersofcatan.network.wifi;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import io.swagslash.settlersofcatan.network.wifi.LobbyService;
+import io.swagslash.settlersofcatan.R;
 
 /**
  * A fragment representing a list of Items.

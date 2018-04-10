@@ -33,7 +33,7 @@
 
         <fragment
             android:id="@+id/lobbyFrag"
-            android:name="io.swagslash.settlersofcatan.LobbyServiceFragment"
+            android:name="io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </ScrollView>
