@@ -48,6 +48,8 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
 
     public static final int SERVER_PORT = 4545;
 
+    private String playerName;
+
     private final IntentFilter intentFilter = new IntentFilter();
     private WifiP2pManager.Channel channel;
     private BroadcastReceiver receiver = null;
@@ -87,6 +89,16 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
 
         lobbies = (LobbyServiceFragment) getSupportFragmentManager().findFragmentById(R.id.lobbyFrag);
 
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                playerName = "NoName";
+            } else {
+                playerName = extras.getString("playerName");
+            }
+        } else {
+            playerName = (String) savedInstanceState.getSerializable("playerName");
+        }
 
     }
 

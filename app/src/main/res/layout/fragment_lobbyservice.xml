@@ -20,8 +20,13 @@
             android:id="@+id/tvOwnerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="TextView" />
+            android:layout_weight="2" />
+
+        <TextView
+            android:id="@+id/tvPlayerCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
     </LinearLayout>
 
     <Button

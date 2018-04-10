@@ -8,6 +8,8 @@ public class LobbyService {
     private String serviceRegistrationType = null;
     private String ownerName = null;
     private String lobbyName = null;
+    private int playerCount = 0;
+    private boolean isOpenLobby = true;
 
     public LobbyService(String ownerName, String lobbyName) {
         this.ownerName = ownerName;
@@ -52,5 +54,25 @@ public class LobbyService {
 
     public void setServiceRegistrationType(String serviceRegistrationType) {
         this.serviceRegistrationType = serviceRegistrationType;
+    }
+
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
+    public void playerJoined(){
+        playerCount++;
+    }
+
+    public void playerLeft(){
+        playerCount--;
+    }
+
+    public boolean isOpenLobby() {
+        return isOpenLobby;
+    }
+
+    public void setOpenLobby(boolean openLobby) {
+        isOpenLobby = openLobby;
     }
 }

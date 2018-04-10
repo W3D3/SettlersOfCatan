@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -24,6 +25,8 @@ public class StartActivity extends AppCompatActivity {
 
     private void startGame() {
         Intent i = new Intent(getApplicationContext(), BrowserActivity.class);
+        TextView playerCount = (TextView) findViewById(R.id.tvPlayerCount);
+        i.putExtra("playerName", playerCount.getText());
         startActivity(i);
     }
 

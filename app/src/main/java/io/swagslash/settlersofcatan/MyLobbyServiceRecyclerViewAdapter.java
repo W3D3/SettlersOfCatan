@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
         holder.mItem = service;
         holder.mIdView.setText(mValues.get(position).getLobbyName());
         holder.mContentView.setText(mValues.get(position).getOwnerName());
+        holder.playerCount.setText(mValues.get(position).getPlayerCount());
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +66,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
         public final TextView mContentView;
         public LobbyService mItem;
         public Button button;
+        public final TextView playerCount;
 
         public ViewHolder(View view) {
             super(view);
@@ -70,6 +74,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
             mIdView = (TextView) view.findViewById(R.id.tvLobbyName);
             mContentView = (TextView) view.findViewById(R.id.tvOwnerName);
             button = view.findViewById(R.id.btnConnect);
+            playerCount = view.findViewById(R.id.tvPlayerCount);
         }
 
         @Override
