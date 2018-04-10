@@ -1,7 +1,9 @@
 package io.swagslash.settlersofcatan.pieces;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 
@@ -13,6 +15,8 @@ import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 public class CatanUtil {
 
     public static final List<AxialHexLocation> hexes = initStartingSequence();
+    public static final Stack<NumberToken> tokens = initNumberTokens();
+    public static Stack<Hex.TerrainType> terrains = initTerrainList();
 
     //TODO find an algo to do this and not hardcode it for a board  with diameter 5
 
@@ -45,7 +49,56 @@ public class CatanUtil {
         return seq;
     }
 
+    private static Stack<NumberToken> initNumberTokens() {
+        Stack<NumberToken> tokens = new Stack<>();
+        tokens.add(new NumberToken(5));
+        tokens.add(new NumberToken(2));
+        tokens.add(new NumberToken(6));
+        tokens.add(new NumberToken(3));
+        tokens.add(new NumberToken(8));
+        tokens.add(new NumberToken(10));
+        tokens.add(new NumberToken(9));
+        tokens.add(new NumberToken(12));
+        tokens.add(new NumberToken(11));
+        tokens.add(new NumberToken(4));
+        tokens.add(new NumberToken(8));
+        tokens.add(new NumberToken(10));
+        tokens.add(new NumberToken(9));
+        tokens.add(new NumberToken(4));
+        tokens.add(new NumberToken(5));
+        tokens.add(new NumberToken(6));
+        tokens.add(new NumberToken(3));
+        tokens.add(new NumberToken(11));
+        return tokens;
+    }
+
+    private static Stack<Hex.TerrainType> initTerrainList() {
+        Stack<Hex.TerrainType> terrainStack = new Stack<>();
+        for (int i = 0; i < 4; i++) {
+            terrainStack.push(Hex.TerrainType.FOREST);
+            terrainStack.push(Hex.TerrainType.PASTURE);
+            terrainStack.push(Hex.TerrainType.FIELD);
+        }
+
+        for (int i = 0; i < 4; i++) {
+            terrainStack.push(Hex.TerrainType.MOUNTAIN);
+            terrainStack.push(Hex.TerrainType.HILL);
+        }
+
+        terrainStack.push(Hex.TerrainType.DESERT);
+        return terrainStack;
+    }
+
     public static List<AxialHexLocation> getCatanBoardHexesInStartingSequence() {
         return hexes;
+    }
+
+    public static Stack<NumberToken> getTokensInStartingSequence() {
+        return tokens;
+    }
+
+    public static Stack<Hex.TerrainType> getTerrainsShuffled() {
+        Collections.shuffle(terrains);
+        return terrains;
     }
 }

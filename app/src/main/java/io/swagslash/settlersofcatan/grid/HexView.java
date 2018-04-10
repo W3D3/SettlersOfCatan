@@ -3,11 +3,16 @@ package io.swagslash.settlersofcatan.grid;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DiscretePathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.util.Pair;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +32,14 @@ import io.swagslash.settlersofcatan.pieces.utility.HexUtility;
 public class HexView extends View {
     private ShapeDrawable mDrawable;
     Board board;
-    List<HexPoint> coordinates;
+    List<Hex> hexes;
+    WindowManager manager;
+    int maxX;
+    int maxY;
+
+    Paint strokePaint;
+    Paint fillPaint;
+
     public Board getBoard() {
         return board;
     }
@@ -36,40 +48,63 @@ public class HexView extends View {
         this.board = board;
     }
 
+    public WindowManager getManager() {
+        return manager;
+    }
+
+    public void setManager(WindowManager manager) {
+        this.manager = manager;
+    }
+
     public HexView(Context context) {
         super(context);
-        coordinates = new ArrayList<>();
+        hexes = new ArrayList<>();
 
+        this.strokePaint = new Paint();
+        this.fillPaint = new Paint();
     }
 
     public void prepare(){
-        for (Map.Entry<HexPoint, Vertex> pointVertexEntry : board.getVertices().entrySet()) {
-            coordinates.add(pointVertexEntry.getKey());
+        hexes.addAll(board.getHexagons());
 
+        Display mdisp = getManager().getDefaultDisplay();
+        Point mdispSize = new Point();
+        mdisp.getSize(mdispSize);
+        maxX = mdispSize.x;
+        maxY = mdispSize.y;
+        int scale = Math.min(maxX, maxY) / 5;
+
+        for (Hex hex : hexes) {
+            hex.calculatePath(new Pair<>(maxX/2, maxY/2), scale);
         }
-        board.getHexagons().get(0).getVerticesPositions();
-
     }
 
     protected void onDraw(Canvas c){
         super.onDraw(c);
         prepare();
-        Paint paint = new Paint();
-        Path path = new Path();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.TRANSPARENT);
-        c.drawPaint(paint);
-        for (int i = 1; i < 6; i++) {
-            path.moveTo(i, i-1);
-            path.lineTo(i, i);
-        }
 
-        path.close();
-        paint.setStrokeWidth(3);
-        paint.setPathEffect(null);
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.STROKE);
-        c.drawPath(path, paint);
+        //Background white
+        this.fillPaint.setStyle(Paint.Style.FILL);
+        this.fillPaint.setColor(Color.WHITE);
+        c.drawPaint(fillPaint);
+
+        strokePaint.setStrokeWidth(3);
+        strokePaint.setPathEffect(null);
+        strokePaint.setColor(Color.BLACK);
+        strokePaint.setStyle(Paint.Style.STROKE);
+
+        fillPaint.setStyle(Paint.Style.FILL);
+        fillPaint.setColor(Color.YELLOW);
+
+
+        for (Hex hex : hexes) {
+            Path path = hex.getPath();
+
+            path.setFillType(Path.FillType.EVEN_ODD);
+            fillPaint.setColor(hex.getTerrainColor());
+            c.drawPath(path, fillPaint);
+            c.drawPath(path, strokePaint);
+        }
 
     }
 }

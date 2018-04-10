@@ -7,6 +7,7 @@ package io.swagslash.settlersofcatan.pieces;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
@@ -80,14 +81,14 @@ public class Board {
 
         this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
 
-        //Center is always Desert?
-//        Hex centerHex = new Hex(this, Hex.TerrainType.DESERT, new AxialHexLocation(0,0));
-//        //ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(this.gridLayout, new AxialHexLocation(0, 0));
-//        centerHex.calculateVertices(gridLayout);
+        final List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();
+        Stack<NumberToken> numberTokens = CatanUtil.getTokensInStartingSequence();
+        Stack<Hex.TerrainType> terrainsShuffled = CatanUtil.getTerrainsShuffled();
+
 
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
-            //TODO RANDOMIZE TERRAIN
-            Hex hex = new Hex(this, Hex.TerrainType.DESERT, location);
+            Hex hex = new Hex(this, terrainsShuffled.pop(), location);
+            if(hex.getResourceProduced() != null) hex.setNumberToken(numberTokens.pop());
             hex.calculateVertices(gridLayout);
             hexagons.add(hex);
             for (HexPoint point : hex.getVerticesPositions()) {
@@ -97,16 +98,5 @@ public class Board {
             }
 
         }
-
-//        Integer start = ((Double)(-(Math.floor(diameter/2)))).intValue();
-//        Integer end = ((Double)((Math.floor(diameter/2)))).intValue();
-//        for (int q = start; q <= end; q ++)
-//        {
-//            for (int r = start; r <= end; r ++)
-//            {
-//
-//
-//            }
-//        }
     }
 }
