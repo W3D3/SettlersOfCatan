@@ -45,7 +45,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(clickListener != null){
+                if (clickListener != null) {
                     clickListener.onClick(service);
                 }
             }
@@ -81,13 +81,18 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
         }
     }
 
-    public void setLobbies(List<LobbyService> lobbies){
+    public void setLobbies(List<LobbyService> lobbies) {
         mValues.clear();
         mValues.addAll(lobbies);
         this.notifyDataSetChanged();
     }
 
-    public interface OnLobbyServiceClickListener{
+    public interface OnLobbyServiceClickListener {
         void onClick(LobbyService service);
+    }
+
+    public void addLobby(LobbyService lobby) {
+        mValues.add(lobby);
+        this.notifyDataSetChanged();
     }
 }

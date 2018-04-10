@@ -19,7 +19,7 @@ import io.swagslash.settlersofcatan.R;
  * <p/>
  * interface.
  */
-public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener{
+public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -113,11 +113,15 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
         void onListFragmentInteraction(LobbyService item);
     }
 
-    public interface OnLobbyServiceClickListener{
+    public interface OnLobbyServiceClickListener {
         public void connectP2p(LobbyService service);
     }
 
-    public void setLobbies(List<LobbyService> lobbies){
+    public void setLobbies(List<LobbyService> lobbies) {
         adapter.setLobbies(lobbies);
+    }
+
+    public void addLobby(LobbyService lobby) {
+        adapter.addLobby(lobby);
     }
 }

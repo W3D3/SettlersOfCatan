@@ -37,11 +37,11 @@ import io.swagslash.settlersofcatan.network.wifi.WiFiBroadCastReceiver;
 public class BrowserActivity extends AppCompatActivity implements Handler.Callback, LobbyServiceFragment.OnLobbyServiceClickListener, LobbyServiceFragment.OnListFragmentInteractionListener,
         WifiP2pManager.ConnectionInfoListener {
 
-    public static final String TAG = "wifidirectdemo";
+    public static final String TAG = "LobbyBrowser";
 
     // TXT RECORD properties
     public static final String TXTRECORD_PROP_AVAILABLE = "available";
-    public static final String SERVICE_INSTANCE = "_wifidemotest";
+    public static final String SERVICE_INSTANCE = "settlerLobby";
     public static final String SERVICE_REG_TYPE = "_presence._tcp";
 
     public static final int MESSAGE_READ = 0x400 + 1;
@@ -71,7 +71,9 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
         this.handler = handler;
     }
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,10 +82,8 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        intentFilter
-                .addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        intentFilter
-                .addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
@@ -93,7 +93,7 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
+            if (extras == null) {
                 playerName = "NoName";
             } else {
                 playerName = extras.getString("playerName");
@@ -186,9 +186,8 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
                                 service.setDevice(srcDevice);
                                 service.setInstanceName(instanceName);
                                 service.setServiceRegistrationType(registrationType);
-                                List<LobbyService> services = new ArrayList<>();
-                                services.add(service);
-                                fragment.setLobbies(services);
+                                fragment.addLobby(service);
+
                                 Log.d(TAG, "onBonjourServiceAvailable "
                                         + instanceName);
                             }
@@ -291,7 +290,7 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
 //                (chatFragment).setChatManager((ChatManager) obj);
 //
 //        }
-    return true;
+        return true;
     }
 
     @Override
@@ -350,7 +349,7 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
     }
 
 
-    public void onClick(View v){
+    public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStart:
                 createLobby();
@@ -358,7 +357,7 @@ public class BrowserActivity extends AppCompatActivity implements Handler.Callba
         }
     }
 
-    public void createLobby(){
+    public void createLobby() {
         Intent i = new Intent(getApplicationContext(), LobbyActivity.class);
         startActivity(i);
     }
