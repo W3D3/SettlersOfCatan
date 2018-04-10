@@ -26,6 +26,7 @@ public class GridActivity extends AppCompatActivity {
         b.setupBoard();
 
         hexView.setBoard(b);
+        hexView.parent = this;
         hexView.setManager(getWindowManager());
 
         setContentView(hexView);

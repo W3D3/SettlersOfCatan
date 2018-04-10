@@ -1,5 +1,6 @@
 package io.swagslash.settlersofcatan.grid;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +39,8 @@ public class HexView extends View {
     List<Hex> hexes;
     List<Region> regionList;
     WindowManager manager;
+    //TODO remove, only here for Toast messages
+    public Activity parent;
     int maxX;
     int maxY;
 
@@ -115,7 +119,7 @@ public class HexView extends View {
 
             Region r = new Region();
             r.setPath(path, clip);
-            regionList.add(r);
+            hex.setRegion(r);
         }
 
     }
@@ -126,9 +130,13 @@ public class HexView extends View {
         int y = (int)event.getY();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                for (int i = 0; i < regionList.size(); i++) {
-                    Region r = regionList.get(i);
+                for (int i = 0; i < hexes.size(); i++) {
+                    Region r = hexes.get(i).getRegion();
                     if (r.contains(x,y)) {
+                        //TODO remove debug data and handle touches properly
+                        System.out.println(hexes.get(i).toString());
+                        Toast.makeText(parent.getApplicationContext(), hexes.get(i).toString(),
+                                Toast.LENGTH_SHORT).show();
                         break;
                     }
                 }
