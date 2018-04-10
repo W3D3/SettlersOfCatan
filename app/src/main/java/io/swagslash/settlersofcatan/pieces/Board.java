@@ -76,19 +76,20 @@ public class Board {
         return hexagons;
     }
 
-    public void setupBoard(int diameter) {
-        if(diameter % 2 == 0) throw new UnsupportedOperationException("Cannot create a Catan board with even diameter.");
+    public void setupBoard() {
+        //if(diameter % 2 == 0) throw new UnsupportedOperationException("Cannot create a Catan board with even diameter.");
 
         this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
 
-        final List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();
+        List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();
         Stack<NumberToken> numberTokens = CatanUtil.getTokensInStartingSequence();
         Stack<Hex.TerrainType> terrainsShuffled = CatanUtil.getTerrainsShuffled();
 
 
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
+            boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
             Hex hex = new Hex(this, terrainsShuffled.pop(), location);
-            if(hex.getResourceProduced() != null) hex.setNumberToken(numberTokens.pop());
+            if(needsNumberToken) hex.setNumberToken(numberTokens.pop());
             hex.calculateVertices(gridLayout);
             hexagons.add(hex);
             for (HexPoint point : hex.getVerticesPositions()) {

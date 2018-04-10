@@ -7,10 +7,12 @@ import android.graphics.DiscretePathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.Region;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.Pair;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -33,12 +35,15 @@ public class HexView extends View {
     private ShapeDrawable mDrawable;
     Board board;
     List<Hex> hexes;
+    List<Region> regionList;
     WindowManager manager;
     int maxX;
     int maxY;
 
     Paint strokePaint;
     Paint fillPaint;
+
+    Region clip;
 
     public Board getBoard() {
         return board;
@@ -59,6 +64,7 @@ public class HexView extends View {
     public HexView(Context context) {
         super(context);
         hexes = new ArrayList<>();
+        regionList = new ArrayList<>();
 
         this.strokePaint = new Paint();
         this.fillPaint = new Paint();
@@ -83,6 +89,8 @@ public class HexView extends View {
         super.onDraw(c);
         prepare();
 
+        clip = new Region(0, 0, c.getWidth(), c.getHeight());
+
         //Background white
         this.fillPaint.setStyle(Paint.Style.FILL);
         this.fillPaint.setColor(Color.WHITE);
@@ -104,7 +112,29 @@ public class HexView extends View {
             fillPaint.setColor(hex.getTerrainColor());
             c.drawPath(path, fillPaint);
             c.drawPath(path, strokePaint);
+
+            Region r = new Region();
+            r.setPath(path, clip);
+            regionList.add(r);
         }
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int x = (int)event.getX();
+        int y = (int)event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                for (int i = 0; i < regionList.size(); i++) {
+                    Region r = regionList.get(i);
+                    if (r.contains(x,y)) {
+                        break;
+                    }
+                }
+            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_UP:
+        }
+        return false;
     }
 }

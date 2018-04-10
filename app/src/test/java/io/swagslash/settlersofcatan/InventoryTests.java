@@ -31,7 +31,7 @@ public class InventoryTests {
         players.add("P1");
         players.add("P2");
         b = new Board(players, true, 10);
-        b.setupBoard(5);
+        b.setupBoard();
     }
 
     @Test

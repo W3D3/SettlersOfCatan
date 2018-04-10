@@ -23,7 +23,7 @@ public class GridActivity extends AppCompatActivity {
         players.add("P1");
         players.add("P2");
         Board b = new Board(players, true, 10);
-        b.setupBoard(5);
+        b.setupBoard();
 
         hexView.setBoard(b);
         hexView.setManager(getWindowManager());

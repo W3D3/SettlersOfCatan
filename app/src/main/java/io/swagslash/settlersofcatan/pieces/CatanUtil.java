@@ -80,7 +80,7 @@ public class CatanUtil {
             terrainStack.push(Hex.TerrainType.FIELD);
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             terrainStack.push(Hex.TerrainType.MOUNTAIN);
             terrainStack.push(Hex.TerrainType.HILL);
         }
@@ -94,11 +94,15 @@ public class CatanUtil {
     }
 
     public static Stack<NumberToken> getTokensInStartingSequence() {
-        return tokens;
+        Stack<NumberToken> newStack = new Stack<NumberToken>();
+        newStack.addAll(tokens);
+        return newStack;
     }
 
     public static Stack<Hex.TerrainType> getTerrainsShuffled() {
-        Collections.shuffle(terrains);
-        return terrains;
+        Stack<Hex.TerrainType> terrainTypesStack = new Stack<Hex.TerrainType>();
+        terrainTypesStack.addAll(terrains);
+        Collections.shuffle(terrainTypesStack);
+        return terrainTypesStack;
     }
 }
