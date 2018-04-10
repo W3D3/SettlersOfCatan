@@ -5,11 +5,13 @@ package io.swagslash.settlersofcatan.pieces;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
+import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
 /**
  * Represents a Catan board that holds all the Hexes
@@ -19,10 +21,9 @@ public class Board {
     private Phase phase;
 
     private List<Hex> hexagons;
-    private List<Vertex> vertices;
+    private HashMap<HexPoint, Vertex> pointToVertices;
     private List<Edge> edges;
     private List<Player> players;
-//    private CatanGrid catanGrid;
     private HexGridLayout gridLayout;
 
     private boolean randomDiscard;
@@ -32,13 +33,14 @@ public class Board {
         this.randomDiscard = randomDiscard;
         this.winningPoints = winningPoints;
         this.hexagons = new ArrayList<>();
+        this.pointToVertices = new HashMap<>();
 
         if(playerNames.size() < 2 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
         players = new ArrayList<>(playerNames.size());
-        for (int i = 0; i < players.size(); i++) {
-            players.set(i, new Player(this, i, Player.Color.NONE, playerNames.get(i)));
+        for (int i = 0; i < playerNames.size(); i++) {
+            players.add(i, new Player(this, i, Player.Color.NONE, playerNames.get(i)));
 
         }
     }
@@ -61,8 +63,12 @@ public class Board {
         return players.get(playerId);
     }
 
-    public Vertex getVertexById(int vertexId) {
-        return vertices.get(vertexId);
+    public HashMap<HexPoint, Vertex> getVertices() {
+        return pointToVertices;
+    }
+
+    public Vertex getVertexByPosition(HexPoint position) {
+        return pointToVertices.get(position);
     }
 
     public List<Hex> getHexagons() {
@@ -84,6 +90,12 @@ public class Board {
             Hex hex = new Hex(this, Hex.TerrainType.DESERT, location);
             hex.calculateVertices(gridLayout);
             hexagons.add(hex);
+            for (HexPoint point : hex.getVerticesPositions()) {
+                if(!this.pointToVertices.containsKey(point)) {
+                    this.pointToVertices.put(point, new Vertex(this, point));
+                }
+            }
+
         }
 
 //        Integer start = ((Double)(-(Math.floor(diameter/2)))).intValue();

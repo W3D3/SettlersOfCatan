@@ -24,7 +24,7 @@ public class Hex {
     private AxialHexLocation hexLocation;
     private Boolean hasRobber;
 
-    private HashMap<Integer, Vertex> vertices = new HashMap<>();
+    private List<HexPoint> verticesPositions;
     private Set<Edge> edges = new HashSet<>();
 
     private transient Board board;
@@ -38,6 +38,11 @@ public class Hex {
         this.terrainType = terrainType;
         this.board = board;
         this.hexLocation = location;
+        this.verticesPositions = new ArrayList<>();
+        for (int i = 0; i < 6; i++)
+        {
+            this.verticesPositions.add(null);
+        }
     }
 
     public Set<Edge> getEdges() {
@@ -48,14 +53,22 @@ public class Hex {
         ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(gridLayout, this.getHexLocation());
         Integer direction = 0;
         for (HexPoint point : hexPoints) {
-            this.vertices.put(direction, new Vertex(this.board, point));
+            this.verticesPositions.set(direction, point);
             direction++;
         }
     }
 
-    public Set<Vertex> getVerticesSet() {
-        return new HashSet<Vertex>(vertices.values());
+    public List<HexPoint> getVerticesPositions() {
+        return verticesPositions;
     }
+
+    public HexPoint getVertexPositions(int direction) {
+        return verticesPositions.get(direction);
+    }
+
+//    public Set<Vertex> getVerticesSet() {
+//        return new HashSet<Vertex>(vertices.values());
+//    }
 
     public AxialHexLocation getHexLocation() {
         return hexLocation;
@@ -85,11 +98,12 @@ public class Hex {
         for (int i = 0; i < 6; i++)
         {
             //TODO each vertex gets resources
-            //board.getVertexById(vertexIds[i]).distributeResources(resourceProduced.getResourceType());
+            board.getVertexByPosition(verticesPositions.get(i)).distributeResources(this.getResourceProduced());
         }
     }
 
-    public void setVertex(Integer direction, Vertex v) {
-        vertices.put(direction, v);
+    @Override
+    public String toString() {
+        return this.hexLocation.toString() + " " + this.terrainType.toString();
     }
 }
