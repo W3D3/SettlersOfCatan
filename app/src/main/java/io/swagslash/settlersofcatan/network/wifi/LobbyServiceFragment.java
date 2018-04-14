@@ -10,8 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.peak.salut.Salut;
+import com.peak.salut.SalutDevice;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.Global;
 import io.swagslash.settlersofcatan.R;
 
 /**
@@ -25,7 +30,8 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener mListener;
+    private List<SalutDevice> lobbies = new ArrayList<>();;
 
     private MyLobbyServiceRecyclerViewAdapter adapter;
 
@@ -69,7 +75,7 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adapter = new MyLobbyServiceRecyclerViewAdapter(this);
+            adapter = new MyLobbyServiceRecyclerViewAdapter(lobbies, mListener, context);
             recyclerView.setAdapter(adapter);
         }
         return view;
@@ -79,8 +85,8 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener) {
+            mListener = (MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -94,9 +100,10 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
     }
 
     @Override
-    public void onClick(LobbyService service) {
+    public void onClick(SalutDevice device) {
 
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -113,15 +120,11 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
         void onListFragmentInteraction(LobbyService item);
     }
 
-    public interface OnLobbyServiceClickListener {
-        public void connectP2p(LobbyService service);
-    }
-
-    public void setLobbies(List<LobbyService> lobbies) {
+    public void setLobbies(List<SalutDevice> lobbies) {
         adapter.setLobbies(lobbies);
     }
 
-    public void addLobby(LobbyService lobby) {
+    public void addLobby(SalutDevice lobby) {
         adapter.addLobby(lobby);
     }
 }

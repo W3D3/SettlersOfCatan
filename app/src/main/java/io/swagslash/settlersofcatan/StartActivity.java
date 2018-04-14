@@ -24,9 +24,10 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void startGame() {
+        Global g = (Global)getApplication();
+        TextView tvPlayer = (TextView)findViewById(R.id.enterName);
+        g.setPlayerName(tvPlayer.getText().toString());
         Intent i = new Intent(getApplicationContext(), BrowserActivity.class);
-        TextView playerCount = (TextView) findViewById(R.id.tvPlayerCount);
-        i.putExtra("playerName", playerCount.getText());
         startActivity(i);
     }
 
