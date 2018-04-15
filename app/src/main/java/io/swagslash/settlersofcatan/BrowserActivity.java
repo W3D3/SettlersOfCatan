@@ -82,25 +82,6 @@ public class BrowserActivity extends AppCompatActivity implements SalutDataCallb
 
     }
 
-    private void setupNetwork()
-    {
-        if(!network.isRunningAsHost)
-        {
-            network.stopNetworkService(false);
-            network.startNetworkService(new SalutDeviceCallback() {
-                @Override
-                public void call(SalutDevice salutDevice) {
-                    Log.d(TAG,"Shit found me");
-                    Toast.makeText(getApplicationContext(), "Device: " + salutDevice.instanceName + " connected.", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        else
-        {
-            network.stopNetworkService(false);
-        }
-    }
-
     @Override
     protected void onRestart() {
         Fragment frag = getFragmentManager().findFragmentByTag("services");
@@ -173,7 +154,7 @@ public class BrowserActivity extends AppCompatActivity implements SalutDataCallb
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnCreateLobby:
-                setupNetwork();
+                createLobby();
                 break;
             case R.id.btnDiscover:
                 discoverServices();
