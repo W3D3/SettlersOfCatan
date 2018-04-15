@@ -96,7 +96,7 @@ public class HexagonTests {
         players.add("P1");
         players.add("P2");
         Board b = new Board(players, true, 10);
-        b.setupBoard(5);
+        b.setupBoard();
 
         assertEquals(54, b.getVertices().size());
     }
