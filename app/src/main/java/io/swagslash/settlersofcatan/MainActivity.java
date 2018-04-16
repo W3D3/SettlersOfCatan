@@ -1,5 +1,6 @@
 package io.swagslash.settlersofcatan;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -95,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.cards:
                 tv.append("cards clicked!");
+                Intent in = new Intent(this, DisplayCardsActivity.class);
+                startActivity(in);
                 break;
             default:
                 break;
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.layoutCity.startAnimation(openMenu);
             this.layoutCity.animate().translationY(-1 * (offset++ * FAB_MENU_DISTANCE));
             this.layoutStreet.startAnimation(openMenu);
-            this.layoutStreet.animate().translationY(-1 * (offset++ * FAB_MENU_DISTANCE));
+            this.layoutStreet.animate().translationY(-1 * (offset * FAB_MENU_DISTANCE));
         }
         this.fabOpen = !this.fabOpen;
     }
