@@ -1,22 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.otaliastudios.zoom.ZoomLayout android:layout_width="match_parent"
-    android:id="@+id/zoomContainer"
-    android:layout_height="match_parent"
-    app:overScrollHorizontal="true"
-    app:overScrollVertical="true"
-    app:overPinchable="true"
-    app:minZoom="1"
-    app:minZoomType="zoom"
-    app:maxZoom="3"
-    app:maxZoomType="zoom"
-    app:hasClickableChildren="false"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Content here. -->
-
-</com.otaliastudios.zoom.ZoomLayout>
+<LinearLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical">
 
 
+    <Button xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
+    <com.otaliastudios.zoom.ZoomLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/zoomContainer"
+        android:layout_width="match_parent"
+        android:layout_height="600px"
+        app:hasClickableChildren="false"
+        app:maxZoom="3"
+        app:maxZoomType="zoom"
+        app:minZoom="1"
+        app:minZoomType="zoom"
+        app:overPinchable="false"
+        app:overScrollHorizontal="false"
+        app:overScrollVertical="false">
+
+        <!-- Content here. -->
+
+
+    </com.otaliastudios.zoom.ZoomLayout>
+
+</LinearLayout>
 
