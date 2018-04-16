@@ -13,6 +13,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.Pair;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -41,10 +42,10 @@ public class HexView extends View {
     List<Hex> hexes;
     List<Region> regionList;
     WindowManager manager;
-    //TODO remove, only here for Toast messages
-    public Activity parent;
     int maxX;
     int maxY;
+    private final GestureDetector gestureDetector;
+    private boolean singleClick;
 
     ZoomLayout zoomLayout = null;
 
@@ -78,6 +79,38 @@ public class HexView extends View {
 
         this.strokePaint = new Paint();
         this.fillPaint = new Paint();
+
+        this.gestureDetector = new GestureDetector(this.getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent event) {
+                // triggers first for both single tap and long press
+                return true;
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                singleClick = true;
+                return true;
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                super.onLongPress(e);
+                singleClick = true;
+            }
+
+            // Keep this in for future use
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                singleClick = false;
+                return false;
+            }
+        });
     }
 
     public ZoomLayout getZoomLayout() {
@@ -152,36 +185,32 @@ public class HexView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        // this sets singleClick so we know that when the user wants to really tap something
+        gestureDetector.onTouchEvent(event);
+
         float x = event.getX();
         float y = event.getY();
 
         if(zoomLayout != null)
         {
-//            if (zoomLayout.getEngine().onInterceptTouchEvent(event)) {
-//                return false;
-//            }
             // invert the coordinates so they map back to our regions when using a zoom engine
             x = x * (1/zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanX();
             y = y * (1/ zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanY();
         }
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                System.out.println("Action DOWN");
-                for (int i = 0; i < hexes.size(); i++) {
-                    Region r = hexes.get(i).getRegion();
-                    if (r.contains((int)x,(int)y)) {
-                        //TODO remove debug data and handle touches properly
-                        System.out.println(hexes.get(i).toString());
-                        Toast.makeText(parent.getApplicationContext(), hexes.get(i).toString(),
-                                Toast.LENGTH_SHORT).show();
-                        break;
-                    }
+        for (int i = 0; i < hexes.size(); i++) {
+            Region r = hexes.get(i).getRegion();
+            if (r.contains((int)x,(int)y)) {
+                //TODO remove debug data and handle touches properly
+                if(singleClick) {
+                    System.out.println(hexes.get(i).toString());
+                    Toast.makeText(getContext().getApplicationContext(), hexes.get(i).toString(),
+                            Toast.LENGTH_SHORT).show();
                 }
-            case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_UP:
-
+                singleClick = false;
+                break;
+            }
         }
-        return false;
+        return true;
     }
 }

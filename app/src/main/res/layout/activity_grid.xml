@@ -16,7 +16,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/zoomContainer"
         android:layout_width="match_parent"
-        android:layout_height="600px"
+        android:layout_height="match_parent"
         app:hasClickableChildren="false"
         app:maxZoom="3"
         app:maxZoomType="zoom"
