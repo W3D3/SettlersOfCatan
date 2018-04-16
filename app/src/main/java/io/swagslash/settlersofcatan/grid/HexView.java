@@ -37,7 +37,7 @@ import io.swagslash.settlersofcatan.pieces.utility.HexUtility;
  */
 
 public class HexView extends View {
-    private ShapeDrawable mDrawable;
+
     Board board;
     List<Hex> hexes;
     List<Region> regionList;
