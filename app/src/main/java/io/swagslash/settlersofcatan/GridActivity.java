@@ -1,7 +1,14 @@
 package io.swagslash.settlersofcatan;
 
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
+import android.view.MotionEvent;
+import android.widget.TextView;
+
+import com.otaliastudios.zoom.ZoomEngine;
+import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +36,21 @@ public class GridActivity extends AppCompatActivity {
         hexView.parent = this;
         hexView.setManager(getWindowManager());
 
-        setContentView(hexView);
+        setContentView(R.layout.activity_grid);
+
+        ZoomLayout zl = (ZoomLayout) findViewById(R.id.zoomContainer);
+        zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
+        Display mdisp = getWindowManager().getDefaultDisplay();
+        Point mdispSize = new Point();
+        mdisp.getSize(mdispSize);
+
+        //zl.setMinimumHeight(mdispSize.y);
+        //zl.setMinimumWidth(mdispSize.x);
+        hexView.setZoomLayout(zl);
+        hexView.prepare();
+
+        zl.addView(hexView);
     }
+
+
 }

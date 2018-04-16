@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="io.swagslash.settlersofcatan.GridActivity">
 
-</android.support.constraint.ConstraintLayout>
+<com.otaliastudios.zoom.ZoomLayout android:layout_width="match_parent"
+    android:id="@+id/zoomContainer"
+    android:layout_height="match_parent"
+    app:overScrollHorizontal="true"
+    app:overScrollVertical="true"
+    app:overPinchable="true"
+    app:minZoom="1"
+    app:minZoomType="zoom"
+    app:maxZoom="3"
+    app:maxZoomType="zoom"
+    app:hasClickableChildren="false"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Content here. -->
+
+</com.otaliastudios.zoom.ZoomLayout>
+
+
+

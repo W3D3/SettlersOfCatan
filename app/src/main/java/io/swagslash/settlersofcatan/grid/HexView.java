@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.otaliastudios.zoom.ZoomLayout;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,8 @@ public class HexView extends View {
     int maxX;
     int maxY;
 
+    ZoomLayout zoomLayout = null;
+
     Paint strokePaint;
     Paint fillPaint;
 
@@ -67,11 +71,26 @@ public class HexView extends View {
 
     public HexView(Context context) {
         super(context);
+
+
         hexes = new ArrayList<>();
         regionList = new ArrayList<>();
 
         this.strokePaint = new Paint();
         this.fillPaint = new Paint();
+    }
+
+    public ZoomLayout getZoomLayout() {
+        return zoomLayout;
+    }
+
+    public void setZoomLayout(ZoomLayout zoomLayout) {
+        this.zoomLayout = zoomLayout;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     public void prepare(){
@@ -87,17 +106,23 @@ public class HexView extends View {
         for (Hex hex : hexes) {
             hex.calculatePath(new Pair<>(maxX/2, maxY/2), scale);
         }
+        //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES
+        // OR GET IT FROM PARENT?
+        setMinimumHeight(maxY);
+        setMinimumWidth(maxX);
+        //ready to draw
+        setWillNotDraw(false);
+        invalidate();
     }
 
     protected void onDraw(Canvas c){
         super.onDraw(c);
-        prepare();
 
         clip = new Region(0, 0, c.getWidth(), c.getHeight());
 
         //Background white
         this.fillPaint.setStyle(Paint.Style.FILL);
-        this.fillPaint.setColor(Color.WHITE);
+        this.fillPaint.setColor(Color.GRAY);
         c.drawPaint(fillPaint);
 
         strokePaint.setStrokeWidth(3);
@@ -126,13 +151,26 @@ public class HexView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int x = (int)event.getX();
-        int y = (int)event.getY();
+
+        float x = event.getX();
+        float y = event.getY();
+
+        if(zoomLayout != null)
+        {
+//            if (zoomLayout.getEngine().onInterceptTouchEvent(event)) {
+//                return false;
+//            }
+            // invert the coordinates so they map back to our regions when using a zoom engine
+            x = x * (1/zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanX();
+            y = y * (1/ zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanY();
+        }
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                System.out.println("Action DOWN");
                 for (int i = 0; i < hexes.size(); i++) {
                     Region r = hexes.get(i).getRegion();
-                    if (r.contains(x,y)) {
+                    if (r.contains((int)x,(int)y)) {
                         //TODO remove debug data and handle touches properly
                         System.out.println(hexes.get(i).toString());
                         Toast.makeText(parent.getApplicationContext(), hexes.get(i).toString(),
@@ -142,6 +180,7 @@ public class HexView extends View {
                 }
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
+
         }
         return false;
     }
