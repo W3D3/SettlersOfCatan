@@ -10,17 +10,10 @@ import android.widget.TextView;
 
 import com.peak.salut.SalutDevice;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.R;
-import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment.OnListFragmentInteractionListener;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link io.swagslash.settlersofcatan.network.wifi.LobbyService} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLobbyServiceRecyclerViewAdapter.ViewHolder> {
 
     private final List<SalutDevice> mValues;
@@ -43,7 +36,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final SalutDevice device = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).deviceName);
+        holder.mIdView.setText(mValues.get(position).readableName);
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

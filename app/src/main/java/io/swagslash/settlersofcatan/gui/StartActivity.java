@@ -1,10 +1,13 @@
-package io.swagslash.settlersofcatan;
+package io.swagslash.settlersofcatan.gui;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import io.swagslash.settlersofcatan.Global;
+import io.swagslash.settlersofcatan.R;
 
 public class StartActivity extends AppCompatActivity {
 

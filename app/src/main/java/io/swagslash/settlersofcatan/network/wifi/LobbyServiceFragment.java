@@ -26,9 +26,7 @@ import io.swagslash.settlersofcatan.R;
  */
 public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener mListener;
     private List<SalutDevice> lobbies = new ArrayList<>();
@@ -102,22 +100,6 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
     @Override
     public void onClick(SalutDevice device) {
 
-    }
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(LobbyService item);
     }
 
     public void setLobbies(List<SalutDevice> lobbies) {

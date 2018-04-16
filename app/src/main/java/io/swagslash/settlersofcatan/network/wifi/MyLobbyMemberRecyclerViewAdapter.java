@@ -8,25 +8,20 @@ import android.widget.TextView;
 
 import com.peak.salut.SalutDevice;
 
-import io.swagslash.settlersofcatan.R;
-import io.swagslash.settlersofcatan.network.wifi.LobbyMemberFragment.OnListFragmentInteractionListener;
-import io.swagslash.settlersofcatan.dummy.DummyContent.DummyItem;
-
 import java.util.List;
 
+import io.swagslash.settlersofcatan.R;
+
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyLobbyMemberRecyclerViewAdapter extends RecyclerView.Adapter<MyLobbyMemberRecyclerViewAdapter.ViewHolder> {
 
     private final List<SalutDevice> mValues;
-    private final OnListFragmentInteractionListener mListener;
 
-    public MyLobbyMemberRecyclerViewAdapter(List<SalutDevice> items, OnListFragmentInteractionListener listener) {
+    public MyLobbyMemberRecyclerViewAdapter(List<SalutDevice> items) {
         mValues = items;
-        mListener = listener;
     }
 
     @Override
@@ -38,20 +33,9 @@ public class MyLobbyMemberRecyclerViewAdapter extends RecyclerView.Adapter<MyLob
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        holder.mIdView.setText(mValues.get(position).readableName);
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.indexOf(holder.mItem));
-        holder.mContentView.setText(mValues.get(position).deviceName);
-
-//        holder.mView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (null != mListener) {
-//                    // Notify the active callbacks interface (the activity, if the
-//                    // fragment is attached to one) that an item has been selected.
-//                    mListener.onListFragmentInteraction(holder.mItem);
-//                }
-//            }
-//        });
+        //holder.mContentView.setText(mValues.get(position).deviceName);
     }
 
     @Override
@@ -76,5 +60,15 @@ public class MyLobbyMemberRecyclerViewAdapter extends RecyclerView.Adapter<MyLob
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
         }
+    }
+
+    public void setLobbies(List<SalutDevice> lobbies) {
+        mValues.clear();
+        mValues.addAll(lobbies);
+        this.notifyDataSetChanged();
+    }
+    public void addMember(SalutDevice member){
+        mValues.add(member);
+        notifyDataSetChanged();
     }
 }
