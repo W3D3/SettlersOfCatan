@@ -1,5 +1,6 @@
 package io.swagslash.settlersofcatan;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -30,6 +31,8 @@ public class GridActivity extends AppCompatActivity {
 
         //Rücksetzen vor comitten
         setContentView(R.layout.activity_resource_discard);
+        Intent intent = new Intent(this, ResourceDiscardActivity.class);
+        startActivity(intent);
         //setContentView(hexView);
     }
 }
