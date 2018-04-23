@@ -28,6 +28,8 @@ public class GridActivity extends AppCompatActivity {
         hexView.setBoard(b);
         hexView.setManager(getWindowManager());
 
-        setContentView(hexView);
+        //Rücksetzen vor comitten
+        setContentView(R.layout.activity_resource_discard);
+        //setContentView(hexView);
     }
 }
