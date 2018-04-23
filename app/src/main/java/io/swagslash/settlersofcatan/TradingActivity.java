@@ -5,11 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-public class DisplayCardsActivity extends AppCompatActivity{
+public class TradingActivity extends AppCompatActivity {
 
     private RecyclerView rv;
     private RecyclerView.Adapter rva;
@@ -18,9 +17,9 @@ public class DisplayCardsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_cards);
+        setContentView(R.layout.activity_trading);
 
-        rv = findViewById(R.id.card_list);
+        rv = findViewById(R.id.player_trading_list);
         rv.addOnItemTouchListener(new RecyclerItemClickListener(this, rv, new ClickListener() {
             @Override
             public void onClick(View v, int pos) {
@@ -37,8 +36,8 @@ public class DisplayCardsActivity extends AppCompatActivity{
         rvl = new LinearLayoutManager(this);
         rv.setLayoutManager(rvl);
 
-        String[] test = {"test0", "test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9"};
-        rva = new CardListAdapter(test);
+        String[] test = {"Player1", "Player2", "Player3", "Player4"};
+        rva = new PlayerListAdapter(test);
         rv.setAdapter(rva);
     }
 }

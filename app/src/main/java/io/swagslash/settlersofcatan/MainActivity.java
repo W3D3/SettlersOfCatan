@@ -1,5 +1,6 @@
 package io.swagslash.settlersofcatan;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final int FAB_MENU_DISTANCE = 145;
 
     protected Button cards;
-    protected ImageButton dice, endOfTurn;
+    protected ImageButton dice, endOfTurn, trading;
     protected FloatingActionButton fab, fabSettlement, fabCity, fabStreet;
     protected LinearLayout layoutSettlement, layoutCity, layoutStreet;
     protected Animation openMenu, closeMenu;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //image_btns
         this.dice = findViewById(R.id.dice);
         this.endOfTurn = findViewById(R.id.end_of_turn);
+        this.trading = findViewById(R.id.trading);
 
         //btns
         this.cards = findViewById(R.id.cards);
@@ -67,7 +70,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.fabStreet.setOnClickListener(this);
         this.dice.setOnClickListener(this);
         this.endOfTurn.setOnClickListener(this);
+        this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
+
     }
 
     @Override
@@ -98,6 +103,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tv.append("cards clicked!");
                 Intent in = new Intent(this, DisplayCardsActivity.class);
                 startActivity(in);
+                break;
+            case R.id.trading:
+                tv.append("trading clicked!");
+                Intent in2 = new Intent(this, TradingActivity.class);
+                startActivity(in2);
                 break;
             default:
                 break;

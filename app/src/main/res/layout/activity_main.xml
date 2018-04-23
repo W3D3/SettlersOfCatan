@@ -19,8 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="false"
+            android:focusableInTouchMode="false"
+            android:longClickable="false"
             android:saveEnabled="false"
-            app:layout_scrollFlags="scroll|enterAlways"
             app:tabIndicatorColor="@color/colorAccent">
 
             <android.support.design.widget.TabItem
@@ -47,11 +48,6 @@
                 android:layout_height="wrap_content"
                 android:text="P4" />
 
-            <android.support.design.widget.TabItem
-                android:id="@+id/p5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="P5" />
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -309,6 +305,17 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_menu_directions" />
+
+    <ImageButton
+        android:id="@+id/trading"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:drawable/ic_menu_always_landscape_portrait"
+        app:layout_constraintBottom_toTopOf="@+id/end_of_turn"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/debug_view"
