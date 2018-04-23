@@ -4,6 +4,8 @@ package io.swagslash.settlersofcatan.pieces;
  * Created by wedenigc on 19.03.18.
  */
 
+import android.util.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +25,8 @@ public class Board {
 
     private List<Hex> hexagons;
     private HashMap<HexPoint, Vertex> pointToVertices;
-    private List<Edge> edges;
+    private HashMap<Pair<HexPoint, HexPoint>, Edge> edges;
+    
     private List<Player> players;
     private HexGridLayout gridLayout;
 
@@ -35,6 +38,7 @@ public class Board {
         this.winningPoints = winningPoints;
         this.hexagons = new ArrayList<>();
         this.pointToVertices = new HashMap<>();
+        this.edges = new HashMap<>();
 
         if(playerNames.size() < 2 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
@@ -44,6 +48,10 @@ public class Board {
             players.add(i, new Player(this, i, Player.Color.NONE, playerNames.get(i)));
 
         }
+    }
+
+    public HashMap<Pair<HexPoint, HexPoint>,Edge> getEdges() {
+        return edges;
     }
 
     public enum Phase {
@@ -85,6 +93,8 @@ public class Board {
         Stack<NumberToken> numberTokens = CatanUtil.getTokensInStartingSequence();
         Stack<Hex.TerrainType> terrainsShuffled = CatanUtil.getTerrainsShuffled();
 
+        List<Hex> hexList = new ArrayList<>();
+        Vertex v = null;
 
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
             boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
@@ -92,12 +102,37 @@ public class Board {
             if(needsNumberToken) hex.setNumberToken(numberTokens.pop());
             hex.calculateVertices(gridLayout);
             hexagons.add(hex);
-            for (HexPoint point : hex.getVerticesPositions()) {
-                if(!this.pointToVertices.containsKey(point)) {
-                    this.pointToVertices.put(point, new Vertex(this, point));
-                }
-            }
+            Vertex previous = null;
+            Vertex first = null;
+            //Iterate over all vertices
+            for (int i = 0; i < 6; i++) {
+                HexPoint point = hex.getVerticesPositions().get(i);
+                v = new Vertex(this, point);
 
+                if(!this.pointToVertices.containsKey(point)) {
+                    this.pointToVertices.put(point, v);
+                }
+                // for first vertex, connect the 6th with the first.
+                if(previous == null)
+                {
+                    previous = new Vertex(this, hex.getVerticesPositions().get(5));
+                }
+
+                Pair<HexPoint, HexPoint> key1 = new Pair<HexPoint, HexPoint>(previous.getCoordinates(), point);
+                Pair<HexPoint, HexPoint> key2 = new Pair<HexPoint, HexPoint>(point, previous.getCoordinates());
+                Edge e = new Edge(this, key1.hashCode());
+
+                if(!this.edges.containsKey(key1) && !this.edges.containsKey(key2)) {
+                    e.setVertices(previous, v);
+                    this.edges.put(key1, e);
+                } else {
+                    System.out.println("Dupe found!");
+                }
+                hex.addEdge(e);
+
+                previous = v;
+            }
+            hexList.add(hex);
         }
     }
 }

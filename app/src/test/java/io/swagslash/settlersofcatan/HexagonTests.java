@@ -100,4 +100,16 @@ public class HexagonTests {
 
         assertEquals(54, b.getVertices().size());
     }
+
+//    @Test
+//    public void catanGridCountEdges() throws Exception {
+//
+//        List<String> players = new ArrayList<>();
+//        players.add("P1");
+//        players.add("P2");
+//        Board b = new Board(players, true, 10);
+//        b.setupBoard();
+//
+//        assertEquals(72, b.getEdges().size());
+//    }
 }

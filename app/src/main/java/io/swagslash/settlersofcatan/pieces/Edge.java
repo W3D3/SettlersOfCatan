@@ -18,7 +18,7 @@ public class Edge {
 
     private int id;
     private EdgeType unitType;
-    private Set<Vertex> vertexes;
+    private Vertex[] vertices;
     private int ownerPlayerNumber = -1;
     private transient Board board;
 
@@ -28,8 +28,8 @@ public class Edge {
     public Edge(Board board, int id) {
         this.id = id;
         this.unitType = EdgeType.NONE;
-//        vertexIds = new int[2];
-//        vertexIds[0] = vertexIds[1] = -1;
+        vertices = new Vertex[2];
+//        vertexIds[0] = vertexIds[1] = null;
         ownerPlayerNumber = -1;
         this.board = board;
     }
@@ -68,10 +68,10 @@ public class Edge {
      * @param v1 the second vertex
      */
     public void setVertices(Vertex v0, Vertex v1) {
-//        vertexIds[0] = v0.getId();
-//        vertexIds[1] = v1.getId();
-//        v0.addEdge(this);
-//        v1.addEdge(this);
+        vertices[0] = v0;
+        vertices[1] = v1;
+        v0.addEdge(this);
+        v1.addEdge(this);
     }
 
     /**
@@ -127,6 +127,9 @@ public class Edge {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Edge: " + vertices[0].toString() + " => " + vertices[1].toString();
 
-
+    }
 }

@@ -29,7 +29,7 @@ public class Hex {
     private Boolean hasRobber;
 
     private List<HexPoint> verticesPositions;
-    private Set<Edge> edges = new HashSet<>();
+    private List<Edge> edges;
     private Path path;
 
     private transient Board board;
@@ -48,14 +48,23 @@ public class Hex {
         {
             this.verticesPositions.add(null);
         }
+        edges = new ArrayList<>();
     }
 
     public Path getPath() {
         return path;
     }
 
-    public Set<Edge> getEdges() {
+    public List<Edge> getEdges() {
         return edges;
+    }
+
+    public void addEdge(Edge e) {
+        if(edges.size() <= 5) {
+            this.edges.add(e);
+        } else {
+            throw new ArrayIndexOutOfBoundsException("Hex can't have more than 6 edges!");
+        }
     }
 
     public void calculateVertices(HexGridLayout gridLayout) {

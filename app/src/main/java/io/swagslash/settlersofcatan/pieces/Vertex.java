@@ -1,5 +1,8 @@
 package io.swagslash.settlersofcatan.pieces;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -20,11 +23,13 @@ public class Vertex {
     //private int ownerPlayerNumber;
     private Player owner;
     private HexPoint coordinates;
+    private List<Edge> edges;
 
     public Vertex(Board board, int id) {
         this.id = id;
         this.unitType = VertexUnit.NONE;
         this.board = board;
+        this.edges = new ArrayList<>();
         //this.ownerPlayerNumber = -1;
     }
 
@@ -32,6 +37,7 @@ public class Vertex {
         this.unitType = VertexUnit.NONE;
         this.board = board;
         this.coordinates = coords;
+        this.edges = new ArrayList<>();
         //this.ownerPlayerNumber = -1;
     }
 
@@ -51,6 +57,14 @@ public class Vertex {
 
     public void setCoordinates(HexPoint coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public void addEdge(Edge edge) {
+        if(this.edges.size() <= 2) {
+            this.edges.add(edge);
+        } else {
+            throw new ArrayIndexOutOfBoundsException("Edges are full!");
+        }
     }
 
     private void giveResourceToOwner(int amount, Resource resource) {
@@ -83,5 +97,8 @@ public class Vertex {
         // TODO REMOVE RESOURCES FROM PLAYER INVENTORY OUTSIDE?
     }
 
-
+    @Override
+    public String toString() {
+        return "[Vertex: " + getCoordinates().toString() +"]";
+    }
 }
