@@ -25,8 +25,8 @@ public class Edge {
     /**
      * Initialize edge
      */
-    public Edge(Board board, int id) {
-        this.id = id;
+    public Edge(Board board) {
+        //this.id = id;
         this.unitType = EdgeType.NONE;
         vertices = new Vertex[2];
 //        vertexIds[0] = vertexIds[1] = null;

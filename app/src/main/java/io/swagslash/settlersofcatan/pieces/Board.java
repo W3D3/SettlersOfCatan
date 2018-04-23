@@ -26,7 +26,7 @@ public class Board {
     private List<Hex> hexagons;
     private HashMap<HexPoint, Vertex> pointToVertices;
     private HashMap<Pair<HexPoint, HexPoint>, Edge> edges;
-    
+
     private List<Player> players;
     private HexGridLayout gridLayout;
 
@@ -118,12 +118,11 @@ public class Board {
                     previous = new Vertex(this, hex.getVerticesPositions().get(5));
                 }
 
-                Pair<HexPoint, HexPoint> key1 = new Pair<HexPoint, HexPoint>(previous.getCoordinates(), point);
-                Pair<HexPoint, HexPoint> key2 = new Pair<HexPoint, HexPoint>(point, previous.getCoordinates());
-                Edge e = new Edge(this, key1.hashCode());
-
+                Pair<HexPoint, HexPoint> key1 = new Pair<>(previous.getCoordinates(), point);
+                Pair<HexPoint, HexPoint> key2 = new Pair<>(point, previous.getCoordinates());
+                Edge e = new Edge(this);
+                e.setVertices(previous, v);
                 if(!this.edges.containsKey(key1) && !this.edges.containsKey(key2)) {
-                    e.setVertices(previous, v);
                     this.edges.put(key1, e);
                 } else {
                     System.out.println("Dupe found!");
