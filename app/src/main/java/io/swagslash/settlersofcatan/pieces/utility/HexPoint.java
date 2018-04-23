@@ -16,7 +16,15 @@ public class HexPoint
 
     @Override
     public String toString() {
-        return "(" + this.x + "," + this.y + ")";
+        DecimalFormat df = new DecimalFormat("#.###");
+        double x, y;
+        //FIXME hack to disable -0 in string
+        if(areEqualDouble(this.x, 0d, 5)) x = 0;
+        else x = this.x;
+        if(areEqualDouble(this.y, 0d, 5)) y = 0;
+        else y = this.y;
+        return ("(" + df.format(x)  + "," + df.format(y) + ")");
+        //return "(" + this.x + "," + this.y + ")";
     }
 
     @Override
@@ -27,9 +35,9 @@ public class HexPoint
 
     @Override
     public int hashCode() {
-        return 1;
-        //DecimalFormat df = new DecimalFormat("#.##");
-        //return (df.format(this.x) +  df.format(this.y)).hashCode();
+        return toString().hashCode();
+//        DecimalFormat df = new DecimalFormat("#.##");
+//        return (df.format(this.x) +  df.format(this.y)).hashCode();
     }
 
     /**
