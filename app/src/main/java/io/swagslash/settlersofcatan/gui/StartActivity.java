@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import io.swagslash.settlersofcatan.Global;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
 
 public class StartActivity extends AppCompatActivity {
@@ -27,9 +27,8 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void startGame() {
-        Global g = (Global)getApplication();
         TextView tvPlayer = (TextView)findViewById(R.id.enterName);
-        g.setPlayerName(tvPlayer.getText().toString());
+        SettlerApp.playerName=tvPlayer.getText().toString();
         Intent i = new Intent(getApplicationContext(), BrowserActivity.class);
         startActivity(i);
     }

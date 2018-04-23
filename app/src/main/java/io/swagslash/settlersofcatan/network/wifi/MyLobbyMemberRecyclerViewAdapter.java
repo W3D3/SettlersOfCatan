@@ -62,9 +62,9 @@ public class MyLobbyMemberRecyclerViewAdapter extends RecyclerView.Adapter<MyLob
         }
     }
 
-    public void setLobbies(List<SalutDevice> lobbies) {
+    public void setMember(List<SalutDevice> member) {
         mValues.clear();
-        mValues.addAll(lobbies);
+        mValues.addAll(member);
         this.notifyDataSetChanged();
     }
     public void addMember(SalutDevice member){

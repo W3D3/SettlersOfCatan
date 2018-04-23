@@ -86,8 +86,8 @@ public class LobbyMemberFragment extends Fragment {
         super.onAttach(context);
 
     }
-    public void setLobbies(List<SalutDevice> lobbies) {
-        adapter.setLobbies(lobbies);
+    public void setMember(List<SalutDevice> member) {
+        adapter.setMember(member);
     }
     public void addMember(SalutDevice member){
         adapter.addMember(member);

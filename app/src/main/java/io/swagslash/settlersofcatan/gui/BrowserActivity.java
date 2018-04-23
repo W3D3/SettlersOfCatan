@@ -3,59 +3,54 @@ package io.swagslash.settlersofcatan.gui;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.peak.salut.Callbacks.SalutCallback;
-import com.peak.salut.Callbacks.SalutDataCallback;
 import com.peak.salut.Salut;
 import com.peak.salut.SalutDataReceiver;
 import com.peak.salut.SalutDevice;
 import com.peak.salut.SalutServiceData;
 
-import io.swagslash.settlersofcatan.Global;
+import java.util.ArrayList;
+
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
-import io.swagslash.settlersofcatan.network.wifi.DataCallBack;
+import io.swagslash.settlersofcatan.network.wifi.DataCallback;
+import io.swagslash.settlersofcatan.network.wifi.DiscoveryCallback;
+import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.MyLobbyServiceRecyclerViewAdapter;
 
-public class  BrowserActivity extends AppCompatActivity implements SalutDataCallback, MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener{
+public class  BrowserActivity extends AppCompatActivity implements DiscoveryCallback.IDiscoveryCallback, MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, SwipeRefreshLayout.OnRefreshListener{
 
     public static final String TAG = "LOBBYBROWSER";
 
-    public SalutDataReceiver dataReceiver;
-    public SalutServiceData serviceData;
     public Salut network;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
+    private boolean backAllowed = false;
     private LobbyServiceFragment lobbies;
+
+    public Runnable refreshRunnable;
+    private Handler refreshHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
+        createNetwork();
+        setupNetwork();
+        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        setRefreshing();
 
         lobbies = (LobbyServiceFragment) getSupportFragmentManager().findFragmentById(R.id.lobbyFrag);
-
-        DataCallBack dataCallBack = new DataCallBack(this);
-
-
-        dataReceiver = new SalutDataReceiver(this, dataCallBack);
-
-        Global g = (Global)getApplication();
-
-        g.setDataCallBack(dataCallBack);
-        serviceData = new SalutServiceData("SettlerOfCartan", 10000, g.getPlayerName());
-
-        network = new Salut(dataReceiver, serviceData, new SalutCallback() {
-            @Override
-            public void call() {
-                Log.e(TAG, "Sorry, but this device does not support WiFi Direct.");
-            }
-        });
-
-        g.setNetwork(network);
-
+        DiscoveryCallback.activity = this;
 
 
     }
@@ -68,31 +63,6 @@ public class  BrowserActivity extends AppCompatActivity implements SalutDataCall
         }
         super.onRestart();
     }
-
-    /*
-     * Search for Open Lobbies
-     */
-    private void discoverServices()
-    {
-        if(!network.isRunningAsHost && !network.isDiscovering)
-        {
-            network.discoverNetworkServices(new SalutCallback() {
-                @Override
-                public void call() {
-                    lobbies.setLobbies(network.foundDevices);
-                }
-            }, true);
-        }
-        else
-        {
-            network.stopServiceDiscovery(true);
-        }
-    }
-
-    @Override
-    public void onDataReceived(Object data) {
-
-     }
 
     @Override
     public void onClick(SalutDevice device) {
@@ -118,13 +88,94 @@ public class  BrowserActivity extends AppCompatActivity implements SalutDataCall
                 createLobby();
                 break;
             case R.id.btnDiscover:
-                discoverServices();
+                startDiscovery();
                 break;
                    }
     }
 
     public void createLobby() {
+        stopDiscovery();
         Intent i = new Intent(getApplicationContext(), HostLobbyActivity.class);
         startActivity(i);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(network.isRunningAsHost)
+            network.stopNetworkService(false);
+        else
+            network.unregisterClient(false);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!backAllowed) {
+
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        setupDiscovery();
+        lobbies.setLobbies(new ArrayList<SalutDevice>());
+        setRefreshing();
+    }
+
+    private void stopDiscovery(){
+        if(network.isDiscovering){
+            network.stopServiceDiscovery(false);
+        }
+    }
+
+    private void startDiscovery(){
+        network.discoverNetworkServices(new DiscoveryCallback(), true);
+    }
+
+    @Override
+    public void call() {
+        lobbies.setLobbies(network.foundDevices);
+
+        swipeRefreshLayout.setRefreshing(false);
+        if (refreshHandler != null) {
+            refreshHandler.removeCallbacks(refreshRunnable);
+        }
+    }
+
+    private void setupDiscovery() {
+        network = SettlerApp.getManager().getNetwork();
+
+        stopDiscovery();
+        startDiscovery();
+    }
+
+    private void setupNetwork(){
+        INetworkManager manager = SettlerApp.getManager();
+        network = manager.getNetwork();
+    }
+
+    private void setRefreshing() {
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(),"No Devices found!", Toast.LENGTH_LONG);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        };
+
+        refreshHandler = new Handler();
+        refreshHandler.postDelayed(refreshRunnable, 10000);
+    }
+
+    void createNetwork(){
+        INetworkManager manager = SettlerApp.getManager();
+        Salut network = manager.getNetwork();
+
+        if (network == null) {
+            manager.init(this);
+        }
     }
 }

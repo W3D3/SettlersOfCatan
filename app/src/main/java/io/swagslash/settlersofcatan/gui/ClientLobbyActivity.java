@@ -1,42 +1,40 @@
 package io.swagslash.settlersofcatan.gui;
 
-import android.content.Intent;
-import android.os.Message;
-import android.renderscript.ScriptGroup;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bluelinelabs.logansquare.LoganSquare;
-import com.peak.salut.Callbacks.SalutCallback;
 import com.peak.salut.Callbacks.SalutDataCallback;
 import com.peak.salut.Salut;
-import com.peak.salut.SalutDataReceiver;
-import com.peak.salut.SalutServiceData;
+import com.peak.salut.SalutDevice;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 
-import io.swagslash.settlersofcatan.Global;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
+import io.swagslash.settlersofcatan.network.wifi.DataCallback;
+import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 
-public class ClientLobbyActivity extends AppCompatActivity implements SalutDataCallback{
+public class ClientLobbyActivity extends AppCompatActivity implements DataCallback.IDataCallback {
 
     private static final String TAG = "CLIENTLOBBY";
     private Salut network;
+
+    private boolean backAllowed = false;
+
+    private List<SalutDevice> member;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_lobby);
+        DataCallback.actActivity = this;
 
-        Global g = (Global)getApplication();
-        network = g.getNetwork();
-        g.getDataCallBack().setActActivity(this);
-
+        network = SettlerApp.getManager().getNetwork();
     }
 
     public void onClick(View v){
@@ -65,6 +63,25 @@ public class ClientLobbyActivity extends AppCompatActivity implements SalutDataC
         catch (IOException ex)
         {
             Log.e(TAG, "Failed to parse network data.");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(network.isRunningAsHost)
+            network.stopNetworkService(false);
+        else
+            network.unregisterClient(false);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!backAllowed) {
+
+        } else {
+            super.onBackPressed();
         }
     }
 }
