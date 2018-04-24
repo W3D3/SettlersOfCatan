@@ -1,17 +1,28 @@
 package io.swagslash.settlersofcatan.pieces.utility;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
 import java.text.DecimalFormat;
 
 /**
  * Created by logan on 2017-01-31.
  */
-
+@JsonObject
 public class HexPoint
 {
+    @JsonField
+    public double x;
+    @JsonField
+    public double y;
+
     public HexPoint(double x, double y)
     {
         this.x = x;
         this.y = y;
+    }
+
+    public HexPoint() {
     }
 
     @Override
@@ -39,6 +50,4 @@ public class HexPoint
         return Math.abs(a - b) <= Math.pow(10, -precision);
     }
 
-    public final double x;
-    public final double y;
 }

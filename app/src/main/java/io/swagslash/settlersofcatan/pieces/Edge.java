@@ -2,6 +2,9 @@ package io.swagslash.settlersofcatan.pieces;
 
 import android.widget.EditText;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
 import java.util.Set;
 
 import io.swagslash.settlersofcatan.Player;
@@ -9,7 +12,6 @@ import io.swagslash.settlersofcatan.Player;
 /**
  * Created by wedenigc on 19.03.18.
  */
-
 public class Edge {
 
     public enum EdgeType {
