@@ -1,6 +1,7 @@
 package io.swagslash.settlersofcatan.pieces;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
 /**
@@ -51,4 +52,36 @@ public class Vertex {
     public void setCoordinates(HexPoint coordinates) {
         this.coordinates = coordinates;
     }
+
+    private void giveResourceToOwner(int amount, Resource resource) {
+        for (int i = 0; i < amount; i++) {
+            this.board.getPlayerById(owner.getPlayerNumber()).getInventory().addResource(resource);
+        }
+    }
+
+    public void distributeResources(Resource resourceProduced) {
+        if(owner == null) return;
+        switch (this.unitType) {
+            case NONE:
+                break;
+            case SETTLEMENT:
+                giveResourceToOwner(1, resourceProduced);
+                break;
+            case CITY:
+                giveResourceToOwner(2, resourceProduced);
+                break;
+        }
+    }
+
+    public void setOwner(Player owner) {
+        this.owner = owner;
+    }
+
+    public void buildSettlement(Player p) {
+        this.unitType = VertexUnit.SETTLEMENT;
+        this.setOwner(p);
+        // TODO REMOVE RESOURCES FROM PLAYER INVENTORY OUTSIDE?
+    }
+
+
 }

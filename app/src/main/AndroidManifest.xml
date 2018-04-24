@@ -23,6 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".GridActivity"/>
         <activity android:name=".gui.HostLobbyActivity" />
         <activity android:name=".gui.MainActivity" />
         <activity android:name=".gui.BrowserActivity" />

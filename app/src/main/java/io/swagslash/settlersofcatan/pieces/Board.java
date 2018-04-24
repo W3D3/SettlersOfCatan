@@ -5,11 +5,14 @@ package io.swagslash.settlersofcatan.pieces;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
+import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
 /**
  * Represents a Catan board that holds all the Hexes
@@ -19,10 +22,9 @@ public class Board {
     private Phase phase;
 
     private List<Hex> hexagons;
-    private List<Vertex> vertices;
+    private HashMap<HexPoint, Vertex> pointToVertices;
     private List<Edge> edges;
     private List<Player> players;
-//    private CatanGrid catanGrid;
     private HexGridLayout gridLayout;
 
     private boolean randomDiscard;
@@ -32,13 +34,14 @@ public class Board {
         this.randomDiscard = randomDiscard;
         this.winningPoints = winningPoints;
         this.hexagons = new ArrayList<>();
+        this.pointToVertices = new HashMap<>();
 
         if(playerNames.size() < 2 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
         players = new ArrayList<>(playerNames.size());
-        for (int i = 0; i < players.size(); i++) {
-            players.set(i, new Player(this, i, Player.Color.NONE, playerNames.get(i)));
+        for (int i = 0; i < playerNames.size(); i++) {
+            players.add(i, new Player(this, i, Player.Color.NONE, playerNames.get(i)));
 
         }
     }
@@ -61,40 +64,40 @@ public class Board {
         return players.get(playerId);
     }
 
-    public Vertex getVertexById(int vertexId) {
-        return vertices.get(vertexId);
+    public HashMap<HexPoint, Vertex> getVertices() {
+        return pointToVertices;
+    }
+
+    public Vertex getVertexByPosition(HexPoint position) {
+        return pointToVertices.get(position);
     }
 
     public List<Hex> getHexagons() {
         return hexagons;
     }
 
-    public void setupBoard(int diameter) {
-        if(diameter % 2 == 0) throw new UnsupportedOperationException("Cannot create a Catan board with even diameter.");
+    public void setupBoard() {
+        //if(diameter % 2 == 0) throw new UnsupportedOperationException("Cannot create a Catan board with even diameter.");
 
         this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
 
-        //Center is always Desert?
-//        Hex centerHex = new Hex(this, Hex.TerrainType.DESERT, new AxialHexLocation(0,0));
-//        //ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(this.gridLayout, new AxialHexLocation(0, 0));
-//        centerHex.calculateVertices(gridLayout);
+        List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();
+        Stack<NumberToken> numberTokens = CatanUtil.getTokensInStartingSequence();
+        Stack<Hex.TerrainType> terrainsShuffled = CatanUtil.getTerrainsShuffled();
+
 
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
-            //TODO RANDOMIZE TERRAIN
-            Hex hex = new Hex(this, Hex.TerrainType.DESERT, location);
+            boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
+            Hex hex = new Hex(this, terrainsShuffled.pop(), location);
+            if(needsNumberToken) hex.setNumberToken(numberTokens.pop());
             hex.calculateVertices(gridLayout);
             hexagons.add(hex);
-        }
+            for (HexPoint point : hex.getVerticesPositions()) {
+                if(!this.pointToVertices.containsKey(point)) {
+                    this.pointToVertices.put(point, new Vertex(this, point));
+                }
+            }
 
-//        Integer start = ((Double)(-(Math.floor(diameter/2)))).intValue();
-//        Integer end = ((Double)((Math.floor(diameter/2)))).intValue();
-//        for (int q = start; q <= end; q ++)
-//        {
-//            for (int r = start; r <= end; r ++)
-//            {
-//
-//
-//            }
-//        }
+        }
     }
 }

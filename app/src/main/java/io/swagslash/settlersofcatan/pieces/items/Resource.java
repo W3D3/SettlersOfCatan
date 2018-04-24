@@ -47,4 +47,8 @@ public class Resource {
     public static Resource getResourceForTerrain(Hex.TerrainType t) {
         return Resource.terrainTypeToResourceMap.get(t);
     }
+
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
 }

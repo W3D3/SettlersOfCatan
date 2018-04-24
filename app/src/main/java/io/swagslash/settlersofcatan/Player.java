@@ -1,6 +1,7 @@
 package io.swagslash.settlersofcatan;
 
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.items.Inventory;
 
 /**
  * Created by wedenigc on 19.03.18.
@@ -22,6 +23,7 @@ public class Player {
     protected int numOwnedSettlements;
     protected int numOwnedCities;
     private int longestTradeRoute;
+    private Inventory inventory;
 
     protected transient Board board;
 
@@ -34,5 +36,35 @@ public class Player {
         this.numOwnedCities = 0;
         this.numOwnedSettlements = 0;
         this.longestTradeRoute = 0;
+
+        this.inventory = new Inventory();
+    }
+
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public int getNumOwnedSettlements() {
+        return numOwnedSettlements;
+    }
+
+    public int getNumOwnedCities() {
+        return numOwnedCities;
+    }
+
+    public int getLongestTradeRoute() {
+        return longestTradeRoute;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 }
