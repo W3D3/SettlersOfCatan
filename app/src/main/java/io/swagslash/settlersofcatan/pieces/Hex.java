@@ -2,6 +2,7 @@ package io.swagslash.settlersofcatan.pieces;
 
 import android.graphics.Color;
 import android.graphics.Path;
+import android.graphics.Region;
 import android.util.Pair;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
@@ -39,6 +40,7 @@ public class Hex {
     private Set<Edge> edges = new HashSet<>();
 
     private Path path;
+    private Region region;
 
     private transient Board board;
 
@@ -64,6 +66,14 @@ public class Hex {
 
     public Path getPath() {
         return path;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
     }
 
     public Set<Edge> getEdges() {
