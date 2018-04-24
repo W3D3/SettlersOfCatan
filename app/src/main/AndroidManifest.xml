@@ -35,6 +35,24 @@
         <activity android:name=".gui.MainActivity" />
         <activity android:name=".network.wifi.gui.BrowserActivity" />
         <activity android:name=".network.wifi.gui.ClientLobbyActivity"></activity>
+        <activity
+            android:name=".DisplayCardsActivity"
+            android:parentActivityName=".MainActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".TradingActivity"
+            android:parentActivityName=".MainActivity">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>
