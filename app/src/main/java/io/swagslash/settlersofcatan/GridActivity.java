@@ -23,6 +23,7 @@ import io.swagslash.settlersofcatan.network.wifi.DataCallback;
 import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
+@Deprecated
 public class GridActivity extends AppCompatActivity implements DataCallback.IDataCallback {
 
     HexView hexView;
@@ -32,7 +33,6 @@ public class GridActivity extends AppCompatActivity implements DataCallback.IDat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_grid);
         hexView = new HexView(getApplicationContext());
 
         if (BuildConfig.DEBUG) {
@@ -47,9 +47,9 @@ public class GridActivity extends AppCompatActivity implements DataCallback.IDat
 
         setContentView(R.layout.activity_grid);
 
-        final ZoomLayout zl = (ZoomLayout) findViewById(R.id.zoomContainer);
-        final LinearLayout container = (LinearLayout) findViewById(R.id.gridContainer);
-        Button btn = (Button) findViewById(R.id.button);
+        final ZoomLayout zl = findViewById(R.id.zoomContainer);
+        final LinearLayout container = findViewById(R.id.gridContainer);
+        Button btn = findViewById(R.id.button);
         zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
         Display mdisp = getWindowManager().getDefaultDisplay();
         Point mdispSize = new Point();
@@ -72,10 +72,6 @@ public class GridActivity extends AppCompatActivity implements DataCallback.IDat
             container.removeView(zl);
             container.addView(hexView);
         }
-
-
-
-
     }
 
     @Override

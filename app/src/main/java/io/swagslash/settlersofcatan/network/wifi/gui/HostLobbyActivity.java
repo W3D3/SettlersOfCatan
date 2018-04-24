@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import io.swagslash.settlersofcatan.GridActivity;
+import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.network.wifi.DataCallback;
@@ -78,7 +78,7 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
                         Log.e(TAG, "Failed to send!");
                     }
                 });
-                Intent i = new Intent(getApplicationContext(), GridActivity.class);
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(i);
                 break;
             case R.id.btnCloseLobby:

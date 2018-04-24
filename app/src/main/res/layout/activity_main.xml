@@ -317,6 +317,36 @@
         app:layout_constraintBottom_toTopOf="@+id/end_of_turn"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/gridContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="56dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="@+id/appbar">
+
+
+        <com.otaliastudios.zoom.ZoomLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/zoomContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:hasClickableChildren="true"
+            app:maxZoom="3"
+            app:maxZoomType="zoom"
+            app:minZoom="0.8"
+            app:minZoomType="zoom"
+            app:overPinchable="false"
+            app:overScrollHorizontal="false"
+            app:overScrollVertical="false">
+
+            <!-- Content here. -->
+
+
+        </com.otaliastudios.zoom.ZoomLayout>
+
+    </LinearLayout>
     <TextView
         android:id="@+id/debug_view"
         android:layout_width="wrap_content"

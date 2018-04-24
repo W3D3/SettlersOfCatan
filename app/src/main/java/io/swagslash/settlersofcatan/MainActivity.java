@@ -2,9 +2,12 @@ package io.swagslash.settlersofcatan;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Point;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -12,6 +15,16 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.otaliastudios.zoom.ZoomEngine;
+import com.otaliastudios.zoom.ZoomLayout;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import io.swagslash.settlersofcatan.grid.HexView;
+import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
+import io.swagslash.settlersofcatan.pieces.Board;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -23,6 +36,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected LinearLayout layoutSettlement, layoutCity, layoutStreet;
     protected Animation openMenu, closeMenu;
 
+    HexView hexView;
+    private INetworkManager network;
+    private Board board;
+
     //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
 
@@ -30,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        this.setupHexView();
+        //setContentView(R.layout.activity_main);
 
         //fab menu animation
         this.fabOpen = false;
@@ -139,5 +157,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.layoutStreet.animate().translationY(-1 * (offset * FAB_MENU_DISTANCE));
         }
         this.fabOpen = !this.fabOpen;
+    }
+
+    private void setupHexView() {
+        hexView = new HexView(getApplicationContext());
+
+        if (BuildConfig.DEBUG) {
+            // do something for a debug build
+            //String[] array ={"P1", "P2"};
+            //SettlerApp.generateBoard(new ArrayList<>(Arrays.asList(array)));
+        }
+        board = SettlerApp.board;
+
+        hexView.setBoard(board);
+        hexView.setManager(getWindowManager());
+
+        setContentView(R.layout.activity_main);
+
+        final ZoomLayout zl = (ZoomLayout) findViewById(R.id.zoomContainer);
+        final LinearLayout container = (LinearLayout) findViewById(R.id.gridContainer);
+        //Button btn = (Button) findViewById(R.id.button);
+        zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
+        Display mdisp = getWindowManager().getDefaultDisplay();
+        Point mdispSize = new Point();
+        mdisp.getSize(mdispSize);
+
+        System.out.println(android.os.Build.VERSION.SDK_INT);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || true){
+            hexView.setZoomLayout(zl);
+            hexView.prepare();
+            zl.addView(hexView);
+        } else {
+            hexView.prepare();
+            container.removeView(zl);
+            container.addView(hexView);
+        }
     }
 }

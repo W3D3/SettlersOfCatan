@@ -121,7 +121,7 @@ public class HexView extends View {
     protected void onDraw(Canvas c){
         super.onDraw(c);
 
-        clip = new Region(0, 0, maxX, maxY);
+        clip = new Region(0, 0, c.getWidth(), c.getHeight());
 
         //Background white
         this.fillPaint.setStyle(Paint.Style.FILL);
@@ -136,6 +136,10 @@ public class HexView extends View {
         fillPaint.setStyle(Paint.Style.FILL);
         fillPaint.setColor(Color.YELLOW);
 
+//        Path pathTest = new Path();
+//        pathTest.moveTo(0,0);
+//        pathTest.lineTo(100,100);
+//        c.drawPath(pathTest, strokePaint);
 
         for (Hex hex : hexes) {
             Path path = hex.getPath();
@@ -206,8 +210,8 @@ public class HexView extends View {
         if(zoomLayout != null)
         {
             // invert the coordinates so they map back to our regions when using a zoom engine
-            x = x * (1/zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanX();
-            y = y * (1/ zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanY();
+            //x = x * (1/zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanX();
+            //y = y * (1/ zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanY();
         }
         return new Pair<>((int)x, (int)y);
     }
@@ -226,7 +230,7 @@ public class HexView extends View {
 //        if(hex == null) return;
 //        //TODO REPLACE WITH HexDetailActivity Intend
 //        System.out.println(hex.toString());
-//        Toast.makeText(getContext().getApplicationContext(), hex.toString(),
+//        Toast.makeText(getContext().getApplicationContext(), hex.toString(),X!
 //                Toast.LENGTH_SHORT).show();
 //    }
 
