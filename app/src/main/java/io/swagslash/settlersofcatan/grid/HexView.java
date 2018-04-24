@@ -37,15 +37,14 @@ import io.swagslash.settlersofcatan.pieces.utility.HexUtility;
  */
 
 public class HexView extends View {
-    private ShapeDrawable mDrawable;
+
     Board board;
     List<Hex> hexes;
     List<Region> regionList;
     WindowManager manager;
     int maxX;
     int maxY;
-    private final GestureDetector gestureDetector;
-    private boolean singleClick;
+    private GestureDetector gestureDetector;
 
     ZoomLayout zoomLayout = null;
 
@@ -80,37 +79,8 @@ public class HexView extends View {
         this.strokePaint = new Paint();
         this.fillPaint = new Paint();
 
-        this.gestureDetector = new GestureDetector(this.getContext(), new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDown(MotionEvent event) {
-                // triggers first for both single tap and long press
-                return true;
-            }
+        this.gestureDetector = null;
 
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {
-                singleClick = true;
-                return true;
-            }
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                return true;
-            }
-
-            @Override
-            public void onLongPress(MotionEvent e) {
-                super.onLongPress(e);
-                singleClick = true;
-            }
-
-            // Keep this in for future use
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                singleClick = false;
-                return false;
-            }
-        });
     }
 
     public ZoomLayout getZoomLayout() {
@@ -185,9 +155,51 @@ public class HexView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        // this sets singleClick so we know that when the user wants to really tap something
+        //TODO remove debug data and handle touches properly
+
+        if(gestureDetector == null) {
+            this.gestureDetector = new GestureDetector(this.getContext(), new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDown(MotionEvent event) {
+                    // triggers first for both single tap and long press
+                    return true;
+                }
+
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    showHexDetailFromMotionEvent(e, "Single Tap");
+
+                    return true;
+                }
+
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    super.onLongPress(e);
+                    showHexDetailFromMotionEvent(e, "Long Press");
+                }
+
+                // Keep this in for future use
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    showHexDetailFromMotionEvent(e, "Double Tap");
+                    return false;
+                }
+            });
+        }
+        //detect touch
         gestureDetector.onTouchEvent(event);
 
+
+
+        return true;
+    }
+
+    private Pair<Integer, Integer> getCoordinates(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
 
@@ -197,20 +209,39 @@ public class HexView extends View {
             x = x * (1/zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanX();
             y = y * (1/ zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanY();
         }
+        return new Pair<>((int)x, (int)y);
+    }
 
+    private Hex getHexFromCoordinates(int x, int y) {
         for (int i = 0; i < hexes.size(); i++) {
             Region r = hexes.get(i).getRegion();
-            if (r.contains((int)x,(int)y)) {
-                //TODO remove debug data and handle touches properly
-                if(singleClick) {
-                    System.out.println(hexes.get(i).toString());
-                    Toast.makeText(getContext().getApplicationContext(), hexes.get(i).toString(),
-                            Toast.LENGTH_SHORT).show();
-                }
-                singleClick = false;
-                break;
+            if (r.contains((int) x, (int) y)) {
+                return hexes.get(i);
             }
         }
-        return true;
+        return null;
+    }
+
+//    private void showHexDetail(Hex hex) {
+//        if(hex == null) return;
+//        //TODO REPLACE WITH HexDetailActivity Intend
+//        System.out.println(hex.toString());
+//        Toast.makeText(getContext().getApplicationContext(), hex.toString(),
+//                Toast.LENGTH_SHORT).show();
+//    }
+
+    private void showHexDetailFromMotionEvent(MotionEvent event, String msg) {
+        Pair<Integer, Integer> coordinates = getCoordinates(event);
+        Hex hex = getHexFromCoordinates(coordinates.first, coordinates.second);
+        if(hex == null) return;
+        //TODO REPLACE WITH HexDetailActivity Intend
+        System.out.println(hex.toString());
+        Toast.makeText(getContext().getApplicationContext(), hex.toString() + " ~ " + msg,
+                Toast.LENGTH_SHORT).show();
+//        if(zoomLayout != null) {
+//            zoomLayout.getEngine().moveTo(3, -coordinates.first/2, -coordinates.second/2, true);
+//            //zoomLayout.getEngine().realZoomTo(2, true);
+//            //zoomLayout.getEngine().moveTo(2,coordinates.first, coordinates.second, false);
+//        }
     }
 }

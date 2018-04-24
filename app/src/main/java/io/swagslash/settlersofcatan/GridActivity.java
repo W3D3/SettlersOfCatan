@@ -8,6 +8,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.otaliastudios.zoom.ZoomEngine;
@@ -41,6 +42,7 @@ public class GridActivity extends AppCompatActivity implements DataCallback.IDat
         setContentView(R.layout.activity_grid);
 
         final ZoomLayout zl = (ZoomLayout) findViewById(R.id.zoomContainer);
+        final LinearLayout container = (LinearLayout) findViewById(R.id.gridContainer);
         Button btn = (Button) findViewById(R.id.button);
         zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
         Display mdisp = getWindowManager().getDefaultDisplay();
