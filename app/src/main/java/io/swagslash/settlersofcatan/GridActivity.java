@@ -59,11 +59,16 @@ public class GridActivity extends AppCompatActivity implements DataCallback.IDat
         System.out.println(android.os.Build.VERSION.SDK_INT);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
             hexView.setZoomLayout(zl);
+            hexView.prepare();
+            zl.addView(hexView);
+        } else {
+            hexView.prepare();
+            zl.addView(container);
         }
 
-        hexView.prepare();
 
-        zl.addView(hexView);
+
+
     }
 
     @Override
