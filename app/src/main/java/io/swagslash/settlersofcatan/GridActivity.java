@@ -15,6 +15,7 @@ import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.grid.HexView;
@@ -34,6 +35,11 @@ public class GridActivity extends AppCompatActivity implements DataCallback.IDat
 //        setContentView(R.layout.activity_grid);
         hexView = new HexView(getApplicationContext());
 
+        if (BuildConfig.DEBUG) {
+            // do something for a debug build
+            String[] array ={"P1", "P2"};
+            SettlerApp.generateBoard(new ArrayList<>(Arrays.asList(array)));
+        }
         board = SettlerApp.board;
 
         hexView.setBoard(board);
@@ -63,7 +69,8 @@ public class GridActivity extends AppCompatActivity implements DataCallback.IDat
             zl.addView(hexView);
         } else {
             hexView.prepare();
-            zl.addView(container);
+            container.removeView(zl);
+            container.addView(hexView);
         }
 
 

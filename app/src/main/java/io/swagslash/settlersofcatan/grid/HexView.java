@@ -107,7 +107,7 @@ public class HexView extends View {
         int scale = Math.min(maxX, maxY) / 5;
 
         for (Hex hex : hexes) {
-            hex.calculatePath(new Pair<>(maxX/2, maxY/2), scale);
+            hex.calculatePath(new Pair<>(Math.min(maxX, maxY)/2, Math.min(maxX, maxY)/2), scale);
         }
         //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES
         // OR GET IT FROM PARENT?
@@ -121,7 +121,7 @@ public class HexView extends View {
     protected void onDraw(Canvas c){
         super.onDraw(c);
 
-        clip = new Region(0, 0, c.getWidth(), c.getHeight());
+        clip = new Region(0, 0, maxX, maxY);
 
         //Background white
         this.fillPaint.setStyle(Paint.Style.FILL);
@@ -139,7 +139,6 @@ public class HexView extends View {
 
         for (Hex hex : hexes) {
             Path path = hex.getPath();
-
             path.setFillType(Path.FillType.EVEN_ODD);
             fillPaint.setColor(hex.getTerrainColor());
             c.drawPath(path, fillPaint);
@@ -148,6 +147,7 @@ public class HexView extends View {
             Region r = new Region();
             r.setPath(path, clip);
             hex.setRegion(r);
+
         }
 
     }
@@ -215,7 +215,7 @@ public class HexView extends View {
     private Hex getHexFromCoordinates(int x, int y) {
         for (int i = 0; i < hexes.size(); i++) {
             Region r = hexes.get(i).getRegion();
-            if (r.contains((int) x, (int) y)) {
+            if (r.contains(x, y)) {
                 return hexes.get(i);
             }
         }
