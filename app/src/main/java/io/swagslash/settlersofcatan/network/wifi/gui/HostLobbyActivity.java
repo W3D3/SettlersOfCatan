@@ -1,5 +1,6 @@
-package io.swagslash.settlersofcatan.gui;
+package io.swagslash.settlersofcatan.network.wifi.gui;
 
+import android.content.Intent;
 import android.media.midi.MidiManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,12 +14,18 @@ import com.peak.salut.Callbacks.SalutDeviceCallback;
 import com.peak.salut.Salut;
 import com.peak.salut.SalutDevice;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import io.swagslash.settlersofcatan.GridActivity;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.network.wifi.DataCallback;
 import io.swagslash.settlersofcatan.network.wifi.DiscoveryCallback;
 import io.swagslash.settlersofcatan.network.wifi.LobbyMemberFragment;
 import io.swagslash.settlersofcatan.network.wifi.Message;
+import io.swagslash.settlersofcatan.network.wifi.NetworkManager;
 
 public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManager.ChannelListener, SalutDataCallback, DataCallback.IDataCallback{
 
@@ -59,7 +66,20 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStartGame:
-                sendMessage();
+                List<String> players = new ArrayList<>();
+                for (SalutDevice device: network.registeredClients) {
+                    players.add(device.readableName);
+                }
+                players.add(SettlerApp.playerName);
+                SettlerApp.generateBoard(players);
+                network.sendToAllDevices(SettlerApp.board, new SalutCallback() {
+                    @Override
+                    public void call() {
+                        Log.e(TAG, "Failed to send!");
+                    }
+                });
+                Intent i = new Intent(getApplicationContext(), GridActivity.class);
+                startActivity(i);
                 break;
             case R.id.btnCloseLobby:
                 closeLobby();

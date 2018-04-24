@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.grid.HexView;
+import io.swagslash.settlersofcatan.network.wifi.DataCallback;
+import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
-public class GridActivity extends AppCompatActivity {
+public class GridActivity extends AppCompatActivity implements DataCallback.IDataCallback {
 
     HexView hexView;
+    private INetworkManager network;
+    private Board board;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,15 +23,16 @@ public class GridActivity extends AppCompatActivity {
 //        setContentView(R.layout.activity_grid);
         hexView = new HexView(getApplicationContext());
 
-        List<String> players = new ArrayList<>();
-        players.add("P1");
-        players.add("P2");
-        Board b = new Board(players, true, 10);
-        b.setupBoard();
+        board = SettlerApp.board;
 
-        hexView.setBoard(b);
+        hexView.setBoard(board);
         hexView.setManager(getWindowManager());
 
         setContentView(hexView);
+    }
+
+    @Override
+    public void onDataReceived(Object data) {
+
     }
 }

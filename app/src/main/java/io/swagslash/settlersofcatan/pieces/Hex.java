@@ -4,38 +4,50 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.util.Pair;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.swagslash.settlersofcatan.network.wifi.TerrainTypeConverter;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
-import io.swagslash.settlersofcatan.pieces.utility.VertexDirection;
 
 /**
  * Created by wedenigc on 19.03.18.
  */
-
+@JsonObject
 public class Hex {
-
+    @JsonField
     private int id;
+    @JsonField
     private NumberToken numberToken;
+    @JsonField(typeConverter = TerrainTypeConverter.class)
     private TerrainType terrainType;
+    @JsonField
     private AxialHexLocation hexLocation;
+    @JsonField
     private Boolean hasRobber;
-
+    @JsonField
     private List<HexPoint> verticesPositions;
+
     private Set<Edge> edges = new HashSet<>();
+
     private Path path;
 
     private transient Board board;
 
+
     public enum TerrainType {
         FOREST, FIELD, HILL, MOUNTAIN, DESERT, PASTURE
+    }
+
+    public Hex() {
     }
 
     public Hex(Board board, TerrainType terrainType, AxialHexLocation location) {
@@ -155,5 +167,49 @@ public class Hex {
                 return Color.parseColor("#9ffca6");
         }
         return 0;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public TerrainType getTerrainType() {
+        return terrainType;
+    }
+
+    public void setTerrainType(TerrainType terrainType) {
+        this.terrainType = terrainType;
+    }
+
+    public Boolean getHasRobber() {
+        return hasRobber;
+    }
+
+    public void setHasRobber(Boolean hasRobber) {
+        this.hasRobber = hasRobber;
+    }
+
+    public void setVerticesPositions(List<HexPoint> verticesPositions) {
+        this.verticesPositions = verticesPositions;
+    }
+
+    public void setEdges(Set<Edge> edges) {
+        this.edges = edges;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 }

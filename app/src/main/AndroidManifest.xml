@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".gui.StartActivity">
+        <activity android:name=".network.wifi.gui.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,10 +24,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".GridActivity"/>
-        <activity android:name=".gui.HostLobbyActivity" />
+        <activity android:name=".network.wifi.gui.HostLobbyActivity" />
         <activity android:name=".gui.MainActivity" />
-        <activity android:name=".gui.BrowserActivity" />
-        <activity android:name=".gui.ClientLobbyActivity"></activity>
+        <activity android:name=".network.wifi.gui.BrowserActivity" />
+        <activity android:name=".network.wifi.gui.ClientLobbyActivity"></activity>
     </application>
 
 </manifest>

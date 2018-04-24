@@ -4,6 +4,9 @@ package io.swagslash.settlersofcatan.pieces;
  * Created by wedenigc on 19.03.18.
  */
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +20,13 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 /**
  * Represents a Catan board that holds all the Hexes
  */
+@JsonObject
 public class Board {
+
 
     private Phase phase;
 
+    @JsonField
     private List<Hex> hexagons;
     private HashMap<HexPoint, Vertex> pointToVertices;
     private List<Edge> edges;
@@ -29,6 +35,9 @@ public class Board {
 
     private boolean randomDiscard;
     private int winningPoints;
+
+    public Board(){
+    }
 
     public Board(List<String> playerNames, boolean randomDiscard, int winningPoints) {
         this.randomDiscard = randomDiscard;
@@ -99,5 +108,9 @@ public class Board {
             }
 
         }
+    }
+
+    public void setHexagons(List<Hex> hexagons) {
+        this.hexagons = hexagons;
     }
 }

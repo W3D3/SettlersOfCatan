@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan.gui;
+package io.swagslash.settlersofcatan.network.wifi.gui;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -12,15 +12,12 @@ import android.widget.Toast;
 
 import com.peak.salut.Callbacks.SalutCallback;
 import com.peak.salut.Salut;
-import com.peak.salut.SalutDataReceiver;
 import com.peak.salut.SalutDevice;
-import com.peak.salut.SalutServiceData;
 
 import java.util.ArrayList;
 
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
-import io.swagslash.settlersofcatan.network.wifi.DataCallback;
 import io.swagslash.settlersofcatan.network.wifi.DiscoveryCallback;
 import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;

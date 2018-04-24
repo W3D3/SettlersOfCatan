@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan.gui;
+package io.swagslash.settlersofcatan.network.wifi.gui;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
