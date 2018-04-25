@@ -11,10 +11,8 @@
         android:layout_height="495dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/textViewTitel"
@@ -78,7 +76,7 @@
             android:layout_height="67dp"
             android:layout_marginStart="14dp"
             android:layout_marginTop="116dp"
-            android:background="#71f442"
+            android:background="#d81b02"
             android:text="LEHM"
             app:layout_constraintStart_toEndOf="@+id/buttonGetreide"
             app:layout_constraintTop_toTopOf="parent" />
@@ -176,5 +174,24 @@
             android:text="10"
             app:layout_constraintStart_toEndOf="@+id/textView2"
             app:layout_constraintTop_toBottomOf="@+id/buttonErz" />
+
+        <TextView
+            android:id="@+id/textViewNoch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="350dp"
+            android:text="Noch"
+            app:layout_constraintStart_toEndOf="@+id/buttonConfirm"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewNochNumber"
+            android:layout_width="26dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="350dp"
+            app:layout_constraintStart_toEndOf="@+id/textViewNoch"
+            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>
