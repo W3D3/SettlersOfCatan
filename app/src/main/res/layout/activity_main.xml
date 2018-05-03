@@ -333,7 +333,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:hasClickableChildren="true"
-            app:maxZoom="3"
+            app:maxZoom="4"
             app:maxZoomType="zoom"
             app:minZoom="0.8"
             app:minZoomType="zoom"

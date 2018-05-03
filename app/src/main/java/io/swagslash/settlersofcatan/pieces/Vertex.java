@@ -1,6 +1,10 @@
 package io.swagslash.settlersofcatan.pieces;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.network.wifi.VertexUnitConverter;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
@@ -8,18 +12,26 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
  * Created by wedenigc on 19.03.18.
  */
 
+@JsonObject
 public class Vertex {
+
 
     public enum VertexUnit {
         NONE, SETTLEMENT, CITY;
     }
-
     private int id;
+    @JsonField(typeConverter = VertexUnitConverter.class)
     private VertexUnit unitType;
     private transient Board board;
     //private int ownerPlayerNumber;
+    //@JsonField
     private Player owner;
+    @JsonField
     private HexPoint coordinates;
+
+    public Vertex() {
+
+    }
 
     public Vertex(Board board, int id) {
         this.id = id;
@@ -47,6 +59,18 @@ public class Vertex {
 
     public HexPoint getCoordinates() {
         return coordinates;
+    }
+
+    public VertexUnit getUnitType() {
+        return unitType;
+    }
+
+    public Player getOwner() {
+        return owner;
+    }
+
+    public void setUnitType(VertexUnit unitType) {
+        this.unitType = unitType;
     }
 
     public void setCoordinates(HexPoint coordinates) {

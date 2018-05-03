@@ -11,10 +11,12 @@ import android.graphics.Point;
 import android.graphics.Region;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -45,6 +48,9 @@ public class HexView extends View {
     int maxX;
     int maxY;
     private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleDetector;
+    int scale = 1;
+    Pair<Integer,Integer> offset =null;
 
     ZoomLayout zoomLayout = null;
 
@@ -72,7 +78,6 @@ public class HexView extends View {
     public HexView(Context context) {
         super(context);
 
-
         hexes = new ArrayList<>();
         regionList = new ArrayList<>();
 
@@ -80,6 +85,7 @@ public class HexView extends View {
         this.fillPaint = new Paint();
 
         this.gestureDetector = null;
+        this.scaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
 
     }
 
@@ -104,10 +110,11 @@ public class HexView extends View {
         mdisp.getSize(mdispSize);
         maxX = mdispSize.x;
         maxY = mdispSize.y;
-        int scale = Math.min(maxX, maxY) / 5;
+        scale = Math.min(maxX, maxY) / 5;
+        offset = new Pair<>(Math.min(maxX, maxY)/2, Math.min(maxX, maxY)/2);
 
         for (Hex hex : hexes) {
-            hex.calculatePath(new Pair<>(Math.min(maxX, maxY)/2, Math.min(maxX, maxY)/2), scale);
+            hex.calculatePath(offset, scale);
         }
         //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES
         // OR GET IT FROM PARENT?
@@ -119,10 +126,17 @@ public class HexView extends View {
     }
 
     protected void onDraw(Canvas c){
+
         super.onDraw(c);
 
         clip = new Region(0, 0, c.getWidth(), c.getHeight());
 
+        Paint circlePaint = new Paint();
+        circlePaint.setColor(Color.RED);
+        circlePaint.setStyle(Paint.Style.FILL);
+        Paint edgePaint = new Paint();
+        edgePaint.setColor(Color.BLUE);
+        circlePaint.setStyle(Paint.Style.FILL);
         //Background white
         this.fillPaint.setStyle(Paint.Style.FILL);
         this.fillPaint.setColor(Color.GRAY);
@@ -147,13 +161,70 @@ public class HexView extends View {
             fillPaint.setColor(hex.getTerrainColor());
             c.drawPath(path, fillPaint);
             c.drawPath(path, strokePaint);
-
             Region r = new Region();
             r.setPath(path, clip);
             hex.setRegion(r);
 
         }
+        if(zoomLayout.getEngine().getRealZoom()>=2){
 
+
+       for(Vertex v : board.getVertices()){
+            HexPoint drawPoint = v.getCoordinates().scale(offset,scale);
+            switch(v.getUnitType()){
+                case CITY:
+                    break;
+                case SETTLEMENT:
+                    c.drawCircle((float)drawPoint.x, (float)drawPoint.y, 30, circlePaint);
+                    break;
+                case NONE:
+                    c.drawCircle((float)drawPoint.x, (float)drawPoint.y, 30, circlePaint);
+                    break;
+
+            }
+       }
+       }
+        for(Hex h: board.getHexagons()){
+            for(Edge e: h.getEdges()){
+                Object[] points = e.getVertexes().toArray();
+                Vertex from = (Vertex)points[0];
+                Vertex to = (Vertex)points[1];
+                HexPoint drawFrom = from.getCoordinates().scale(offset,scale);
+                HexPoint drawTo = to.getCoordinates().scale(offset,scale);
+                switch (e.getUnitType()){
+                    case ROAD:
+                        c.drawLine((float)drawFrom.x,(float)drawFrom.y,(float)drawTo.x,(float)drawTo.y,edgePaint);
+                        break;
+                    case NONE:
+                        c.drawLine((float)drawFrom.x,(float)drawFrom.y,(float)drawTo.x,(float)drawTo.y,edgePaint);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+    }
+
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            redraw();
+            return true;
+
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            redraw();
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            redraw();
+            return true;
+        }
     }
 
     @Override
@@ -166,6 +237,7 @@ public class HexView extends View {
                 @Override
                 public boolean onDown(MotionEvent event) {
                     // triggers first for both single tap and long press
+                    //redraw();
                     return true;
                 }
 
@@ -197,6 +269,7 @@ public class HexView extends View {
         }
         //detect touch
         gestureDetector.onTouchEvent(event);
+        scaleDetector.onTouchEvent(event);
 
 
 
@@ -248,4 +321,10 @@ public class HexView extends View {
 //            //zoomLayout.getEngine().moveTo(2,coordinates.first, coordinates.second, false);
 //        }
     }
+
+    private void redraw(){
+        this.invalidate();
+    }
+
+
 }

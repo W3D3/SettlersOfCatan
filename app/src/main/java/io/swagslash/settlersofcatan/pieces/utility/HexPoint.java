@@ -1,5 +1,7 @@
 package io.swagslash.settlersofcatan.pieces.utility;
 
+import android.util.Pair;
+
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 
@@ -50,4 +52,23 @@ public class HexPoint
         return Math.abs(a - b) <= Math.pow(10, -precision);
     }
 
+    public HexPoint scale(Pair<Integer,Integer> offset, int scale){
+        return new HexPoint(this.x*scale+offset.first, this.y*scale+offset.second);
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
 }

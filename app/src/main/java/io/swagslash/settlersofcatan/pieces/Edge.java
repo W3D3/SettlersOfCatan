@@ -129,6 +129,7 @@ public class Edge {
         return true;
     }
 
-
-
+    public Set<Vertex> getVertexes() {
+        return vertexes;
+    }
 }

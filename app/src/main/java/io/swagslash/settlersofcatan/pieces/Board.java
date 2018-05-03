@@ -28,7 +28,8 @@ public class Board {
 
     @JsonField
     private List<Hex> hexagons;
-    private HashMap<HexPoint, Vertex> pointToVertices;
+    @JsonField
+    private List<Vertex> vertices;
     private List<Edge> edges;
     private List<Player> players;
     private HexGridLayout gridLayout;
@@ -43,7 +44,7 @@ public class Board {
         this.randomDiscard = randomDiscard;
         this.winningPoints = winningPoints;
         this.hexagons = new ArrayList<>();
-        this.pointToVertices = new HashMap<>();
+        this.vertices = new ArrayList<>();
 
         if(playerNames.size() < 2 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
@@ -69,16 +70,34 @@ public class Board {
         return phase;
     }
 
+    public List<Edge> getEdges() {
+        return edges;
+    }
+
+    public void setEdges(List<Edge> edges) {
+        this.edges = edges;
+    }
+
     public Player getPlayerById(int playerId) {
         return players.get(playerId);
     }
 
-    public HashMap<HexPoint, Vertex> getVertices() {
-        return pointToVertices;
+    public List<Vertex> getVertices() {
+        return vertices;
+    }
+
+    public void setVertices(List<Vertex> vertices) {
+        this.vertices = vertices;
     }
 
     public Vertex getVertexByPosition(HexPoint position) {
-        return pointToVertices.get(position);
+//        return vertices.get(position);
+        for(Vertex v: vertices){
+            if(v.getCoordinates().equals(position)){
+                return v;
+            }
+        }
+        return new Vertex();
     }
 
     public List<Hex> getHexagons() {
@@ -102,9 +121,10 @@ public class Board {
             hex.calculateVertices(gridLayout);
             hexagons.add(hex);
             for (HexPoint point : hex.getVerticesPositions()) {
-                if(!this.pointToVertices.containsKey(point)) {
-                    this.pointToVertices.put(point, new Vertex(this, point));
-                }
+                this.vertices.add(new Vertex(this, point));
+//                if(!this.vertices.containsKey(point)) {
+//                    this.vertices.put(point, new Vertex(this, point));
+//                }
             }
 
         }
