@@ -27,7 +27,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
@@ -201,13 +203,20 @@ public class HexView extends View {
                 case CITY:
                     circlePaint.setColor(v.getOwner().getColor());
                     c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 30, circlePaint);
+
                     break;
                 case SETTLEMENT:
                     circlePaint.setColor(v.getOwner().getColor());
                     c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 20, circlePaint);
                     break;
                 case NONE:
-                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 30, this.vertexClickPaint);
+                    Region r = new Region();
+                    Path cir = new Path();
+
+                    cir.addCircle((float) drawPoint.x, (float) drawPoint.y, 30, Path.Direction.CW);
+                    c.drawPath(cir, vertexClickPaint);
+                    r.setPath(cir, clip);
+                    v.setRegion(r);
                     break;
 
             }
@@ -253,6 +262,7 @@ public class HexView extends View {
 
                 @Override
                 public boolean onSingleTapConfirmed(MotionEvent e) {
+                    handleVertexClick(e);
                     showHexDetailFromMotionEvent(e, "Single Tap");
 
                     return true;
@@ -307,27 +317,35 @@ public class HexView extends View {
         return null;
     }
 
-//    private void showHexDetail(Hex hex) {
-//        if(hex == null) return;
-//        //TODO REPLACE WITH HexDetailActivity Intend
-//        System.out.println(hex.toString());
-//        Toast.makeText(getContext().getApplicationContext(), hex.toString(),X!
-//                Toast.LENGTH_SHORT).show();
-//    }
+    private Vertex getVertexFromCoordinates(int x, int y) {
+        final List<Vertex> vertices = SettlerApp.board.getVertices();
+        for (int i = 0; i < vertices.size(); i++) {
+            Region r = vertices.get(i).getRegion();
+            if (r.contains(x, y)) {
+                return vertices.get(i);
+            }
+        }
+        return null;
+    }
 
     private void showHexDetailFromMotionEvent(MotionEvent event, String msg) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
         Hex hex = getHexFromCoordinates(coordinates.first, coordinates.second);
         if (hex == null) return;
-        //TODO REPLACE WITH HexDetailActivity Intend
+
         System.out.println(hex.toString());
         Toast.makeText(getContext().getApplicationContext(), hex.toString() + " ~ " + msg,
                 Toast.LENGTH_SHORT).show();
-//        if(zoomLayout != null) {
-//            zoomLayout.getEngine().moveTo(3, -coordinates.first/2, -coordinates.second/2, true);
-//            //zoomLayout.getEngine().realZoomTo(2, true);
-//            //zoomLayout.getEngine().moveTo(2,coordinates.first, coordinates.second, false);
-//        }
+    }
+
+    private void handleVertexClick(MotionEvent event) {
+        Pair<Integer, Integer> coordinates = getCoordinates(event);
+        Vertex vertex = getVertexFromCoordinates(coordinates.first, coordinates.second);
+        if (vertex == null) return;
+
+        System.out.println(vertex.toString());
+        Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ ",
+                Toast.LENGTH_SHORT).show();
     }
 
     private void redraw() {

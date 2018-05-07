@@ -44,4 +44,8 @@ public class SettlerApp extends Application {
         b.setupBoard();
         board = b;
     }
+
+    public static Player getPlayer() {
+        return board.getPlayerByName(playerName);
+    }
 }

@@ -113,4 +113,9 @@ public class Vertex {
     public void setRegion(Region region) {
         this.region = region;
     }
+
+    @Override
+    public String toString() {
+        return "Vertex [" + this.getCoordinates().toString() + "]";
+    }
 }

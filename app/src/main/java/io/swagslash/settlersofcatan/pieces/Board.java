@@ -79,6 +79,13 @@ public class Board {
         return players.get(playerId);
     }
 
+    public Player getPlayerByName(String name) {
+        for (Player p: players) {
+            if(p.getPlayerName().equals(name)) return p;
+        }
+        return null;
+    }
+
     public List<Vertex> getVertices() {
         return vertices;
     }
@@ -124,7 +131,7 @@ public class Board {
 
         }
 
-        vertices.get(0).buildSettlement(this.getPlayerById(0));
+        //vertices.get(0).buildSettlement(this.getPlayerById(0));
     }
 
     private void generatePlayers(List<String> playerNames) {
