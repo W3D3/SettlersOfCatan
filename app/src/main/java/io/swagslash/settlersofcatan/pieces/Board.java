@@ -105,8 +105,6 @@ public class Board {
     }
 
     public void setupBoard() {
-        //if(diameter % 2 == 0) throw new UnsupportedOperationException("Cannot create a Catan board with even diameter.");
-
         this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
 
         List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();

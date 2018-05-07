@@ -1,49 +1,56 @@
 package io.swagslash.settlersofcatan.pieces;
 
-import android.widget.EditText;
-
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 
-import java.util.Set;
-
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.network.wifi.EdgeTypeConverter;
+import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
 /**
  * Created by wedenigc on 19.03.18.
  */
+@JsonObject
 public class Edge {
 
     public enum EdgeType {
         NONE, ROAD
     }
 
-    private int id;
+    @JsonField(typeConverter = EdgeTypeConverter.class)
     private EdgeType unitType;
-    private Set<Vertex> vertexes;
+    @JsonField
+    private HexPoint[] positions;
+    @JsonField
     private int ownerPlayerNumber = -1;
     private transient Board board;
 
     /**
      * Initialize edge
      */
-    public Edge(Board board, int id) {
-        this.id = id;
+    public Edge() {
         this.unitType = EdgeType.NONE;
-//        vertexIds = new int[2];
-//        vertexIds[0] = vertexIds[1] = -1;
+        positions = new HexPoint[2];
+        ownerPlayerNumber = -1;
+    }
+
+    public Edge(Board board) {
+        this();
+        this.board = board;
+    }
+
+
+
+    public Edge(Board board, HexPoint v1, HexPoint v2) {
+        //this.id = id;
+        this.unitType = EdgeType.NONE;
+        positions = new HexPoint[2];
+        positions[0] = v1;
+        positions[1] = v2;
         ownerPlayerNumber = -1;
         this.board = board;
     }
 
-    /**
-     * Get the unique id of the edge
-     *
-     * @return id
-     */
-    public int getId() {
-        return id;
-    }
 
     /**
      * Get the unit type of the edge
@@ -63,17 +70,35 @@ public class Edge {
         return board.getPlayerById(ownerPlayerNumber);
     }
 
+    public void setUnitType(EdgeType unitType) {
+        this.unitType = unitType;
+    }
+
+    public void setPositions(HexPoint[] positions) {
+        this.positions = positions;
+    }
+
+    public int getOwnerPlayerNumber() {
+        return ownerPlayerNumber;
+    }
+
+    public void setOwnerPlayerNumber(int ownerPlayerNumber) {
+        this.ownerPlayerNumber = ownerPlayerNumber;
+    }
+
     /**
      * Set neighbor vertices for the edge
      *
      * @param v0 the first vertex
      * @param v1 the second vertex
      */
-    public void setVertices(Vertex v0, Vertex v1) {
-//        vertexIds[0] = v0.getId();
-//        vertexIds[1] = v1.getId();
-//        v0.addEdge(this);
-//        v1.addEdge(this);
+    public void setPositions(HexPoint v0, HexPoint v1) {
+        positions[0] = v0;
+        positions[1] = v1;
+    }
+
+    public HexPoint[] getPositions() {
+        return positions;
     }
 
     /**
@@ -129,7 +154,24 @@ public class Edge {
         return true;
     }
 
-    public Set<Vertex> getVertexes() {
-        return vertexes;
+    @Override
+    public String toString() {
+        return "Edge: " + positions[0].toString() + " => " + positions[1].toString();
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Edge)) {
+            return false;
+        }
+        Edge e = (Edge) obj;
+        return (positions[0].equals(e.getPositions()[0]) && positions[1].equals(e.getPositions()[1]))
+                || (positions[0].equals(e.getPositions()[1]) && positions[1].equals(e.getPositions()[0]));
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

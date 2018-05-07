@@ -129,6 +129,7 @@ public class HexView extends View {
 
         super.onDraw(c);
 
+
         clip = new Region(0, 0, c.getWidth(), c.getHeight());
 
         Paint circlePaint = new Paint();
@@ -136,7 +137,8 @@ public class HexView extends View {
         circlePaint.setStyle(Paint.Style.FILL);
         Paint edgePaint = new Paint();
         edgePaint.setColor(Color.BLUE);
-        circlePaint.setStyle(Paint.Style.FILL);
+        edgePaint.setStyle(Paint.Style.STROKE);
+        edgePaint.setStrokeWidth(4);
         //Background white
         this.fillPaint.setStyle(Paint.Style.FILL);
         this.fillPaint.setColor(Color.GRAY);
@@ -186,11 +188,11 @@ public class HexView extends View {
        }
         for(Hex h: board.getHexagons()){
             for(Edge e: h.getEdges()){
-                Object[] points = e.getVertexes().toArray();
-                Vertex from = (Vertex)points[0];
-                Vertex to = (Vertex)points[1];
-                HexPoint drawFrom = from.getCoordinates().scale(offset,scale);
-                HexPoint drawTo = to.getCoordinates().scale(offset,scale);
+                HexPoint[] points = e.getPositions();
+                HexPoint from = points[0];
+                HexPoint to = points[1];
+                HexPoint drawFrom = from.scale(offset, scale);
+                HexPoint drawTo = to.scale(offset, scale);
                 switch (e.getUnitType()){
                     case ROAD:
                         c.drawLine((float)drawFrom.x,(float)drawFrom.y,(float)drawTo.x,(float)drawTo.y,edgePaint);

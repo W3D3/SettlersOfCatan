@@ -36,8 +36,8 @@ public class Hex {
     private Boolean hasRobber;
     @JsonField
     private List<HexPoint> verticesPositions;
-
-    private Set<Edge> edges = new HashSet<>();
+    @JsonField
+    private List<Edge> edges;
 
     private Path path;
     private Region region;
@@ -62,6 +62,7 @@ public class Hex {
         {
             this.verticesPositions.add(null);
         }
+        this.edges = new ArrayList<>();
     }
 
     public Path getPath() {
@@ -76,7 +77,7 @@ public class Hex {
         this.region = region;
     }
 
-    public Set<Edge> getEdges() {
+    public List<Edge> getEdges() {
         return edges;
     }
 
@@ -85,8 +86,17 @@ public class Hex {
         Integer direction = 0;
         for (HexPoint point : hexPoints) {
             this.verticesPositions.set(direction, point);
+            if(direction > 0) {
+                this.edges.add(new Edge(this.board, point, hexPoints.get(direction-1)));
+                if(direction == 5) {
+                    this.edges.add(new Edge(this.board, point, hexPoints.get(0)));
+                }
+            }
             direction++;
+
         }
+
+
     }
 
     public List<HexPoint> getVerticesPositions() {
@@ -207,7 +217,7 @@ public class Hex {
         this.verticesPositions = verticesPositions;
     }
 
-    public void setEdges(Set<Edge> edges) {
+    public void setEdges(List<Edge> edges) {
         this.edges = edges;
     }
 

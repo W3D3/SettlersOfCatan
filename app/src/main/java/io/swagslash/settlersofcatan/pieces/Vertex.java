@@ -14,8 +14,7 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
 @JsonObject
 public class Vertex {
-
-
+    
     public enum VertexUnit {
         NONE, SETTLEMENT, CITY;
     }

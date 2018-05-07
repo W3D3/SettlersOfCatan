@@ -14,7 +14,20 @@ public class Player {
     public static final int MAX_ROADS = 15;
 
     public enum Color {
-        RED, BLUE, GREEN, WHITE, SELECTING, NONE
+        RED(0xFFFF0000),
+        BLUE(0xFF0000FF),
+        YELLOW(0xFFFFFF00),
+        WHITE(0xFFCCCCCC);
+
+        int val;
+
+        Color(int color) {
+            this.val = color;
+        }
+
+        public int getVal() {
+            return val;
+        }
     }
 
     private int playerNumber;
