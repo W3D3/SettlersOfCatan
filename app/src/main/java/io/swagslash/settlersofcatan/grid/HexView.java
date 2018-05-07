@@ -2,6 +2,9 @@ package io.swagslash.settlersofcatan.grid;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DiscretePathEffect;
@@ -9,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Region;
+import android.graphics.Shader;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.Log;
@@ -29,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.pieces.Board;
@@ -184,9 +189,15 @@ public class HexView extends View {
         clip.set(0, 0, c.getWidth(), c.getHeight());
 
         //Background white
-        this.fillPaint.setStyle(Paint.Style.FILL);
-        this.fillPaint.setColor(Color.GRAY);
-        c.drawPaint(fillPaint);
+
+        Paint bg = new Paint();
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water_texture);
+        BitmapShader fillBMPshader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+        bg.setShader(fillBMPshader);
+
+        bg.setStyle(Paint.Style.FILL);
+        //this.fillPaint.setColor(Color.parseColor("#138fdc"));
+        c.drawPaint(bg);
 
         strokePaint.setStrokeWidth(3);
         strokePaint.setPathEffect(null);
