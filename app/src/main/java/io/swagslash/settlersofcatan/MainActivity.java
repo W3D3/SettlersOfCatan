@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.fab_settlement:
                 tv.append("settlement clicked!");
+                SettlerApp.board.setPhase(Board.Phase.SETUP_SETTLEMENT);
                 hexView.showFreeSettlements();
                 break;
             case R.id.fab_city:
@@ -193,5 +194,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             container.removeView(zl);
             container.addView(hexView);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(SettlerApp.getManager().getNetwork().isRunningAsHost)
+            SettlerApp.getManager().getNetwork().stopNetworkService(false);
+        else
+            SettlerApp.getManager().getNetwork().unregisterClient(false);
     }
 }
