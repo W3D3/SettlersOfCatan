@@ -39,8 +39,6 @@ public class Edge {
         this.board = board;
     }
 
-
-
     public Edge(Board board, HexPoint v1, HexPoint v2) {
         //this.id = id;
         this.unitType = EdgeType.NONE;
@@ -66,7 +64,7 @@ public class Edge {
      *
      * @return null if not used or the owner of this edge
      */
-    public Player getOwnerPlayer() {
+    public Player getOwner() {
         return board.getPlayerById(ownerPlayerNumber);
     }
 

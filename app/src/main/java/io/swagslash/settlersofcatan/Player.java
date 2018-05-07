@@ -1,17 +1,23 @@
 package io.swagslash.settlersofcatan;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.peak.salut.SalutDevice;
+
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 
 /**
  * Created by wedenigc on 19.03.18.
  */
-
+@JsonObject
 public class Player {
 
     public static final int MAX_SETTLEMENTS = 5;
     public static final int MAX_CITIES = 4;
     public static final int MAX_ROADS = 15;
+
+    public SalutDevice device;
 
     public enum Color {
         RED(0xFFFF0000),
@@ -30,17 +36,27 @@ public class Player {
         }
     }
 
+    @JsonField
     private int playerNumber;
-    private Color color;
+    @JsonField() //TODO TYPE PARSER
+    private int color;
+    @JsonField
     private String playerName;
+    @JsonField
     protected int numOwnedSettlements;
+    @JsonField
     protected int numOwnedCities;
+    @JsonField
     private int longestTradeRoute;
+    //TODO send inventory
     private Inventory inventory;
 
     protected transient Board board;
 
-    public Player(Board board, int playerNumber, Color color, String playerName) {
+    public Player() {
+    }
+
+    public Player(Board board, int playerNumber, int color, String playerName) {
         this.board = board;
         this.playerNumber = playerNumber;
         this.color = color;
@@ -57,7 +73,7 @@ public class Player {
         return playerNumber;
     }
 
-    public Color getColor() {
+    public int getColor() {
         return color;
     }
 
@@ -79,5 +95,33 @@ public class Player {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public void setNumOwnedSettlements(int numOwnedSettlements) {
+        this.numOwnedSettlements = numOwnedSettlements;
+    }
+
+    public void setNumOwnedCities(int numOwnedCities) {
+        this.numOwnedCities = numOwnedCities;
+    }
+
+    public void setLongestTradeRoute(int longestTradeRoute) {
+        this.longestTradeRoute = longestTradeRoute;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 }

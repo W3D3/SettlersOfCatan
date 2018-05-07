@@ -1,9 +1,12 @@
 package io.swagslash.settlersofcatan.pieces;
 
+import android.graphics.Region;
+
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.network.wifi.VertexUnitConverter;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -14,34 +17,32 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
 @JsonObject
 public class Vertex {
-    
+
+
     public enum VertexUnit {
         NONE, SETTLEMENT, CITY;
     }
-    private int id;
+
     @JsonField(typeConverter = VertexUnitConverter.class)
     private VertexUnit unitType;
-    private transient Board board;
-    //private int ownerPlayerNumber;
-    //@JsonField
+
+    @JsonField
     private Player owner;
     @JsonField
     private HexPoint coordinates;
 
-    public Vertex() {
+    private Region region;
 
+    public Vertex() {
+        this.unitType = VertexUnit.NONE;
     }
 
     public Vertex(Board board, int id) {
-        this.id = id;
-        this.unitType = VertexUnit.NONE;
-        this.board = board;
-        //this.ownerPlayerNumber = -1;
+        this();
     }
 
     public Vertex(Board board, HexPoint coords) {
         this.unitType = VertexUnit.NONE;
-        this.board = board;
         this.coordinates = coords;
         //this.ownerPlayerNumber = -1;
     }
@@ -78,7 +79,7 @@ public class Vertex {
 
     private void giveResourceToOwner(int amount, Resource resource) {
         for (int i = 0; i < amount; i++) {
-            this.board.getPlayerById(owner.getPlayerNumber()).getInventory().addResource(resource);
+            SettlerApp.board.getPlayerById(owner.getPlayerNumber()).getInventory().addResource(resource);
         }
     }
 
@@ -103,8 +104,13 @@ public class Vertex {
     public void buildSettlement(Player p) {
         this.unitType = VertexUnit.SETTLEMENT;
         this.setOwner(p);
-        // TODO REMOVE RESOURCES FROM PLAYER INVENTORY OUTSIDE?
     }
 
+    public Region getRegion() {
+        return region;
+    }
 
+    public void setRegion(Region region) {
+        this.region = region;
+    }
 }

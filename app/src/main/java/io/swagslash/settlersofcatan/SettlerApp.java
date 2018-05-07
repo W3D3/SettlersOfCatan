@@ -40,7 +40,6 @@ public class SettlerApp extends Application {
 
     public static void generateBoard(List<String> players){
 
-
         Board b = new Board(players, true, 10);
         b.setupBoard();
         board = b;

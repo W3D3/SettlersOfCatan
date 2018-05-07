@@ -50,7 +50,7 @@ public class HexView extends View {
     private GestureDetector gestureDetector;
     private ScaleGestureDetector scaleDetector;
     int scale = 1;
-    Pair<Integer,Integer> offset =null;
+    Pair<Integer, Integer> offset = null;
 
     ZoomLayout zoomLayout = null;
 
@@ -58,6 +58,7 @@ public class HexView extends View {
     Paint fillPaint;
 
     Region clip;
+    private Paint vertexClickPaint;
 
     public Board getBoard() {
         return board;
@@ -87,6 +88,10 @@ public class HexView extends View {
         this.gestureDetector = null;
         this.scaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
 
+        this.vertexClickPaint = new Paint();
+        vertexClickPaint.setColor(Color.WHITE);
+        vertexClickPaint.setStyle(Paint.Style.STROKE);
+
     }
 
     public ZoomLayout getZoomLayout() {
@@ -102,7 +107,7 @@ public class HexView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    public void prepare(){
+    public void prepare() {
         hexes.addAll(board.getHexagons());
 
         Display mdisp = getManager().getDefaultDisplay();
@@ -111,7 +116,7 @@ public class HexView extends View {
         maxX = mdispSize.x;
         maxY = mdispSize.y;
         scale = Math.min(maxX, maxY) / 5;
-        offset = new Pair<>(Math.min(maxX, maxY)/2, Math.min(maxX, maxY)/2);
+        offset = new Pair<>(Math.min(maxX, maxY) / 2, Math.min(maxX, maxY) / 2);
 
         for (Hex hex : hexes) {
             hex.calculatePath(offset, scale);
@@ -125,7 +130,7 @@ public class HexView extends View {
         invalidate();
     }
 
-    protected void onDraw(Canvas c){
+    protected void onDraw(Canvas c) {
 
         super.onDraw(c);
 
@@ -168,43 +173,46 @@ public class HexView extends View {
             hex.setRegion(r);
 
         }
-        if(zoomLayout.getEngine().getRealZoom()>=2){
 
-
-       for(Vertex v : board.getVertices()){
-            HexPoint drawPoint = v.getCoordinates().scale(offset,scale);
-            switch(v.getUnitType()){
-                case CITY:
-                    break;
-                case SETTLEMENT:
-                    c.drawCircle((float)drawPoint.x, (float)drawPoint.y, 30, circlePaint);
-                    break;
-                case NONE:
-                    c.drawCircle((float)drawPoint.x, (float)drawPoint.y, 30, circlePaint);
-                    break;
-
-            }
-       }
-       }
-        for(Hex h: board.getHexagons()){
-            for(Edge e: h.getEdges()){
+        for (Hex h : board.getHexagons()) {
+            for (Edge e : h.getEdges()) {
                 HexPoint[] points = e.getPositions();
                 HexPoint from = points[0];
                 HexPoint to = points[1];
                 HexPoint drawFrom = from.scale(offset, scale);
                 HexPoint drawTo = to.scale(offset, scale);
-                switch (e.getUnitType()){
+                switch (e.getUnitType()) {
                     case ROAD:
-                        c.drawLine((float)drawFrom.x,(float)drawFrom.y,(float)drawTo.x,(float)drawTo.y,edgePaint);
+                        edgePaint.setColor(e.getOwner().getColor());
+                        c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, edgePaint);
                         break;
                     case NONE:
-                        c.drawLine((float)drawFrom.x,(float)drawFrom.y,(float)drawTo.x,(float)drawTo.y,edgePaint);
+                        //c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, edgePaint);
                         break;
                     default:
                         break;
                 }
             }
         }
+
+        for (Vertex v : board.getVertices()) {
+            HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
+            switch (v.getUnitType()) {
+                case CITY:
+                    circlePaint.setColor(v.getOwner().getColor());
+                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 30, circlePaint);
+                    break;
+                case SETTLEMENT:
+                    circlePaint.setColor(v.getOwner().getColor());
+                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 20, circlePaint);
+                    break;
+                case NONE:
+                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 30, this.vertexClickPaint);
+                    break;
+
+            }
+        }
+
 
     }
 
@@ -234,7 +242,7 @@ public class HexView extends View {
 
         //TODO remove debug data and handle touches properly
 
-        if(gestureDetector == null) {
+        if (gestureDetector == null) {
             this.gestureDetector = new GestureDetector(this.getContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onDown(MotionEvent event) {
@@ -274,7 +282,6 @@ public class HexView extends View {
         scaleDetector.onTouchEvent(event);
 
 
-
         return true;
     }
 
@@ -282,13 +289,12 @@ public class HexView extends View {
         float x = event.getX();
         float y = event.getY();
 
-        if(zoomLayout != null)
-        {
+        if (zoomLayout != null) {
             // invert the coordinates so they map back to our regions when using a zoom engine
             //x = x * (1/zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanX();
             //y = y * (1/ zoomLayout.getEngine().getRealZoom()) - zoomLayout.getEngine().getPanY();
         }
-        return new Pair<>((int)x, (int)y);
+        return new Pair<>((int) x, (int) y);
     }
 
     private Hex getHexFromCoordinates(int x, int y) {
@@ -312,7 +318,7 @@ public class HexView extends View {
     private void showHexDetailFromMotionEvent(MotionEvent event, String msg) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
         Hex hex = getHexFromCoordinates(coordinates.first, coordinates.second);
-        if(hex == null) return;
+        if (hex == null) return;
         //TODO REPLACE WITH HexDetailActivity Intend
         System.out.println(hex.toString());
         Toast.makeText(getContext().getApplicationContext(), hex.toString() + " ~ " + msg,
@@ -324,7 +330,7 @@ public class HexView extends View {
 //        }
     }
 
-    private void redraw(){
+    private void redraw() {
         this.invalidate();
     }
 

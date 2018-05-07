@@ -45,15 +45,12 @@ public class Board {
         this.winningPoints = winningPoints;
         this.hexagons = new ArrayList<>();
         this.vertices = new ArrayList<>();
+        this.players = new ArrayList<>(playerNames.size());
 
         if (playerNames.size() < 2 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
-        players = new ArrayList<>(playerNames.size());
-        for (int i = 0; i < playerNames.size(); i++) {
-            players.add(i, new Player(this, i, Player.Color.NONE, playerNames.get(i)));
-
-        }
+        generatePlayers(playerNames);
     }
 
     public enum Phase {
@@ -125,6 +122,16 @@ public class Board {
                 }
             }
 
+        }
+
+        vertices.get(0).buildSettlement(this.getPlayerById(0));
+    }
+
+    private void generatePlayers(List<String> playerNames) {
+        final Stack<Integer> colorStack = CatanUtil.getColorsShuffled();
+        for (int i = 0; i < playerNames.size(); i++) {
+            Player p = new Player(this, i, colorStack.pop(), playerNames.get(i));
+            this.players.add(p);
         }
     }
 
