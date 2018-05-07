@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+        tv.setText(""); //TODO remove when debuggin
     }
 
     private void toogleFabMenu() {
@@ -230,5 +231,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        return; //TODO maybe dialog option to exit?
     }
 }
