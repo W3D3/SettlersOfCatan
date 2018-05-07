@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
@@ -16,17 +17,22 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bluelinelabs.logansquare.LoganSquare;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
+import com.peak.salut.Callbacks.SalutDataCallback;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 import io.swagslash.settlersofcatan.grid.HexView;
+import io.swagslash.settlersofcatan.network.wifi.DataCallback;
 import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DataCallback.IDataCallback{
 
     private final int FAB_MENU_DISTANCE = 145;
 
@@ -37,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected Animation openMenu, closeMenu;
 
     HexView hexView;
-    private INetworkManager network;
     private Board board;
 
     //protected ArrayList<FloatingActionButton> fabOptions;
@@ -49,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         this.setupHexView();
         //setContentView(R.layout.activity_main);
+
+        DataCallback.actActivity = this;
 
         //fab menu animation
         this.fabOpen = false;
@@ -204,5 +211,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SettlerApp.getManager().getNetwork().stopNetworkService(false);
         else
             SettlerApp.getManager().getNetwork().unregisterClient(false);
+    }
+
+    @Override
+    public void onDataReceived(Object o) {
+
+        try {
+            SettlerApp.board = (Board) LoganSquare.parse((String) o, Board.class);
+            System.out.println((String) o);
+            if (SettlerApp.getManager().isHost()) {
+                System.out.println( "################### I AM HOST " + SettlerApp.playerName);
+                SettlerApp.getManager().sendToAll(SettlerApp.board);
+            }
+            System.out.println( "################## DATA RECEIVED " + SettlerApp.playerName);
+            hexView.setBoard(SettlerApp.board);
+            hexView.prepare();
+            hexView.redraw();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

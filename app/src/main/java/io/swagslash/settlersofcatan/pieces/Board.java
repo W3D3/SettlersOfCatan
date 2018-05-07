@@ -6,6 +6,7 @@ package io.swagslash.settlersofcatan.pieces;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.peak.salut.Callbacks.SalutCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -30,7 +32,9 @@ public class Board {
     private List<Hex> hexagons;
     @JsonField
     private List<Vertex> vertices;
+
     private List<Edge> edges;
+    @JsonField
     private List<Player> players;
     private HexGridLayout gridLayout;
 
@@ -61,6 +65,9 @@ public class Board {
     }
 
     public void setPhase(Phase phase) {
+        if(phase == Phase.IDLE) {
+            SettlerApp.getManager().sendToAll(this);
+        }
         this.phase = phase;
     }
 
@@ -81,7 +88,7 @@ public class Board {
     }
 
     public Player getPlayerByName(String name) {
-        for (Player p: players) {
+        for (Player p : players) {
             if(p.getPlayerName().equals(name)) return p;
         }
         return null;
@@ -141,6 +148,14 @@ public class Board {
             Player p = new Player(this, i, colorStack.pop(), playerNames.get(i));
             this.players.add(p);
         }
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 
     public void setHexagons(List<Hex> hexagons) {

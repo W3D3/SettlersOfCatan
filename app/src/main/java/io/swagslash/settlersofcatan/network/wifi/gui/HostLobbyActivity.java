@@ -41,7 +41,7 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
         setContentView(R.layout.activity_host_lobby);
 
         frag = (LobbyMemberFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_lobby);
-        DataCallback.actActivity = this;
+        //DataCallback.actActivity = this;
         network = SettlerApp.getManager().getNetwork();
         setupNetwork();
     }
@@ -84,7 +84,7 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
             case R.id.btnCloseLobby:
                 closeLobby();
                 break;
-                    }
+        }
     }
 
     private void sendMessage() {

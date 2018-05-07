@@ -18,7 +18,7 @@ public class CatanUtil {
     public static final List<AxialHexLocation> hexes = initStartingSequence();
     public static final Stack<NumberToken> tokens = initNumberTokens();
     public static Stack<Hex.TerrainType> terrains = initTerrainList();
-    public static Stack<Integer> colors = initColors();
+    public static final Stack<Integer> colors = initColors();
 
     private static Stack<Integer> initColors() {
         Stack<Integer> colors = new Stack<>();
@@ -120,6 +120,6 @@ public class CatanUtil {
     public static Stack<Integer> getColorsShuffled() {
         Stack<Integer> colorsStack = new Stack<>();
         colorsStack.addAll(colors);
-        return colors;
+        return colorsStack;
     }
 }

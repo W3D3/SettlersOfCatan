@@ -38,7 +38,7 @@ public class Player {
 
     @JsonField
     private int playerNumber;
-    @JsonField() //TODO TYPE PARSER
+    @JsonField
     private int color;
     @JsonField
     private String playerName;
@@ -54,6 +54,7 @@ public class Player {
     protected transient Board board;
 
     public Player() {
+
     }
 
     public Player(Board board, int playerNumber, int color, String playerName) {

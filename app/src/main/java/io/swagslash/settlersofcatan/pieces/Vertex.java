@@ -1,6 +1,8 @@
 package io.swagslash.settlersofcatan.pieces;
 
+import android.graphics.Path;
 import android.graphics.Region;
+import android.util.Pair;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
@@ -31,6 +33,7 @@ public class Vertex {
     @JsonField
     private HexPoint coordinates;
 
+    private Path path;
     private Region region;
 
     public Vertex() {
@@ -118,6 +121,29 @@ public class Vertex {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public void calculatePath(Pair<Integer, Integer> offset, Integer scale) {
+        Path path = new Path();
+        HexPoint drawPoint = this.getCoordinates().scale(offset, scale);
+        switch (this.getUnitType()) {
+            case CITY:
+                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 30, Path.Direction.CW);
+                break;
+            case SETTLEMENT:
+                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 20, Path.Direction.CW);
+                break;
+            case NONE:
+                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 40, Path.Direction.CW);
+                break;
+        }
+
+        path.close();
+        this.path = path;
+    }
+
+    public Path getPath() {
+        return path;
     }
 
     @Override

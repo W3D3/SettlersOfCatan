@@ -93,10 +93,7 @@ public class Hex {
                 }
             }
             direction++;
-
         }
-
-
     }
 
     public List<HexPoint> getVerticesPositions() {

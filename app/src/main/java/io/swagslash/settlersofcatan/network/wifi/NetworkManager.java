@@ -8,6 +8,8 @@ import com.peak.salut.Salut;
 import com.peak.salut.SalutDataReceiver;
 import com.peak.salut.SalutServiceData;
 
+import java.util.Set;
+
 import io.swagslash.settlersofcatan.SettlerApp;
 
 public class NetworkManager implements INetworkManager {
@@ -18,19 +20,30 @@ public class NetworkManager implements INetworkManager {
 
     @Override
     public void init(Activity activity) {
-        serviceData = new SalutServiceData("SettlerOfCartan", 10000, SettlerApp.playerName);
+        serviceData = new SalutServiceData("SettlerOfCatan", 10000, SettlerApp.playerName);
         dataReceiver = new SalutDataReceiver(activity, new DataCallback());
         network = new Salut(dataReceiver, serviceData, null);
     }
 
     @Override
     public void sendToAll(Object message) {
-        network.sendToAllDevices(message, new SalutCallback() {
+        if(network.isRunningAsHost) {
+            network.sendToAllDevices(message, new SalutCallback() {
+                @Override
+                public void call() {
+                    Log.e("SettlerOfCatan", "Failed to send data!");
+                }
+            });
+        } else
+        {
+            SettlerApp.getManager().sendtoHost(message);
+            network.sendToDevice(network.registeredHost, message, new SalutCallback() {
             @Override
             public void call() {
-                Log.e("SettlerOfCartan", "Failed to send data!");
+                Log.e("SettlerOfCatan", "Failed to send data!");
             }
         });
+        }
     }
 
     @Override
@@ -38,7 +51,7 @@ public class NetworkManager implements INetworkManager {
         network.sendToHost(message, new SalutCallback() {
             @Override
             public void call() {
-                Log.e("SettlerOfCartan", "Failed to send message to host!");
+                Log.e("SettlerOfCatan", "Failed to send message to host!");
             }
         });
     }

@@ -154,6 +154,7 @@ public class HexView extends View {
         setMinimumHeight(maxY);
         setMinimumWidth(maxX);
 
+        // GENERATE PATHS und so
         for (Hex hex : hexes) {
             Path path = hex.getPath();
             Region r = new Region();
@@ -161,9 +162,19 @@ public class HexView extends View {
             hex.setRegion(r);
         }
 
+        generateVerticePaths();
+
+
         //ready to draw
         setWillNotDraw(false);
         invalidate();
+    }
+
+    private void generateVerticePaths() {
+        for (Vertex v : board.getVertices()) {
+            HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
+            v.calculatePath(offset, scale);
+        }
     }
 
     protected void onDraw(Canvas c) {
@@ -219,59 +230,35 @@ public class HexView extends View {
             }
         }
 
-        for (Vertex v : board.getVertices()) {
-            HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
-            switch (v.getUnitType()) {
-                case CITY:
-                    circlePaint.setColor(v.getOwner().getColor());
-                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 30, circlePaint);
+        //TODO draw vertices
 
+        for (Vertex vertex : board.getVertices()) {
+            Region region = new Region();
+            region.setPath(vertex.getPath(), clip);
+            vertex.setRegion(region);
+            switch (vertex.getUnitType()) {
+                case NONE:
+                    if(SettlerApp.board.getPhase() == Board.Phase.SETUP_SETTLEMENT) {
+                        c.drawPath(vertex.getPath(), vertexClickPaint);
+                    }
                     break;
                 case SETTLEMENT:
-                    circlePaint.setColor(v.getOwner().getColor());
-                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 20, circlePaint);
+                    circlePaint.setColor(vertex.getOwner().getColor());
+                    c.drawPath(vertex.getPath(), circlePaint);
                     break;
-                case NONE:
-                    Region r = new Region();
-                    Path cir = new Path();
-
-                    cir.addCircle((float) drawPoint.x, (float) drawPoint.y, 30, Path.Direction.CW);
-                    c.drawPath(cir, vertexClickPaint);
-                    r.setPath(cir, clip);
-                    v.setRegion(r);
+                case CITY:
+                    circlePaint.setColor(vertex.getOwner().getColor());
+                    c.drawPath(vertex.getPath(), circlePaint);
                     break;
-
             }
+
         }
 
 
     }
 
     public void showFreeSettlements() {
-
-//        for (Vertex v : board.getVertices()) {
-//            HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
-//            switch (v.getUnitType()) {
-//                case CITY:
-//                    circlePaint.setColor(v.getOwner().getColor());
-//                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 30, circlePaint);
-//
-//                    break;
-//                case SETTLEMENT:
-//                    circlePaint.setColor(v.getOwner().getColor());
-//                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 20, circlePaint);
-//                    break;
-//                case NONE:
-//                    Region r = new Region();
-//                    Path cir = new Path();
-//
-//                    cir.addCircle((float) drawPoint.x, (float) drawPoint.y, 30, Path.Direction.CW);
-//                    c.drawPath(cir, vertexClickPaint);
-//                    r.setPath(cir, clip);
-//                    v.setRegion(r);
-//                    break;
-//            }
-//        }
+        redraw();
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -399,6 +386,9 @@ public class HexView extends View {
 
             case SETUP_SETTLEMENT:
                 GameController.buildSettlement(vertex);
+                SettlerApp.board.setPhase(Board.Phase.IDLE);
+                generateVerticePaths();
+                redraw();
                 break;
             case SETUP_ROAD:
                 break;
@@ -419,7 +409,7 @@ public class HexView extends View {
         }
     }
 
-    private void redraw() {
+    public void redraw() {
         this.invalidate();
     }
 
