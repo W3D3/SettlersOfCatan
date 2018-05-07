@@ -51,12 +51,13 @@ public class Board {
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
         generatePlayers(playerNames);
+        this.phase = Phase.IDLE;
     }
 
     public enum Phase {
         SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY,
         PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
-        FINISHED_GAME;
+        FINISHED_GAME, IDLE;
     }
 
     public void setPhase(Phase phase) {
