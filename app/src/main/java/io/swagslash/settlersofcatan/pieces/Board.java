@@ -37,7 +37,7 @@ public class Board {
     private boolean randomDiscard;
     private int winningPoints;
 
-    public Board(){
+    public Board() {
     }
 
     public Board(List<String> playerNames, boolean randomDiscard, int winningPoints) {
@@ -46,7 +46,7 @@ public class Board {
         this.hexagons = new ArrayList<>();
         this.vertices = new ArrayList<>();
 
-        if(playerNames.size() < 2 || playerNames.size() > 4)
+        if (playerNames.size() < 2 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
         players = new ArrayList<>(playerNames.size());
@@ -92,8 +92,8 @@ public class Board {
 
     public Vertex getVertexByPosition(HexPoint position) {
 //        return vertices.get(position);
-        for(Vertex v: vertices){
-            if(v.getCoordinates().equals(position)){
+        for (Vertex v : vertices) {
+            if (v.getCoordinates().equals(position)) {
                 return v;
             }
         }
@@ -117,14 +117,14 @@ public class Board {
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
             boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
             Hex hex = new Hex(this, terrainsShuffled.pop(), location);
-            if(needsNumberToken) hex.setNumberToken(numberTokens.pop());
+            if (needsNumberToken) hex.setNumberToken(numberTokens.pop());
             hex.calculateVertices(gridLayout);
             hexagons.add(hex);
             for (HexPoint point : hex.getVerticesPositions()) {
-                this.vertices.add(new Vertex(this, point));
-//                if(!this.vertices.containsKey(point)) {
-//                    this.vertices.put(point, new Vertex(this, point));
-//                }
+                Vertex v = new Vertex(this, point);
+                if (!vertices.contains(v)) {
+                    this.vertices.add(v);
+                }
             }
 
         }
