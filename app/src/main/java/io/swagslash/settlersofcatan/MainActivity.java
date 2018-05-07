@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.fab_settlement:
                 tv.append("settlement clicked!");
+                hexView.showFreeSettlements();
                 break;
             case R.id.fab_city:
                 tv.append("city clicked!");

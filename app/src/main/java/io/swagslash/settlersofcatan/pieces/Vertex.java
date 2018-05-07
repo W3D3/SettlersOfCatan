@@ -106,6 +106,12 @@ public class Vertex {
         this.setOwner(p);
     }
 
+    public boolean buildCity(Player p) {
+        if(p.equals(this.owner) || this.unitType != VertexUnit.SETTLEMENT) return false;
+        this.unitType = VertexUnit.CITY;
+        return true;
+    }
+
     public Region getRegion() {
         return region;
     }

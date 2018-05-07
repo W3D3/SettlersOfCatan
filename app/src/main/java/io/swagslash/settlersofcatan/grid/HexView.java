@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
@@ -54,10 +55,20 @@ public class HexView extends View {
     int scale = 1;
     Pair<Integer, Integer> offset = null;
 
+    List<Path> takenVertices;
+    List<Path> freeVertices;
+    List<Path> takenEdges;
+    List<Path> freeEdges;
+
     ZoomLayout zoomLayout = null;
 
+    //Hexagon paint
     Paint strokePaint;
     Paint fillPaint;
+
+    // Vertex Paint
+    Paint circlePaint;
+    Paint edgePaint;
 
     Region clip;
     private Paint vertexClickPaint;
@@ -94,6 +105,20 @@ public class HexView extends View {
         vertexClickPaint.setColor(Color.WHITE);
         vertexClickPaint.setStyle(Paint.Style.STROKE);
 
+        freeVertices = new ArrayList<>();
+        takenVertices = new ArrayList<>();
+        freeEdges = new ArrayList<>();
+        takenEdges = new ArrayList<>();
+
+        circlePaint = new Paint();
+        circlePaint.setColor(Color.RED);
+        circlePaint.setStyle(Paint.Style.FILL);
+
+        edgePaint = new Paint();
+        edgePaint.setColor(Color.BLUE);
+        edgePaint.setStyle(Paint.Style.STROKE);
+        edgePaint.setStrokeWidth(4);
+
     }
 
     public ZoomLayout getZoomLayout() {
@@ -119,6 +144,7 @@ public class HexView extends View {
         maxY = mdispSize.y;
         scale = Math.min(maxX, maxY) / 5;
         offset = new Pair<>(Math.min(maxX, maxY) / 2, Math.min(maxX, maxY) / 2);
+        clip = new Region();
 
         for (Hex hex : hexes) {
             hex.calculatePath(offset, scale);
@@ -127,6 +153,14 @@ public class HexView extends View {
         // OR GET IT FROM PARENT?
         setMinimumHeight(maxY);
         setMinimumWidth(maxX);
+
+        for (Hex hex : hexes) {
+            Path path = hex.getPath();
+            Region r = new Region();
+            r.setPath(path, clip);
+            hex.setRegion(r);
+        }
+
         //ready to draw
         setWillNotDraw(false);
         invalidate();
@@ -136,16 +170,8 @@ public class HexView extends View {
 
         super.onDraw(c);
 
+        clip.set(0, 0, c.getWidth(), c.getHeight());
 
-        clip = new Region(0, 0, c.getWidth(), c.getHeight());
-
-        Paint circlePaint = new Paint();
-        circlePaint.setColor(Color.RED);
-        circlePaint.setStyle(Paint.Style.FILL);
-        Paint edgePaint = new Paint();
-        edgePaint.setColor(Color.BLUE);
-        edgePaint.setStyle(Paint.Style.STROKE);
-        edgePaint.setStrokeWidth(4);
         //Background white
         this.fillPaint.setStyle(Paint.Style.FILL);
         this.fillPaint.setColor(Color.GRAY);
@@ -159,10 +185,6 @@ public class HexView extends View {
         fillPaint.setStyle(Paint.Style.FILL);
         fillPaint.setColor(Color.YELLOW);
 
-//        Path pathTest = new Path();
-//        pathTest.moveTo(0,0);
-//        pathTest.lineTo(100,100);
-//        c.drawPath(pathTest, strokePaint);
 
         for (Hex hex : hexes) {
             Path path = hex.getPath();
@@ -223,6 +245,33 @@ public class HexView extends View {
         }
 
 
+    }
+
+    public void showFreeSettlements() {
+
+//        for (Vertex v : board.getVertices()) {
+//            HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
+//            switch (v.getUnitType()) {
+//                case CITY:
+//                    circlePaint.setColor(v.getOwner().getColor());
+//                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 30, circlePaint);
+//
+//                    break;
+//                case SETTLEMENT:
+//                    circlePaint.setColor(v.getOwner().getColor());
+//                    c.drawCircle((float) drawPoint.x, (float) drawPoint.y, 20, circlePaint);
+//                    break;
+//                case NONE:
+//                    Region r = new Region();
+//                    Path cir = new Path();
+//
+//                    cir.addCircle((float) drawPoint.x, (float) drawPoint.y, 30, Path.Direction.CW);
+//                    c.drawPath(cir, vertexClickPaint);
+//                    r.setPath(cir, clip);
+//                    v.setRegion(r);
+//                    break;
+//            }
+//        }
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -346,6 +395,28 @@ public class HexView extends View {
         System.out.println(vertex.toString());
         Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ ",
                 Toast.LENGTH_SHORT).show();
+        switch (SettlerApp.board.getPhase()) {
+
+            case SETUP_SETTLEMENT:
+                GameController.buildSettlement(vertex);
+                break;
+            case SETUP_ROAD:
+                break;
+            case SETUP_CITY:
+                break;
+            case PRODUCTION:
+                break;
+            case PLAYER_TURN:
+                break;
+            case MOVING_ROBBER:
+                break;
+            case TRADE_PROPOSED:
+                break;
+            case TRADE_RESPONDED:
+                break;
+            case FINISHED_GAME:
+                break;
+        }
     }
 
     private void redraw() {
