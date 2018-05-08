@@ -171,17 +171,17 @@ public class Hex {
     public int getTerrainColor() {
         switch (terrainType) {
             case FOREST:
-                return Color.parseColor("#596037"); // dark green woods
+                return Color.parseColor("#795F22");
             case FIELD:
-                return Color.parseColor("#fee11c"); // nice wheat
+                return Color.parseColor("#d8d520");
             case HILL:
-                return Color.parseColor("#db6d23"); // lehm colored
+                return Color.parseColor("#71f442");
             case MOUNTAIN:
-                return Color.parseColor("#8e818b"); // dark gray
+                return Color.parseColor("#e2e2e2");
             case DESERT:
-                return Color.parseColor("#feffe5"); // desert color
+                return Color.parseColor("#4f473c");
             case PASTURE:
-                return Color.parseColor("#9bc236"); // wool/sheep
+                return Color.parseColor("#9ffca6");
         }
         return 0;
     }
