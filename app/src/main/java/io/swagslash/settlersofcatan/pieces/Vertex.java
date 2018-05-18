@@ -13,7 +13,7 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
- * Created by wedenigc on 19.03.18.
+ * Holds information about a Vertex and its {@link Edge}s
  */
 public class Vertex {
 
@@ -97,6 +97,11 @@ public class Vertex {
         }
     }
 
+    /**
+     * Build settlement for {@link Player} p
+     *
+     * @param p to own the settlement
+     */
     public void buildSettlement(Player p) {
         this.unitType = VertexUnit.SETTLEMENT;
         this.setOwner(p);
@@ -123,8 +128,8 @@ public class Vertex {
      * @return if {@link Player} p can build a city here
      */
     public boolean canBuildCity(Player p) {
-        //Building is possible if:
-        //there already is a settlement of the player
+        // Building is possible if:
+        // There already is a settlement of the player p
 
         return this.isOwnedBy(p) && this.getUnitType() == VertexUnit.SETTLEMENT;
     }
