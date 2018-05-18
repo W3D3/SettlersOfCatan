@@ -2,37 +2,25 @@ package io.swagslash.settlersofcatan.pieces;
 
 import android.graphics.Path;
 import android.graphics.Region;
-import android.util.Pair;
-
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.SettlerApp;
-import io.swagslash.settlersofcatan.network.wifi.VertexUnitConverter;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
+import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
  * Created by wedenigc on 19.03.18.
  */
-
-@JsonObject
 public class Vertex {
 
-    public enum VertexUnit {
-        NONE, SETTLEMENT, CITY;
-    }
-
     private VertexUnit unitType;
-
     private Player owner;
     private HexPoint coordinates;
     private List<Edge> edgeNeighbours;
-
     private Path path;
     private Region region;
 
@@ -52,7 +40,7 @@ public class Vertex {
 
     @Override
     public boolean equals(Object obj) {
-        return coordinates.equals(((Vertex)obj).getCoordinates());
+        return coordinates.equals(((Vertex) obj).getCoordinates());
     }
 
     @Override
@@ -64,20 +52,24 @@ public class Vertex {
         return coordinates;
     }
 
-    public VertexUnit getUnitType() {
-        return unitType;
+    public void setCoordinates(HexPoint coordinates) {
+        this.coordinates = coordinates;
     }
 
-    public Player getOwner() {
-        return owner;
+    public VertexUnit getUnitType() {
+        return unitType;
     }
 
     public void setUnitType(VertexUnit unitType) {
         this.unitType = unitType;
     }
 
-    public void setCoordinates(HexPoint coordinates) {
-        this.coordinates = coordinates;
+    public Player getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Player owner) {
+        this.owner = owner;
     }
 
     private void giveResourceToOwner(int amount, Resource resource) {
@@ -87,7 +79,7 @@ public class Vertex {
     }
 
     public void distributeResources(Resource resourceProduced) {
-        if(owner == null) return;
+        if (owner == null) return;
         switch (this.unitType) {
             case NONE:
                 break;
@@ -100,17 +92,13 @@ public class Vertex {
         }
     }
 
-    public void setOwner(Player owner) {
-        this.owner = owner;
-    }
-
     public void buildSettlement(Player p) {
         this.unitType = VertexUnit.SETTLEMENT;
         this.setOwner(p);
     }
 
     public boolean buildCity(Player p) {
-        if(p.equals(this.owner) || this.unitType != VertexUnit.SETTLEMENT) return false;
+        if (p.equals(this.owner) || this.unitType != VertexUnit.SETTLEMENT) return false;
         this.unitType = VertexUnit.CITY;
         return true;
     }
@@ -152,15 +140,40 @@ public class Vertex {
     }
 
     public void addEdge(Edge e) {
-        if(edgeNeighbours.size() >= 3 && !this.edgeNeighbours.contains(e)) {
+        if (edgeNeighbours.size() >= 3 && !this.edgeNeighbours.contains(e)) {
             throw new ArrayIndexOutOfBoundsException("Too many Edges for a Vertex!!!");
         } else {
-            if(!this.edgeNeighbours.contains(e))
+            if (!this.edgeNeighbours.contains(e))
                 this.edgeNeighbours.add(e);
         }
     }
 
     public List<Edge> getEdgeNeighbours() {
         return edgeNeighbours;
+    }
+
+    public boolean hasCommunityOf(Player player) {
+        return (this.unitType == VertexUnit.SETTLEMENT || this.unitType == VertexUnit.CITY)
+                && this.getOwner().equals(player);
+    }
+
+    public boolean isConnectedToEdgeUnitOwnedBy(Player player) {
+        for (Edge edge : getEdgeNeighbours()) {
+            for (Vertex vertex : edge.getVertexNeighbors()) {
+                // every vertex except ourself
+                if (!vertex.equals(this) && vertex.hasCommunityOf(player)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isOwnedByAnotherPlayer(Player player) {
+        return !owner.equals(player);
+    }
+
+    public enum VertexUnit {
+        NONE, SETTLEMENT, CITY;
     }
 }

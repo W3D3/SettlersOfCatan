@@ -1,11 +1,9 @@
 package io.swagslash.settlersofcatan;
 
-import android.util.Pair;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -15,7 +13,6 @@ import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
-import io.swagslash.settlersofcatan.pieces.utility.HexUtility;
 
 import static org.junit.Assert.assertEquals;
 
@@ -138,6 +135,26 @@ public class HexagonTests {
         assertEquals(0, count1NB);
         assertEquals(18, count2NB); // counted them
         assertEquals(b.getVerticesList().size() - count2NB, count3NB); //the rest
+    }
+
+    @Test
+    public void vertexIncludesOnlyEdgesWithItself() {
+        List<String> players = new ArrayList<>();
+        players.add("P1");
+        players.add("P2");
+        Board b = new Board(players, true, 10);
+        b.setupBoard();
+
+        for (Vertex vertex : b.getVerticesList()) {
+            for (Edge edge : vertex.getEdgeNeighbours()) {
+                if (!edge.getCoordinates().first.equals(vertex.getCoordinates()) &&
+                        !edge.getCoordinates().second.equals(vertex.getCoordinates())) {
+                    Assert.fail("Vertex coordinates have to be contained in a neighbor of it!");
+                }
+            }
+
+        }
+
     }
 
 

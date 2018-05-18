@@ -1,7 +1,5 @@
 package io.swagslash.settlersofcatan.pieces;
 
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
@@ -9,27 +7,18 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 /**
  * Created by wedenigc on 19.03.18.
  */
-@JsonObject
-public class Edge {
 
-    public enum EdgeType {
-        NONE, ROAD
-    }
+public class Edge {
 
     private EdgeType unitType;
     private HexPointPair coordinates;
     private Player owner;
-    //private int ownerPlayerNumber = -1;
     private Vertex[] vertexNeighbors;
-
     private transient Board board;
 
-    /**
-     * Initialize edge
-     */
+
     public Edge() {
         this.unitType = EdgeType.NONE;
-        //ownerPlayerNumber = -1;
     }
 
     public Edge(Board board) {
@@ -38,14 +27,10 @@ public class Edge {
     }
 
     public Edge(Board board, HexPoint v1, HexPoint v2) {
-        //this.id = id;
         this.unitType = EdgeType.NONE;
         coordinates = new HexPointPair(v1, v2);
-        //ownerPlayerNumber = -1;
         this.board = board;
-        // get vertexes
         this.vertexNeighbors = new Vertex[2];
-
     }
 
     public void connectToVertices() {
@@ -67,6 +52,15 @@ public class Edge {
     }
 
     /**
+     * Sets the unit type of the edge
+     *
+     * @param unitType {@EdgeType} of the edge
+     */
+    public void setUnitType(EdgeType unitType) {
+        this.unitType = unitType;
+    }
+
+    /**
      * Get the owner of this edge
      *
      * @return null if not used or the owner of this edge
@@ -75,17 +69,14 @@ public class Edge {
         return owner;
     }
 
-    public void setUnitType(EdgeType unitType) {
-        this.unitType = unitType;
+    public void setOwner(Player owner) {
+        this.owner = owner;
     }
 
-    public int getOwnerPlayerNumber() {
-        return owner.getPlayerNumber();
-    }
-
-    public void setOwnerPlayerNumber(int ownerPlayerNumber) {
+    public void setOwnerByPlayerNumber(int ownerPlayerNumber) {
         this.owner = board.getPlayerById(ownerPlayerNumber);
     }
+
     public HexPointPair getCoordinates() {
         return coordinates;
     }
@@ -103,8 +94,8 @@ public class Edge {
      * Determine if the player can build on this edge
      *
      * @param player the player to check for
-     * @return 	true iff the player has a road to an unoccupied vertex
-     *			or the player has an adjacent vertexUnit
+     * @return true iff the player has a road to an unoccupied vertex
+     * or the player has an adjacent vertexUnit
      */
     public boolean canBuildRoad(Player player) {
         if (owner != null) {
@@ -116,11 +107,12 @@ public class Edge {
         for (int i = 0; i < 2; i++) {
             // the player has an edgeUnit to an unoccupied vertex
             // or the player has an adjacent building
+            curVertex = getVertexNeighbors()[i];
             //curVertex = board.getVertexById(vertexIds[i]);
-//            if (curVertex.hasCommunityOf(player) || (curVertex.isConnectedToEdgeUnitOwnedBy(player)
-//                    && !(curVertex.isOwnedByAnotherPlayer(player)))) {
-//                return true;
-//            }
+            if (curVertex.hasCommunityOf(player) || (curVertex.isConnectedToEdgeUnitOwnedBy(player)
+                    && !(curVertex.isOwnedByAnotherPlayer(player)))) {
+                return true;
+            }
         }
 
         return false;
@@ -129,8 +121,7 @@ public class Edge {
     /**
      * Build a road on edge
      *
-     * @param player
-     *            the edgeUnit ownerPlayerNumber
+     * @param player the edgeUnit ownerPlayerNumber
      * @return true if player can build an edgeUnit on edge
      */
     public boolean buildRoad(Player player) {
@@ -166,4 +157,8 @@ public class Edge {
     public int hashCode() {
         return 0;
     } //TODO fix maybe?
+
+    public enum EdgeType {
+        NONE, ROAD
+    }
 }

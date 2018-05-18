@@ -3,28 +3,21 @@ package io.swagslash.settlersofcatan.pieces;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Region;
-import android.util.Pair;
-
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import io.swagslash.settlersofcatan.network.wifi.TerrainTypeConverter;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
+import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
  * Created by wedenigc on 19.03.18.
  */
 public class Hex {
 
-    private int id; //TODO remove
     private NumberToken numberToken;
     private TerrainType terrainType;
     private AxialHexLocation hexLocation;
@@ -37,35 +30,31 @@ public class Hex {
 
     private transient Board board;
 
+    public Hex(Board board, TerrainType terrainType, AxialHexLocation location) {
+        this.terrainType = terrainType;
+        this.board = board;
+        this.hexLocation = location;
+        this.vertices = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            this.vertices.add(null);
+        }
+        this.edges = new ArrayList<>();
+    }
+
     public List<Vertex> getVertices() {
         return vertices;
     }
 
     public HexPoint getVertexPositions(Integer position) {
         return this.vertices.get(position).getCoordinates();
-
-    }
-
-
-    public enum TerrainType {
-        FOREST, FIELD, HILL, MOUNTAIN, DESERT, PASTURE
-    }
-
-    public Hex(Board board, TerrainType terrainType, AxialHexLocation location) {
-        //this.id = id;
-        this.terrainType = terrainType;
-        this.board = board;
-        this.hexLocation = location;
-        this.vertices = new ArrayList<>();
-        for (int i = 0; i < 6; i++)
-        {
-            this.vertices.add(null);
-        }
-        this.edges = new ArrayList<>();
     }
 
     public Path getPath() {
         return path;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
     }
 
     public Region getRegion() {
@@ -80,25 +69,29 @@ public class Hex {
         return edges;
     }
 
+    public void setEdges(List<Edge> edges) {
+        this.edges = edges;
+    }
+
+//    public Set<Vertex> getVerticesSet() {
+//        return new HashSet<Vertex>(vertices.values());
+//    }
+
     public void calculateVerticesAndEdges(HexGridLayout gridLayout) {
         ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(gridLayout, this.getHexLocation());
         Integer direction = 0;
         for (HexPoint point : hexPoints) {
             Vertex v = new Vertex(this.board, point);
             this.vertices.set(direction, v);
-            if(direction > 0) {
-                this.edges.add(new Edge(this.board, point, hexPoints.get(direction-1)));
-                if(direction == 5) {
+            if (direction > 0) {
+                this.edges.add(new Edge(this.board, point, hexPoints.get(direction - 1)));
+                if (direction == 5) {
                     this.edges.add(new Edge(this.board, point, hexPoints.get(0)));
                 }
             }
             direction++;
         }
     }
-
-//    public Set<Vertex> getVerticesSet() {
-//        return new HashSet<Vertex>(vertices.values());
-//    }
 
     public AxialHexLocation getHexLocation() {
         return hexLocation;
@@ -125,8 +118,7 @@ public class Hex {
             return;
         }
 
-        for (int i = 0; i < 6; i++)
-        {
+        for (int i = 0; i < 6; i++) {
             //TODO each vertex gets resources
             vertices.get(i).distributeResources(this.getResourceProduced());
         }
@@ -144,14 +136,14 @@ public class Hex {
         for (int i = 0; i < 6; i++) {
             point = this.vertices.get(i).getCoordinates();
             // first point, only move
-            if(i == 0) {
-                path.moveTo((float)point.x * scale + offsets.first, (float)point.y * scale + offsets.second);
+            if (i == 0) {
+                path.moveTo((float) point.x * scale + offsets.first, (float) point.y * scale + offsets.second);
                 first = point;
             } else {
-                path.lineTo((float)point.x * scale + offsets.first, (float)point.y * scale + offsets.second);
+                path.lineTo((float) point.x * scale + offsets.first, (float) point.y * scale + offsets.second);
                 if (i == 5) {
                     //connect last to first point
-                    path.lineTo((float)first.x * scale + offsets.first, (float)first.y * scale + offsets.second);
+                    path.lineTo((float) first.x * scale + offsets.first, (float) first.y * scale + offsets.second);
                 }
             }
         }
@@ -178,14 +170,6 @@ public class Hex {
         return 0;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public TerrainType getTerrainType() {
         return terrainType;
     }
@@ -202,19 +186,15 @@ public class Hex {
         this.hasRobber = hasRobber;
     }
 
-    public void setEdges(List<Edge> edges) {
-        this.edges = edges;
-    }
-
-    public void setPath(Path path) {
-        this.path = path;
-    }
-
     public Board getBoard() {
         return board;
     }
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    public enum TerrainType {
+        FOREST, FIELD, HILL, MOUNTAIN, DESERT, PASTURE
     }
 }
