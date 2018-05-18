@@ -2,7 +2,6 @@ package io.swagslash.settlersofcatan;
 
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
-import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
  * Created by wedenigc on 19.03.18.
@@ -93,7 +92,7 @@ public class Player {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Pair)) {
+        if (!(obj instanceof Player)) {
             return false;
         }
         Player p = (Player) obj;

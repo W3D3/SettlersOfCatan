@@ -78,6 +78,11 @@ public class Vertex {
         }
     }
 
+    /**
+     * Distributes a {@link Resource} to all buildings on this {@link Vertex}
+     *
+     * @param resourceProduced resource to be distributed
+     */
     public void distributeResources(Resource resourceProduced) {
         if (owner == null) return;
         switch (this.unitType) {
@@ -97,8 +102,34 @@ public class Vertex {
         this.setOwner(p);
     }
 
+    /**
+     * Determines if a {@link Player} p can build a settlement on this {@link Vertex}
+     *
+     * @param p to check for
+     * @return if {@link Player} p can build a settlement here
+     */
+    public boolean canBuildSettlement(Player p) {
+        // Building is possible if:
+        // A road leads up to this vertex owned by the player AND
+        // No adjacent space is occuppied
+
+        return this.isConnectedToRoadOwnedBy(p) && this.hasNoNeighbourBuildings();
+    }
+
+    /**
+     * Determines if a {@link Player} p can build a city on this {@link Vertex}
+     *
+     * @param p to check for
+     * @return if {@link Player} p can build a city here
+     */
+    public boolean canBuildCity(Player p) {
+        //Building is possible if:
+        //there already is a settlement of the player
+
+        return this.isOwnedBy(p) && this.getUnitType() == VertexUnit.SETTLEMENT;
+    }
+
     public boolean buildCity(Player p) {
-        if (p.equals(this.owner) || this.unitType != VertexUnit.SETTLEMENT) return false;
         this.unitType = VertexUnit.CITY;
         return true;
     }
@@ -152,16 +183,11 @@ public class Vertex {
         return edgeNeighbours;
     }
 
-    public boolean hasCommunityOf(Player player) {
-        return (this.unitType == VertexUnit.SETTLEMENT || this.unitType == VertexUnit.CITY)
-                && this.getOwner().equals(player);
-    }
-
-    public boolean isConnectedToEdgeUnitOwnedBy(Player player) {
+    public boolean hasNeighbourBuildingOf(Player player) {
         for (Edge edge : getEdgeNeighbours()) {
             for (Vertex vertex : edge.getVertexNeighbors()) {
                 // every vertex except ourself
-                if (!vertex.equals(this) && vertex.hasCommunityOf(player)) {
+                if (!vertex.equals(this) && vertex.isOwnedBy(player)) {
                     return true;
                 }
             }
@@ -169,8 +195,32 @@ public class Vertex {
         return false;
     }
 
+    private boolean isOwnedBy(Player player) {
+        return player.equals(this.getOwner());
+    }
+
     public boolean isOwnedByAnotherPlayer(Player player) {
         return !owner.equals(player);
+    }
+
+    public boolean isConnectedToRoadOwnedBy(Player player) {
+        for (Edge edge : getEdgeNeighbours()) {
+            if (edge.hasRoad() && edge.isOwnedBy(player))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean hasNoNeighbourBuildings() {
+        for (Edge edge : getEdgeNeighbours()) {
+            for (Vertex vertex : edge.getVertexNeighbors()) {
+                // every vertex except ourself must be unoccupied
+                if (!vertex.equals(this) && vertex.getUnitType() != VertexUnit.NONE) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public enum VertexUnit {

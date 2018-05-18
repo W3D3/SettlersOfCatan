@@ -105,11 +105,11 @@ public class Edge {
         // check for edgeUnits between each vertex
         Vertex curVertex = null;
         for (int i = 0; i < 2; i++) {
-            // the player has an edgeUnit to an unoccupied vertex
+            // the player has a road to this unoccupied vertex
             // or the player has an adjacent building
             curVertex = getVertexNeighbors()[i];
-            //curVertex = board.getVertexById(vertexIds[i]);
-            if (curVertex.hasCommunityOf(player) || (curVertex.isConnectedToEdgeUnitOwnedBy(player)
+
+            if (curVertex.hasNeighbourBuildingOf(player) || (curVertex.isConnectedToRoadOwnedBy(player)
                     && !(curVertex.isOwnedByAnotherPlayer(player)))) {
                 return true;
             }
@@ -119,24 +119,24 @@ public class Edge {
     }
 
     /**
-     * Build a road on edge
+     * Build a road on edge without any conditions
+     * Check {@canBuildRoad} first!
      *
      * @param player the edgeUnit ownerPlayerNumber
-     * @return true if player can build an edgeUnit on edge
      */
-    public boolean buildRoad(Player player) {
-        if (!canBuildRoad(player)) {
-            return false;
-        }
-
-        //ownerPlayerNumber = player.getPlayerNumber();
-        unitType = EdgeType.ROAD;
-        return true;
+    public void buildRoad(Player player) {
+        this.owner = player;
+        this.unitType = EdgeType.ROAD;
     }
 
     public Vertex[] getVertexNeighbors() {
         return vertexNeighbors;
     }
+
+    public boolean isOwnedBy(Player p) {
+        return p.equals(this.owner);
+    }
+
 
     @Override
     public String toString() {
