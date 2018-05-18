@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.Edge;
+import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -98,6 +100,45 @@ public class HexagonTests {
         Board b = new Board(players, true, 10);
         b.setupBoard();
 
-        assertEquals(54, b.getVertices().size());
+        assertEquals(54, b.getVerticesList().size());
     }
+
+    @Test
+    public void edgesHaveVertexNeighbors() throws Exception {
+
+        List<String> players = new ArrayList<>();
+        players.add("P1");
+        players.add("P2");
+        Board b = new Board(players, true, 10);
+        b.setupBoard();
+
+        int count0NB = 0;
+        int count1NB = 0;
+        int count2NB = 0;
+        int count3NB = 0;
+
+        for (Vertex vertex : b.getVerticesList()) {
+            switch (vertex.getEdgeNeighbours().size()) {
+                case 0:
+                    count0NB++;
+                    break;
+                case 1:
+                    count1NB++;
+                    break;
+                case 2:
+                    count2NB++;
+                    break;
+                case 3:
+                    count3NB++;
+                    break;
+            }
+        }
+
+        assertEquals(0, count0NB);
+        assertEquals(0, count1NB);
+        assertEquals(18, count2NB); // counted them
+        assertEquals(b.getVerticesList().size() - count2NB, count3NB); //the rest
+    }
+
+
 }

@@ -176,7 +176,7 @@ public class HexView extends View {
     }
 
     private void generateVerticePaths() {
-        for (Vertex v : board.getVertices()) {
+        for (Vertex v : board.getVerticesList()) {
             HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
             v.calculatePath(offset, scale);
         }
@@ -222,9 +222,8 @@ public class HexView extends View {
 
         for (Hex h : board.getHexagons()) {
             for (Edge e : h.getEdges()) {
-                HexPoint[] points = e.getPositions();
-                HexPoint from = points[0];
-                HexPoint to = points[1];
+                HexPoint from = e.getCoordinates().first;
+                HexPoint to = e.getCoordinates().first;
                 HexPoint drawFrom = from.scale(offset, scale);
                 HexPoint drawTo = to.scale(offset, scale);
                 switch (e.getUnitType()) {
@@ -243,7 +242,7 @@ public class HexView extends View {
 
         //TODO draw vertices
 
-        for (Vertex vertex : board.getVertices()) {
+        for (Vertex vertex : board.getVerticesList()) {
             Region region = new Region();
             region.setPath(vertex.getPath(), clip);
             vertex.setRegion(region);
@@ -365,7 +364,7 @@ public class HexView extends View {
     }
 
     private Vertex getVertexFromCoordinates(int x, int y) {
-        final List<Vertex> vertices = SettlerApp.board.getVertices();
+        final ArrayList<Vertex> vertices = (ArrayList<Vertex>) SettlerApp.board.getVerticesList();
         for (int i = 0; i < vertices.size(); i++) {
             Region r = vertices.get(i).getRegion();
             if (r.contains(x, y)) {

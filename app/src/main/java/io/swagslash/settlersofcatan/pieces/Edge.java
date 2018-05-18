@@ -1,11 +1,10 @@
 package io.swagslash.settlersofcatan.pieces;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import io.swagslash.settlersofcatan.Player;
-import io.swagslash.settlersofcatan.network.wifi.EdgeTypeConverter;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
+import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 
 /**
  * Created by wedenigc on 19.03.18.
@@ -17,12 +16,12 @@ public class Edge {
         NONE, ROAD
     }
 
-    @JsonField(typeConverter = EdgeTypeConverter.class)
     private EdgeType unitType;
-    @JsonField
-    private HexPoint[] positions;
-    @JsonField
-    private int ownerPlayerNumber = -1;
+    private HexPointPair coordinates;
+    private Player owner;
+    //private int ownerPlayerNumber = -1;
+    private Vertex[] vertexNeighbors;
+
     private transient Board board;
 
     /**
@@ -30,8 +29,7 @@ public class Edge {
      */
     public Edge() {
         this.unitType = EdgeType.NONE;
-        positions = new HexPoint[2];
-        ownerPlayerNumber = -1;
+        //ownerPlayerNumber = -1;
     }
 
     public Edge(Board board) {
@@ -42,13 +40,22 @@ public class Edge {
     public Edge(Board board, HexPoint v1, HexPoint v2) {
         //this.id = id;
         this.unitType = EdgeType.NONE;
-        positions = new HexPoint[2];
-        positions[0] = v1;
-        positions[1] = v2;
-        ownerPlayerNumber = -1;
+        coordinates = new HexPointPair(v1, v2);
+        //ownerPlayerNumber = -1;
         this.board = board;
+        // get vertexes
+        this.vertexNeighbors = new Vertex[2];
+
     }
 
+    public void connectToVertices() {
+        Vertex vertex1 = board.getVertexByPosition(coordinates.first);
+        Vertex vertex2 = board.getVertexByPosition(coordinates.second);
+        vertex1.addEdge(this);
+        vertex2.addEdge(this);
+        this.vertexNeighbors[0] = vertex1;
+        this.vertexNeighbors[1] = vertex2;
+    }
 
     /**
      * Get the unit type of the edge
@@ -65,38 +72,22 @@ public class Edge {
      * @return null if not used or the owner of this edge
      */
     public Player getOwner() {
-        return board.getPlayerById(ownerPlayerNumber);
+        return owner;
     }
 
     public void setUnitType(EdgeType unitType) {
         this.unitType = unitType;
     }
 
-    public void setPositions(HexPoint[] positions) {
-        this.positions = positions;
-    }
-
     public int getOwnerPlayerNumber() {
-        return ownerPlayerNumber;
+        return owner.getPlayerNumber();
     }
 
     public void setOwnerPlayerNumber(int ownerPlayerNumber) {
-        this.ownerPlayerNumber = ownerPlayerNumber;
+        this.owner = board.getPlayerById(ownerPlayerNumber);
     }
-
-    /**
-     * Set neighbor vertices for the edge
-     *
-     * @param v0 the first vertex
-     * @param v1 the second vertex
-     */
-    public void setPositions(HexPoint v0, HexPoint v1) {
-        positions[0] = v0;
-        positions[1] = v1;
-    }
-
-    public HexPoint[] getPositions() {
-        return positions;
+    public HexPointPair getCoordinates() {
+        return coordinates;
     }
 
     /**
@@ -116,7 +107,7 @@ public class Edge {
      *			or the player has an adjacent vertexUnit
      */
     public boolean canBuildRoad(Player player) {
-        if (ownerPlayerNumber != -1) {
+        if (owner != null) {
             return false;
         }
 
@@ -152,9 +143,13 @@ public class Edge {
         return true;
     }
 
+    public Vertex[] getVertexNeighbors() {
+        return vertexNeighbors;
+    }
+
     @Override
     public String toString() {
-        return "Edge: " + positions[0].toString() + " => " + positions[1].toString();
+        return "Edge: " + coordinates.toString();
 
     }
 
@@ -164,12 +159,11 @@ public class Edge {
             return false;
         }
         Edge e = (Edge) obj;
-        return (positions[0].equals(e.getPositions()[0]) && positions[1].equals(e.getPositions()[1]))
-                || (positions[0].equals(e.getPositions()[1]) && positions[1].equals(e.getPositions()[0]));
+        return e.coordinates.equals(this.coordinates);
     }
 
     @Override
     public int hashCode() {
         return 0;
-    }
+    } //TODO fix maybe?
 }

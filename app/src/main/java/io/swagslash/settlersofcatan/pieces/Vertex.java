@@ -7,6 +7,9 @@ import android.util.Pair;
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.network.wifi.VertexUnitConverter;
@@ -20,18 +23,15 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 @JsonObject
 public class Vertex {
 
-
     public enum VertexUnit {
         NONE, SETTLEMENT, CITY;
     }
 
-    @JsonField(typeConverter = VertexUnitConverter.class)
     private VertexUnit unitType;
 
-    @JsonField
     private Player owner;
-    @JsonField
     private HexPoint coordinates;
+    private List<Edge> edgeNeighbours;
 
     private Path path;
     private Region region;
@@ -47,7 +47,7 @@ public class Vertex {
     public Vertex(Board board, HexPoint coords) {
         this.unitType = VertexUnit.NONE;
         this.coordinates = coords;
-        //this.ownerPlayerNumber = -1;
+        this.edgeNeighbours = new ArrayList<>();
     }
 
     @Override
@@ -149,5 +149,18 @@ public class Vertex {
     @Override
     public String toString() {
         return "Vertex [" + this.getCoordinates().toString() + "]";
+    }
+
+    public void addEdge(Edge e) {
+        if(edgeNeighbours.size() >= 3 && !this.edgeNeighbours.contains(e)) {
+            throw new ArrayIndexOutOfBoundsException("Too many Edges for a Vertex!!!");
+        } else {
+            if(!this.edgeNeighbours.contains(e))
+                this.edgeNeighbours.add(e);
+        }
+    }
+
+    public List<Edge> getEdgeNeighbours() {
+        return edgeNeighbours;
     }
 }
