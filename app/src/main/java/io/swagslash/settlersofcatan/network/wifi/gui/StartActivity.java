@@ -28,7 +28,7 @@ public class StartActivity extends AppCompatActivity {
 
     private void startGame() {
         TextView tvPlayer = (TextView)findViewById(R.id.enterName);
-        SettlerApp.playerName=tvPlayer.getText().toString();
+        SettlerApp.playerName = tvPlayer.getText().toString();
         Intent i = new Intent(getApplicationContext(), BrowserActivity.class);
         startActivity(i);
     }

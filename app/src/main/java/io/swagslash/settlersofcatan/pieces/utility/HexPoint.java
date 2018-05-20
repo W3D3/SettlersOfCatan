@@ -2,20 +2,17 @@ package io.swagslash.settlersofcatan.pieces.utility;
 
 import android.util.Pair;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
 import java.text.DecimalFormat;
 
 /**
  * Created by logan on 2017-01-31.
  */
-@JsonObject
+
 public class HexPoint
 {
-    @JsonField
+
     public double x;
-    @JsonField
+
     public double y;
 
     public HexPoint(double x, double y)

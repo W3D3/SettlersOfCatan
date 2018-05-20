@@ -4,9 +4,7 @@ package io.swagslash.settlersofcatan.pieces;
  * Created by wedenigc on 19.03.18.
  */
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.peak.salut.Callbacks.SalutCallback;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,19 +20,18 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 /**
  * Represents a Catan board that holds all the Hexes
  */
-@JsonObject
+
 public class Board {
 
 
     private Phase phase;
 
-    @JsonField
     private List<Hex> hexagons;
-    @JsonField
+
     private List<Vertex> vertices;
 
     private List<Edge> edges;
-    @JsonField
+
     private List<Player> players;
     private HexGridLayout gridLayout;
 

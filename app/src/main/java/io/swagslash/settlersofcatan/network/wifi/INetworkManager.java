@@ -2,7 +2,7 @@ package io.swagslash.settlersofcatan.network.wifi;
 
 import android.app.Activity;
 
-import com.peak.salut.Salut;
+
 
 public interface INetworkManager {
 
@@ -11,5 +11,5 @@ public interface INetworkManager {
     void sendtoHost(Object message);
     boolean isHost();
     boolean isClient();
-    Salut getNetwork();
+
 }

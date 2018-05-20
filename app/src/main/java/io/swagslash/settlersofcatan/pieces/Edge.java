@@ -1,27 +1,24 @@
 package io.swagslash.settlersofcatan.pieces;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
 import io.swagslash.settlersofcatan.Player;
-import io.swagslash.settlersofcatan.network.wifi.EdgeTypeConverter;
+
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
 /**
  * Created by wedenigc on 19.03.18.
  */
-@JsonObject
+
 public class Edge {
 
     public enum EdgeType {
         NONE, ROAD
     }
 
-    @JsonField(typeConverter = EdgeTypeConverter.class)
+
     private EdgeType unitType;
-    @JsonField
+
     private HexPoint[] positions;
-    @JsonField
+
     private int ownerPlayerNumber = -1;
     private transient Board board;
 

@@ -1,23 +1,18 @@
 package io.swagslash.settlersofcatan;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.peak.salut.SalutDevice;
-
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 
 /**
  * Created by wedenigc on 19.03.18.
  */
-@JsonObject
+
 public class Player {
 
     public static final int MAX_SETTLEMENTS = 5;
     public static final int MAX_CITIES = 4;
     public static final int MAX_ROADS = 15;
 
-    public SalutDevice device;
 
     public enum Color {
         RED(0xFFFF0000),
@@ -36,17 +31,17 @@ public class Player {
         }
     }
 
-    @JsonField
+
     private int playerNumber;
-    @JsonField
+
     private int color;
-    @JsonField
+
     private String playerName;
-    @JsonField
+
     protected int numOwnedSettlements;
-    @JsonField
+
     protected int numOwnedCities;
-    @JsonField
+
     private int longestTradeRoute;
     //TODO send inventory
     private Inventory inventory;

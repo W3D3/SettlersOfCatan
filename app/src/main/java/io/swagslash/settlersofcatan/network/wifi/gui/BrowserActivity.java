@@ -10,24 +10,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.peak.salut.Callbacks.SalutCallback;
-import com.peak.salut.Salut;
-import com.peak.salut.SalutDevice;
 
-import java.util.ArrayList;
 
-import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
-import io.swagslash.settlersofcatan.network.wifi.DiscoveryCallback;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.MyLobbyServiceRecyclerViewAdapter;
 
-public class  BrowserActivity extends AppCompatActivity implements DiscoveryCallback.IDiscoveryCallback, MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, SwipeRefreshLayout.OnRefreshListener{
+public class  BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, SwipeRefreshLayout.OnRefreshListener{
 
     public static final String TAG = "LOBBYBROWSER";
 
-    public Salut network;
+
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private boolean backAllowed = false;
@@ -47,7 +42,6 @@ public class  BrowserActivity extends AppCompatActivity implements DiscoveryCall
         setRefreshing();
 
         lobbies = (LobbyServiceFragment) getSupportFragmentManager().findFragmentById(R.id.lobbyFrag);
-        DiscoveryCallback.activity = this;
     }
 
     @Override
@@ -60,20 +54,8 @@ public class  BrowserActivity extends AppCompatActivity implements DiscoveryCall
     }
 
     @Override
-    public void onClick(SalutDevice device) {
-        Log.d(TAG,"Try Register");
-        network.registerWithHost(device, new SalutCallback() {
-            @Override
-            public void call() {
-                Intent i = new Intent(getApplicationContext(), ClientLobbyActivity.class);
-                startActivity(i);
-            }
-        }, new SalutCallback() {
-            @Override
-            public void call() {
-                Log.d(TAG, "We failed to register.");
-            }
-        });
+    public void onClick() {
+
     }
 
 
@@ -97,11 +79,6 @@ public class  BrowserActivity extends AppCompatActivity implements DiscoveryCall
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if(network.isRunningAsHost)
-            network.stopNetworkService(false);
-        else
-            network.unregisterClient(false);
     }
 
     @Override
@@ -116,7 +93,7 @@ public class  BrowserActivity extends AppCompatActivity implements DiscoveryCall
     @Override
     public void onRefresh() {
         setupDiscovery();
-        lobbies.setLobbies(new ArrayList<SalutDevice>());
+        lobbies.setLobbies();
         setRefreshing();
     }
 
@@ -140,17 +117,8 @@ public class  BrowserActivity extends AppCompatActivity implements DiscoveryCall
         }
     }
 
-    private void setupDiscovery() {
-        network = SettlerApp.getManager().getNetwork();
 
-        stopDiscovery();
-        startDiscovery();
-    }
 
-    private void setupNetwork(){
-        INetworkManager manager = SettlerApp.getManager();
-        network = manager.getNetwork();
-    }
 
     private void setRefreshing() {
         refreshRunnable = new Runnable() {

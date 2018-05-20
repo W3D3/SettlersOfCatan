@@ -1,7 +1,5 @@
 package io.swagslash.settlersofcatan.pieces.utility;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +7,7 @@ import java.util.Collection;
 /**
  * Axial Position of a Hex
  */
-@JsonObject
+
 public class AxialHexLocation
 {
     public AxialHexLocation() {
@@ -21,9 +19,9 @@ public class AxialHexLocation
         this.r = r;
     }
 
-    @JsonField
+
     public  int q;
-    @JsonField
+
     public  int r;
 
     static public AxialHexLocation addAxial(AxialHexLocation a, AxialHexLocation b)

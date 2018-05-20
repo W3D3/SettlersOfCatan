@@ -4,12 +4,8 @@ import android.graphics.Path;
 import android.graphics.Region;
 import android.util.Pair;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.SettlerApp;
-import io.swagslash.settlersofcatan.network.wifi.VertexUnitConverter;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
@@ -17,20 +13,16 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
  * Created by wedenigc on 19.03.18.
  */
 
-@JsonObject
-public class Vertex {
 
+public class Vertex {
 
     public enum VertexUnit {
         NONE, SETTLEMENT, CITY;
     }
 
-    @JsonField(typeConverter = VertexUnitConverter.class)
     private VertexUnit unitType;
 
-    @JsonField
     private Player owner;
-    @JsonField
     private HexPoint coordinates;
 
     private Path path;

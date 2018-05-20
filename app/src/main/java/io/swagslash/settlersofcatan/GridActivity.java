@@ -19,12 +19,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.grid.HexView;
-import io.swagslash.settlersofcatan.network.wifi.DataCallback;
+
 import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 @Deprecated
-public class GridActivity extends AppCompatActivity implements DataCallback.IDataCallback {
+public class GridActivity extends AppCompatActivity {
 
     HexView hexView;
     private INetworkManager network;
@@ -72,10 +72,5 @@ public class GridActivity extends AppCompatActivity implements DataCallback.IDat
             container.removeView(zl);
             container.addView(hexView);
         }
-    }
-
-    @Override
-    public void onDataReceived(Object data) {
-
     }
 }

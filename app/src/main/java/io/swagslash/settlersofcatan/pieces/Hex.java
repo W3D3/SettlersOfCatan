@@ -5,15 +5,13 @@ import android.graphics.Path;
 import android.graphics.Region;
 import android.util.Pair;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import io.swagslash.settlersofcatan.network.wifi.TerrainTypeConverter;
+
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
@@ -22,21 +20,21 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 /**
  * Created by wedenigc on 19.03.18.
  */
-@JsonObject
+
 public class Hex {
-    @JsonField
+
     private int id;
-    @JsonField
+
     private NumberToken numberToken;
-    @JsonField(typeConverter = TerrainTypeConverter.class)
+
     private TerrainType terrainType;
-    @JsonField
+
     private AxialHexLocation hexLocation;
-    @JsonField
+
     private Boolean hasRobber;
-    @JsonField
+
     private List<HexPoint> verticesPositions;
-    @JsonField
+
     private List<Edge> edges;
 
     private Path path;

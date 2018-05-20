@@ -79,7 +79,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
     }
 
     public interface OnLobbyServiceClickListener {
-        void onClick(SalutDevice device);
+        void onClick();
     }
 
     public void addLobby(SalutDevice lobby) {
