@@ -1,7 +1,11 @@
 package io.swagslash.settlersofcatan;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,20 +14,28 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private final int FAB_MENU_DISTANCE = 145;
+    private final int FAB_MENU_DISTANCE = 165;
 
     protected Button cards;
-    protected ImageButton dice, endOfTurn, trading;
+    protected ImageButton dice_1, dice_2, endOfTurn, trading;
     protected FloatingActionButton fab, fabSettlement, fabCity, fabStreet;
     protected LinearLayout layoutSettlement, layoutCity, layoutStreet;
     protected Animation openMenu, closeMenu;
 
-    //protected ArrayList<FloatingActionButton> fabOptions;
+    //sensor
+    protected SensorManager sensorManager;
+    protected Sensor sensor;
+    protected ShakeDetector shakeDetector;
+
     protected boolean fabOpen;
 
     @SuppressLint("WrongViewCast")
@@ -56,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.layoutStreet.setVisibility(View.INVISIBLE);
 
         //image_btns
-        this.dice = findViewById(R.id.dice);
+        this.dice_1 = findViewById(R.id.dice_1);
+        this.dice_2 = findViewById(R.id.dice_2);
         this.endOfTurn = findViewById(R.id.end_of_turn);
         this.trading = findViewById(R.id.trading);
 
@@ -68,11 +81,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.fabSettlement.setOnClickListener(this);
         this.fabCity.setOnClickListener(this);
         this.fabStreet.setOnClickListener(this);
-        this.dice.setOnClickListener(this);
+        //this.dice.setOnClickListener(this);
         this.endOfTurn.setOnClickListener(this);
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
 
+        //sensor init
+        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            shakeDetector = new ShakeDetector();
+            shakeDetector.setShakeListener(new ShakeListener() {
+                @Override
+                public void onShake() {
+                    Dice d6 = new Dice();
+
+                    int roll1 = d6.roll();
+                    int roll2 = d6.roll();
+                    int totalRoll = roll1 + roll2;
+
+                    dice_1.setBackgroundResource(getResources().getIdentifier("io.swagslash.settlersofcatan:drawable/ic_dice_" + roll1, null, null));
+                    dice_2.setBackgroundResource(getResources().getIdentifier("io.swagslash.settlersofcatan:drawable/ic_dice_" + roll2, null, null));
+
+                    Toast t = Toast.makeText(getApplicationContext(), "your rolled a " + totalRoll, Toast.LENGTH_SHORT);
+                    t.show();
+                }
+            });
+            sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        sensorManager.unregisterListener(shakeDetector);
+        super.onPause();
     }
 
     @Override
@@ -93,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab_street:
                 tv.append("street clicked!");
                 break;
-            case R.id.dice:
+            case R.id.dice_1:
                 tv.append("dice clicked!");
                 break;
             case R.id.end_of_turn:
@@ -123,13 +171,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.layoutStreet.startAnimation(closeMenu);
             this.layoutStreet.animate().translationY(0);
         } else {
-            /*
-            byte offset = 1;
-            for(FloatingActionButton f : this.fabOptions){
-                f.startAnimation(openMenu);
-                f.animate().translationY(-1*(offset++*FAB_MENU_DISTANCE));
-            }
-            */
             byte offset = 1;
             this.layoutSettlement.startAnimation(openMenu);
             this.layoutSettlement.animate().translationY(-1 * (offset++ * FAB_MENU_DISTANCE));
