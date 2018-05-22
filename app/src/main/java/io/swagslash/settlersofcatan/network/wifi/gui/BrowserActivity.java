@@ -6,24 +6,29 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 
+import com.esotericsoftware.kryonet.Connection;
+
+import java.io.IOException;
 
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
-import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.MyLobbyServiceRecyclerViewAdapter;
+import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
 
-public class  BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, SwipeRefreshLayout.OnRefreshListener{
+public class  BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, SwipeRefreshLayout.OnRefreshListener, INetworkCallback{
 
     public static final String TAG = "LOBBYBROWSER";
 
-
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    private AbstractNetworkManager network;
 
     private boolean backAllowed = false;
     private LobbyServiceFragment lobbies;
@@ -35,12 +40,12 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
-        createNetwork();
-        setupNetwork();
+        network = SettlerApp.getManager();
+        network.init(this);
+        network.discover();
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
         setRefreshing();
-
         lobbies = (LobbyServiceFragment) getSupportFragmentManager().findFragmentById(R.id.lobbyFrag);
     }
 
@@ -53,26 +58,20 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
         super.onRestart();
     }
 
-    @Override
-    public void onClick() {
-
-    }
-
-
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnCreateLobby:
                 createLobby();
                 break;
             case R.id.btnDiscover:
-                startDiscovery();
+                lobbies.setLobbies(network.getHosts());
                 break;
                    }
     }
 
     public void createLobby() {
-        stopDiscovery();
         Intent i = new Intent(getApplicationContext(), HostLobbyActivity.class);
+        network.switchOut();
         startActivity(i);
     }
 
@@ -92,32 +91,9 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
 
     @Override
     public void onRefresh() {
-        setupDiscovery();
-        lobbies.setLobbies();
+        network.discover();
         setRefreshing();
     }
-
-    private void stopDiscovery(){
-        if(network.isDiscovering){
-            network.stopServiceDiscovery(false);
-        }
-    }
-
-    private void startDiscovery(){
-        network.discoverNetworkServices(new DiscoveryCallback(), true);
-    }
-
-    @Override
-    public void call() {
-        lobbies.setLobbies(network.foundDevices);
-
-        swipeRefreshLayout.setRefreshing(false);
-        if (refreshHandler != null) {
-            refreshHandler.removeCallbacks(refreshRunnable);
-        }
-    }
-
-
 
 
     private void setRefreshing() {
@@ -133,12 +109,15 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
         refreshHandler.postDelayed(refreshRunnable, 10000);
     }
 
-    void createNetwork(){
-        INetworkManager manager = SettlerApp.getManager();
-        Salut network = manager.getNetwork();
+    @Override
+    public void recieved(Connection connection, Object object) {
 
-        if (network == null) {
-            manager.init(this);
-        }
+
+
+    }
+
+    @Override
+    public void onClick(NetworkDevice host) {
+        network.connect(host.getAddress());
     }
 }

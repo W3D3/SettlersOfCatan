@@ -2,18 +2,16 @@ package io.swagslash.settlersofcatan;
 
 import android.app.Application;
 
-import com.peak.salut.SalutDevice;
-
 import java.util.List;
 
-import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
-import io.swagslash.settlersofcatan.network.wifi.NetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.GameClient;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 public class SettlerApp extends Application {
 
     public static String playerName;
-    private static INetworkManager network;
+    private static AbstractNetworkManager network;
     public static Board board;
 
     public String getPlayerName() {
@@ -27,17 +25,16 @@ public class SettlerApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        network = new NetworkManager();
+        //am anfang ist jeder client
+        network = new GameClient();
     }
 
-    public static INetworkManager getManager() {
+    public static AbstractNetworkManager getManager() {
         return network;
     }
-
-    public static void setNetwork(INetworkManager network) {
-        SettlerApp.network = network;
+    public static void setNetwork(AbstractNetworkManager newNetwork){
+        network = newNetwork;
     }
-
     public static void generateBoard(List<String> players){
 
         Board b = new Board(players, true, 10);
@@ -48,4 +45,6 @@ public class SettlerApp extends Application {
     public static Player getPlayer() {
         return SettlerApp.board.getPlayerByName(playerName);
     }
+
+
 }

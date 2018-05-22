@@ -5,29 +5,26 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import io.swagslash.settlersofcatan.grid.HexView;
 
-import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 @Deprecated
 public class GridActivity extends AppCompatActivity {
 
     HexView hexView;
-    private INetworkManager network;
+    private AbstractNetworkManager network;
     private Board board;
 
     @Override

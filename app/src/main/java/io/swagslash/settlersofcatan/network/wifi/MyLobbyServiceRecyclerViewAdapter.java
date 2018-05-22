@@ -8,19 +8,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.peak.salut.SalutDevice;
-
 import java.util.List;
 
 import io.swagslash.settlersofcatan.R;
 
 public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLobbyServiceRecyclerViewAdapter.ViewHolder> {
 
-    private final List<SalutDevice> mValues;
+    private final List<NetworkDevice> mValues;
     private final OnLobbyServiceClickListener clickListener;
     private final Context context;
 
-    public MyLobbyServiceRecyclerViewAdapter(List<SalutDevice> items, OnLobbyServiceClickListener listener, Context context) {
+    public MyLobbyServiceRecyclerViewAdapter(List<NetworkDevice> items, OnLobbyServiceClickListener listener, Context context) {
         mValues = items;
         clickListener = listener;
         this.context = context;
@@ -35,8 +33,8 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final SalutDevice device = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).readableName);
+        final NetworkDevice device = mValues.get(position);
+        holder.mIdView.setText(mValues.get(position).deviceName);
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,17 +70,17 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
         }
     }
 
-    public void setLobbies(List<SalutDevice> lobbies) {
+    public void setLobbies(List<NetworkDevice> lobbies) {
         mValues.clear();
         mValues.addAll(lobbies);
         this.notifyDataSetChanged();
     }
 
     public interface OnLobbyServiceClickListener {
-        void onClick();
+        void onClick(NetworkDevice host);
     }
 
-    public void addLobby(SalutDevice lobby) {
+    public void addLobby(NetworkDevice lobby) {
         mValues.add(lobby);
         this.notifyDataSetChanged();
     }
