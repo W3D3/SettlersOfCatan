@@ -4,6 +4,13 @@
     <string name="build_city">Build City</string>
     <string name="build_street">Build Street</string>
     <string name="victory_points">VP:</string>
+    <string name="default_trading_value">0</string>
+    <string name="resource_ore">Ore</string>
+    <string name="resource_lumber">Lumber</string>
+    <string name="resource_bricks">Bricks</string>
+    <string name="resource_grain">Grain</string>
+    <string name="resource_wool">Wool</string>
+
     <string name="cards">Cards</string>
     <string name="title_activity_settings">Settings</string>
 
