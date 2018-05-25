@@ -1,5 +1,10 @@
 package io.swagslash.settlersofcatan;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
+import java.util.Objects;
+
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 
@@ -98,6 +103,13 @@ public class Player {
         Player p = (Player) obj;
         return this.getPlayerNumber() == p.getPlayerNumber()
                 && this.getPlayerName().equals(p.getPlayerName());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public int hashCode() {
+        //one can dream right
+        return Objects.hash(playerNumber, playerName);
     }
 
     public enum Color {
