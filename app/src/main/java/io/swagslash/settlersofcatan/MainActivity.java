@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     protected boolean fabOpen;
 
-    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.fabSettlement.setOnClickListener(this);
         this.fabCity.setOnClickListener(this);
         this.fabStreet.setOnClickListener(this);
-        //this.dice.setOnClickListener(this);
         this.endOfTurn.setOnClickListener(this);
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
@@ -100,10 +98,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     int roll2 = d6.roll();
                     int totalRoll = roll1 + roll2;
 
-                    dice_1.setBackgroundResource(getResources().getIdentifier("io.swagslash.settlersofcatan:drawable/ic_dice_" + roll1, null, null));
-                    dice_2.setBackgroundResource(getResources().getIdentifier("io.swagslash.settlersofcatan:drawable/ic_dice_" + roll2, null, null));
+                    dice_1.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll1, "drawable", getPackageName()));
+                    dice_2.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll2, "drawable", getPackageName()));
 
-                    Toast t = Toast.makeText(getApplicationContext(), "your rolled a " + totalRoll, Toast.LENGTH_SHORT);
+                    Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + totalRoll, Toast.LENGTH_SHORT);
                     t.show();
                 }
             });
