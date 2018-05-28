@@ -1,54 +1,41 @@
 package io.swagslash.settlersofcatan.pieces;
 
-/**
- * Created by wedenigc on 19.03.18.
- */
-
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.peak.salut.Callbacks.SalutCallback;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
-import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
+import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 
 /**
- * Represents a Catan board that holds all the Hexes
+ * Represents a Catan board that holds all the Hexes etc.
  */
-@JsonObject
 public class Board {
 
 
     private Phase phase;
 
-    @JsonField
     private List<Hex> hexagons;
-    @JsonField
-    private List<Vertex> vertices;
-
-    private List<Edge> edges;
-    @JsonField
+    private HashMap<HexPoint, Vertex> vertices;
+    private HashMap<HexPointPair, Edge> edges;
     private List<Player> players;
     private HexGridLayout gridLayout;
 
     private boolean randomDiscard;
     private int winningPoints;
 
-    public Board() {
-    }
-
     public Board(List<String> playerNames, boolean randomDiscard, int winningPoints) {
         this.randomDiscard = randomDiscard;
         this.winningPoints = winningPoints;
         this.hexagons = new ArrayList<>();
-        this.vertices = new ArrayList<>();
+        this.vertices = new HashMap<>();
+        this.edges = new HashMap<>();
         this.players = new ArrayList<>(playerNames.size());
 
         if (playerNames.size() < 2 || playerNames.size() > 4)
@@ -58,6 +45,22 @@ public class Board {
         this.phase = Phase.IDLE;
     }
 
+    public Collection<Vertex> getVerticesList() {
+        return vertices.values();
+    }
+
+    public Collection<Edge> getEdgesList() {
+        return edges.values();
+    }
+
+    public HashMap<HexPoint, Vertex> getVertices() {
+        return vertices;
+    }
+
+    public HashMap<HexPointPair, Edge> getEdges() {
+        return edges;
+    }
+
     public enum Phase {
         SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY,
         PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
@@ -65,22 +68,11 @@ public class Board {
     }
 
     public void setPhase(Phase phase) {
-        if(phase == Phase.IDLE) {
-            SettlerApp.getManager().sendToAll(this);
-        }
         this.phase = phase;
     }
 
     public Phase getPhase() {
         return phase;
-    }
-
-    public List<Edge> getEdges() {
-        return edges;
-    }
-
-    public void setEdges(List<Edge> edges) {
-        this.edges = edges;
     }
 
     public Player getPlayerById(int playerId) {
@@ -94,22 +86,16 @@ public class Board {
         return null;
     }
 
-    public List<Vertex> getVertices() {
-        return vertices;
-    }
-
-    public void setVertices(List<Vertex> vertices) {
-        this.vertices = vertices;
-    }
-
     public Vertex getVertexByPosition(HexPoint position) {
-//        return vertices.get(position);
-        for (Vertex v : vertices) {
-            if (v.getCoordinates().equals(position)) {
-                return v;
-            }
-        }
-        return new Vertex();
+        return vertices.get(position);
+    }
+
+    public Edge getEdgeByPosition(HexPointPair pair) {
+        return edges.get(pair);
+    }
+
+    public Edge getEdgeByPosition(HexPoint first, HexPoint second) {
+        return this.getEdgeByPosition(new HexPointPair(first, second));
     }
 
     public List<Hex> getHexagons() {
@@ -128,12 +114,17 @@ public class Board {
             boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
             Hex hex = new Hex(this, terrainsShuffled.pop(), location);
             if (needsNumberToken) hex.setNumberToken(numberTokens.pop());
-            hex.calculateVertices(gridLayout);
+            hex.calculateVerticesAndEdges(gridLayout);
             hexagons.add(hex);
-            for (HexPoint point : hex.getVerticesPositions()) {
-                Vertex v = new Vertex(this, point);
-                if (!vertices.contains(v)) {
-                    this.vertices.add(v);
+            for (Vertex v : hex.getVertices()) {
+                if (!vertices.containsValue(v)) {
+                    this.vertices.put(v.getCoordinates(), v);
+                }
+            }
+            for (Edge e : hex.getEdges()) {
+                e.connectToVertices();
+                if (!edges.containsValue(e)) {
+                    this.edges.put(e.getCoordinates(), e);
                 }
             }
 
