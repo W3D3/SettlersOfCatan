@@ -77,6 +77,14 @@ public class Vertex {
         this.owner = owner;
     }
 
+
+    /*
+    Need in the Robber Class
+     */
+    public Player getOwner() {
+        return owner;
+    }
+
     public void buildSettlement(Player p) {
         this.unitType = VertexUnit.SETTLEMENT;
         this.setOwner(p);

@@ -23,11 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GridActivity"/>
+        <activity android:name=".GridActivity" />
         <activity android:name=".network.wifi.gui.HostLobbyActivity" />
         <activity android:name=".gui.MainActivity" />
         <activity android:name=".network.wifi.gui.BrowserActivity" />
-        <activity android:name=".network.wifi.gui.ClientLobbyActivity"></activity>
+        <activity android:name=".network.wifi.gui.ClientLobbyActivity" />
+        <activity android:name=".RobPlayerActivity"></activity>
     </application>
 
 </manifest>

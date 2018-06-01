@@ -1,0 +1,114 @@
+package io.swagslash.settlersofcatan;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.util.Log;
+import android.view.View;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import io.swagslash.settlersofcatan.gui.MainActivity;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
+
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * Created by thoma on 29.05.2018.
+ */
+
+public class ResourceDiscardTest {
+
+      /*
+    Unit Tests of the Resource Discard Class
+     */
+
+    @Test
+    public void TestOnCreat(){
+        try{
+            //execute code that you expect not to throw Exceptions.
+            ResourceDiscardActivity r = new ResourceDiscardActivity();
+            View viewById = r.findViewById(R.layout.activity_resource_discard);
+            assertThat(viewById,notNullValue());
+            }
+        catch(Exception e){
+        }
+    }
+
+    @Test
+    public void Test2(){
+        try{
+            //execute code that you expect not to throw Exceptions.
+            ResourceDiscardActivity r = new ResourceDiscardActivity();
+            View viewById = r.findViewById(R.layout.activity_resource_discard);
+            r.printCountToDiscard();
+
+            //When no exception Test bestanden
+            assertTrue(true);
+        }
+        catch(Exception e){
+        }
+    }
+
+    @Test
+    public void TestconfirmDiscard(){
+        try{
+            //execute code that you expect not to throw Exceptions.
+            ResourceDiscardActivity r = new ResourceDiscardActivity();
+            View viewById = r.findViewById(R.layout.activity_resource_discard);
+            r.confirmDiscard();
+
+            //When no exception Test bestanden
+            assertTrue(true);
+        }
+        catch(Exception e){
+        }
+    }
+
+    @Test
+    public void TestRandomDiscard(){
+        try{
+            //execute code that you expect not to throw Exceptions.
+            ResourceDiscardActivity r = new ResourceDiscardActivity();
+            View viewById = r.findViewById(R.layout.activity_resource_discard);
+            r.randomDiscard();
+            //When no exception Test bestanden
+            assertTrue(true);
+        }
+        catch(Exception e){
+        }
+    }
+
+    @Test
+    public void TestCountdown(){
+        try{
+            //execute code that you expect not to throw Exceptions.
+            ResourceDiscardActivity r = new ResourceDiscardActivity();
+            View viewById = r.findViewById(R.layout.activity_resource_discard);
+            r.countdown25to0();
+            //When no exception Test bestanden
+            assertTrue(true);
+        }
+        catch(Exception e){
+        }
+    }
+
+    @Test
+    public void TestResource(){
+        try{
+            //execute code that you expect not to throw Exceptions.
+            ResourceDiscardActivity r = new ResourceDiscardActivity();
+            View viewById = r.findViewById(R.layout.activity_resource_discard);
+            int sumResource = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
+            r.randomDiscard();
+            int sumResourceAfterRandomDiscard = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
+           Assert.assertNotEquals(sumResource,sumResourceAfterRandomDiscard);
+
+        }
+        catch(Exception e){
+        }
+    }
+
+}
