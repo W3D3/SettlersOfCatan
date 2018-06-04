@@ -1,5 +1,6 @@
 package io.swagslash.settlersofcatan.network.wifi.gui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,14 +8,21 @@ import android.view.View;
 
 import com.esotericsoftware.kryonet.Connection;
 
+import java.lang.reflect.Array;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.GameClient;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
+import io.swagslash.settlersofcatan.pieces.Board;
 
 public class ClientLobbyActivity extends AppCompatActivity implements INetworkCallback {
 
@@ -31,6 +39,8 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
         setContentView(R.layout.activity_client_lobby);
         network = SettlerApp.getManager();
         network.switchIn(this);
+
+
     }
 
     public void onClick(View v){
@@ -63,10 +73,21 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
     }
 
     @Override
-    public void recieved(Connection connection, Object object) {
+    public void received(Connection connection, Object object) {
         if (object instanceof Network.UpdateNames) {
             Network.UpdateNames updateNames = (Network.UpdateNames)object;
             Log.d(TAG, updateNames.names.toString());
+            member.clear();
+            for(String s: updateNames.names){
+               member.add(new NetworkDevice(s, null));
+            }
+            return;
+        }
+        if (object instanceof Board) {
+            SettlerApp.board = (Board) object;
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            network.switchOut();
+            startActivity(i);
             return;
         }
     }

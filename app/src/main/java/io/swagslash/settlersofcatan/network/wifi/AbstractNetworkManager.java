@@ -13,9 +13,7 @@ import java.util.List;
 
 public abstract class AbstractNetworkManager {
 
-    public void init(INetworkCallback activity){
-
-    }
+    public abstract void init(INetworkCallback activity);
 
     public void switchOut(){
 
@@ -33,9 +31,7 @@ public abstract class AbstractNetworkManager {
 
     }
 
-    public void sendtoHost(Object message) {
-
-    }
+    public abstract void sendtoHost(Object message);
 
     public void discover(){    }
 

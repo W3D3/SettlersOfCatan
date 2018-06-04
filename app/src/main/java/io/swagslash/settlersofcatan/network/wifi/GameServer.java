@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameServer extends AbstractNetworkManager {
@@ -13,11 +14,12 @@ public class GameServer extends AbstractNetworkManager {
 
 
     public GameServer() throws IOException {
-        server = new Server() {
+        server = new Server(32768,16384) {
             protected Connection newConnection(){
                 return new GameConnection();
             }
         };
+        Network.register(server);
 
         server.bind(Network.TCP,Network.UDP);
         server.start();
@@ -27,6 +29,7 @@ public class GameServer extends AbstractNetworkManager {
     public void init(INetworkCallback activity){
         listener = new NetworkListener(activity);
         server.addListener(listener);
+        devices = new ArrayList();
     }
 
     @Override
@@ -41,8 +44,13 @@ public class GameServer extends AbstractNetworkManager {
     }
 
     @Override
-    public void sendToAll(Object message) {
-        server.sendToAllTCP(message);
+    public void sendToAll(final Object message) {
+        new Thread("Sending") {
+            public void run () {
+                 server.sendToAllTCP(message);
+                 }
+        }.start();
+
     }
 
     @Override

@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.SettlerApp;
+
 public class GameClient extends AbstractNetworkManager {
 
     Client client;
@@ -14,17 +16,17 @@ public class GameClient extends AbstractNetworkManager {
     List<NetworkDevice> hosts;
 
     public GameClient() {
-       client = new Client();
-       client.start();
+       client = new Client(16384,16384);
+//       client.start();
        Network.register(client);
     }
 
     public void connect(final InetAddress host){
 
-        new Thread("Discover") {
+        new Thread("Connect") {
             public void run () {
                 try {
-                    client.connect(5000, host, Network.TCP);
+                    client.connect(1000, host, Network.TCP);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -51,8 +53,19 @@ public class GameClient extends AbstractNetworkManager {
     }
 
     @Override
-    public void sendToAll(Object message) {
-        client.sendTCP(message);
+    public void sendToAll(final Object message) {
+        if (!client.isConnected()){
+            try {
+                client.reconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        new Thread("Sending") {
+            public void run () {
+                client.sendTCP(message);
+            }
+        }.start();
     }
 
     @Override
@@ -67,6 +80,18 @@ public class GameClient extends AbstractNetworkManager {
 
             }
         }.start();
+    }
+
+    @Override
+    public void sendtoHost(Object message) {
+        if(!client.isConnected()) {
+            try {
+                client.reconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        client.sendTCP(message);
     }
 
     @Override

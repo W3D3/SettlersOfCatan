@@ -43,15 +43,17 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        com.esotericsoftware.minlog.Log
+                .set(com.esotericsoftware.minlog.Log.LEVEL_DEBUG);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
         network = SettlerApp.getManager();
         network.init(this);
-        network.discover();
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
         setRefreshing();
         lobbies = (LobbyServiceFragment) getSupportFragmentManager().findFragmentById(R.id.lobbyFrag);
+        network.discover();
     }
 
     @Override
@@ -115,7 +117,7 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
     }
 
     @Override
-    public void recieved(Connection connection, Object object) {
+    public void received(Connection connection, Object object) {
 
     }
 
@@ -137,10 +139,10 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
         @Override
         protected Boolean doInBackground(Void... voids) {
             Boolean connectionEstablished = false;
-
-            client.start();
+            client.setKeepAliveTCP(1000);
+            new Thread(client).start();
             try {
-                client.connect(1000, ip, Network.TCP);
+                client.connect(150000, ip, Network.TCP, Network.UDP);
                 connectionEstablished = true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -154,6 +156,7 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
             if (connectionEstablished.booleanValue()) {
                 network.setClient(client);
                 Intent intent = new Intent(getApplicationContext(),ClientLobbyActivity.class);
+                network.switchOut();
                 startActivity(intent);
                 finish();
             } else {

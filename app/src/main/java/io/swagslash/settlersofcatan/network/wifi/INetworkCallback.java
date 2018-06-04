@@ -4,6 +4,6 @@ import com.esotericsoftware.kryonet.Connection;
 
 public interface INetworkCallback {
 
-    public void recieved(Connection connection, Object object);
+    void received(Connection connection, Object object);
 
 }

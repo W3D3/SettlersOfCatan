@@ -42,6 +42,7 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
             e.printStackTrace();
         }
         network = SettlerApp.getManager();
+
         network.init(this);
         frag = (LobbyMemberFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_lobby);
 
@@ -100,7 +101,7 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
     }
 
     @Override
-    public void recieved(Connection connection, Object object) {
+    public void received(Connection connection, Object object) {
             GameServer.GameConnection gamecon = (GameServer.GameConnection)connection;
 
             if(object instanceof Network.RegisterName){
@@ -111,9 +112,17 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
                 name = name.trim();
                 if(name.length() == 0) return;
                 gamecon.name = name;
-                network.addMember(new NetworkDevice(gamecon.name, (InetAddress) gamecon.getRemoteAddressTCP().getAddress()));
-                updateMember();
-                frag.setMember(network.getDevices());
+                final String conname = gamecon.name;
+                final InetAddress address = gamecon.getRemoteAddressTCP().getAddress();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        network.addMember(new NetworkDevice(conname, address));
+                        updateMember();
+                        frag.setMember(network.getDevices());
+                    }
+                });
+
             }
 
             if(object instanceof Board){

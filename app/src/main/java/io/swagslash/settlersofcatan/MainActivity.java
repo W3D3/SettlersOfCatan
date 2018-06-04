@@ -16,15 +16,18 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.esotericsoftware.kryonet.Connection;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.io.IOException;
 
 import io.swagslash.settlersofcatan.grid.HexView;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.pieces.Board;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
 
     private final int FAB_MENU_DISTANCE = 145;
 
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     HexView hexView;
     private Board board;
+    private AbstractNetworkManager network;
 
     //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setupHexView();
+        network = SettlerApp.getManager();
+        network.switchIn(this);
         //setContentView(R.layout.activity_main);
 
 
@@ -206,5 +212,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         return; //TODO maybe dialog option to exit?
+    }
+
+    @Override
+    public void received(Connection connection, Object object) {
+        if (object instanceof Board) {
+            SettlerApp.board = (Board) object;
+            hexView.redraw();
+            return;
+        }
     }
 }
