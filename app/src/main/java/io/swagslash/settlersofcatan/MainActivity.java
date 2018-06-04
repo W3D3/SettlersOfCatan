@@ -219,6 +219,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (object instanceof Board) {
             SettlerApp.board = (Board) object;
             hexView.redraw();
+            if(network.isHost()){
+                network.sendtoAllExcept(connection.getID(), object);
+            }
             return;
         }
     }
