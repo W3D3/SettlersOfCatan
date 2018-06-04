@@ -2,17 +2,21 @@ package io.swagslash.settlersofcatan.network.wifi.gui;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 
+import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
@@ -20,6 +24,7 @@ import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.MyLobbyServiceRecyclerViewAdapter;
+import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
 
 public class  BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, SwipeRefreshLayout.OnRefreshListener, INetworkCallback{
@@ -112,12 +117,48 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
     @Override
     public void recieved(Connection connection, Object object) {
 
-
-
     }
 
     @Override
     public void onClick(NetworkDevice host) {
-        network.connect(host.getAddress());
+        new EstablishConnection(host.getAddress()).execute();
+//        network.connect(host.getAddress());
+    }
+
+    private class EstablishConnection extends AsyncTask<Void, Void, Boolean> {
+        InetAddress ip;
+        Client client;
+
+        public EstablishConnection(InetAddress ip) {
+            this.ip = ip;
+            this.client = network.getClient();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            Boolean connectionEstablished = false;
+
+            client.start();
+            try {
+                client.connect(1000, ip, Network.TCP);
+                connectionEstablished = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                connectionEstablished = false;
+            }
+            return connectionEstablished;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean connectionEstablished) {
+            if (connectionEstablished.booleanValue()) {
+                network.setClient(client);
+                Intent intent = new Intent(getApplicationContext(),ClientLobbyActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Log.d(TAG,"Connection failed");
+            }
+        }
     }
 }

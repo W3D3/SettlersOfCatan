@@ -88,4 +88,14 @@ public class GameClient extends AbstractNetworkManager {
     public void disconnect() {
         client.close();
     }
+
+    @Override
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    @Override
+    public Client getClient() {
+        return this.client;
+    }
 }

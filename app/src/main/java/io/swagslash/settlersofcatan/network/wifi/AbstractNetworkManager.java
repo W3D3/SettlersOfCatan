@@ -2,6 +2,7 @@ package io.swagslash.settlersofcatan.network.wifi;
 
 import android.app.Activity;
 
+import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
@@ -70,4 +71,12 @@ public abstract class AbstractNetworkManager {
 
     }
     public List<NetworkDevice> getHosts(){return null;}
+
+    public void setClient(Client client){
+
+    }
+
+    public Client getClient(){
+        return null;
+    }
 }
