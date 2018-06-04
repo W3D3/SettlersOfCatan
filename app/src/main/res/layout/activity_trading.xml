@@ -10,15 +10,13 @@
         android:id="@+id/offerer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:text="Your Offer"
-        app:layout_constraintBottom_toTopOf="@+id/divider0"
-        app:layout_constraintEnd_toStartOf="@+id/vertical_divider"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,27 +24,14 @@
         android:id="@+id/offeree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:text="Your Demand"
-        app:layout_constraintBottom_toTopOf="@+id/divider0"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/vertical_divider"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/divider0"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="24dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -61,11 +46,11 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_ore"
-        app:layout_constraintBottom_toTopOf="@+id/divider1"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toStartOf="@+id/ore_offerer_minus"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <ImageButton
         android:id="@+id/ore_offerer_minus"
@@ -78,9 +63,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider1"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toStartOf="@+id/ore_offerer_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <TextView
         android:id="@+id/ore_offerer_value"
@@ -91,9 +76,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toTopOf="@+id/divider1"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toStartOf="@+id/ore_offerer_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <ImageButton
         android:id="@+id/ore_offerer_plus"
@@ -105,9 +90,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider1"
-        app:layout_constraintEnd_toStartOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <TextView
         android:id="@+id/ore_offeree_text"
@@ -121,10 +106,10 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_ore"
-        app:layout_constraintBottom_toTopOf="@+id/divider1"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toStartOf="@+id/ore_offeree_minus"
-        app:layout_constraintStart_toEndOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <ImageButton
         android:id="@+id/ore_offeree_minus"
@@ -137,9 +122,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider1"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toStartOf="@+id/ore_offeree_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <TextView
         android:id="@+id/ore_offeree_value"
@@ -150,9 +135,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toTopOf="@+id/divider1"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toStartOf="@+id/ore_offeree_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <ImageButton
         android:id="@+id/ore_offeree_plus"
@@ -164,19 +149,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider1"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
-
-    <View
-        android:id="@+id/divider1"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="64dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider0" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <TextView
         android:id="@+id/lumber_offerer_text"
@@ -190,10 +165,11 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_lumber"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toStartOf="@+id/lumber_offerer_minus"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <ImageButton
         android:id="@+id/lumber_offerer_minus"
@@ -205,9 +181,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toStartOf="@+id/lumber_offerer_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <TextView
         android:id="@+id/lumber_offerer_value"
@@ -218,9 +194,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toStartOf="@+id/lumber_offerer_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <ImageButton
         android:id="@+id/lumber_offerer_plus"
@@ -232,27 +208,26 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
-        app:layout_constraintEnd_toStartOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <TextView
         android:id="@+id/lumber_offeree_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginRight="12dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_lumber"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toStartOf="@+id/lumber_offeree_minus"
-        app:layout_constraintStart_toEndOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider1"
-        app:layout_constraintVertical_bias="0.517" />
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <ImageButton
         android:id="@+id/lumber_offeree_minus"
@@ -264,9 +239,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toStartOf="@+id/lumber_offeree_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <TextView
         android:id="@+id/lumber_offeree_value"
@@ -277,9 +252,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toStartOf="@+id/lumber_offeree_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <ImageButton
         android:id="@+id/lumber_offeree_plus"
@@ -291,20 +266,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider2"
+        app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
-
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="64dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+        app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <TextView
         android:id="@+id/bricks_offerer_text"
@@ -318,10 +282,11 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_bricks"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/bricks_offerer_minus"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <ImageButton
         android:id="@+id/bricks_offerer_minus"
@@ -333,9 +298,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/bricks_offerer_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <TextView
         android:id="@+id/bricks_offerer_value"
@@ -346,9 +311,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/bricks_offerer_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <ImageButton
         android:id="@+id/bricks_offerer_plus"
@@ -360,9 +325,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
-        app:layout_constraintEnd_toStartOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <TextView
         android:id="@+id/bricks_offeree_text"
@@ -376,11 +341,10 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_bricks"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/bricks_offeree_minus"
-        app:layout_constraintStart_toEndOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider2"
-        app:layout_constraintVertical_bias="0.517" />
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <ImageButton
         android:id="@+id/bricks_offeree_minus"
@@ -392,9 +356,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/bricks_offeree_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <TextView
         android:id="@+id/bricks_offeree_value"
@@ -405,9 +369,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toStartOf="@+id/bricks_offeree_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <ImageButton
         android:id="@+id/bricks_offeree_plus"
@@ -419,20 +383,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
-
-    <View
-        android:id="@+id/divider3"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="64dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <TextView
         android:id="@+id/grain_offerer_text"
@@ -446,10 +399,11 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_grain"
-        app:layout_constraintBottom_toBottomOf="@+id/divider4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toStartOf="@+id/grain_offerer_minus"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <ImageButton
         android:id="@+id/grain_offerer_minus"
@@ -462,9 +416,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toBottomOf="@+id/divider4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toStartOf="@+id/grain_offerer_value"
-        app:layout_constraintTop_toTopOf="@+id/divider3" />
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <TextView
         android:id="@+id/grain_offerer_value"
@@ -475,9 +429,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toTopOf="@+id/divider4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toStartOf="@+id/grain_offerer_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <ImageButton
         android:id="@+id/grain_offerer_plus"
@@ -489,9 +443,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider4"
-        app:layout_constraintEnd_toStartOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <TextView
         android:id="@+id/grain_offeree_text"
@@ -505,10 +459,10 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_grain"
-        app:layout_constraintBottom_toBottomOf="@+id/divider4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toStartOf="@+id/grain_offeree_minus"
-        app:layout_constraintStart_toEndOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <ImageButton
         android:id="@+id/grain_offeree_minus"
@@ -521,9 +475,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toBottomOf="@+id/divider4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toStartOf="@+id/grain_offeree_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <TextView
         android:id="@+id/grain_offeree_value"
@@ -534,9 +488,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toTopOf="@+id/divider4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toStartOf="@+id/grain_offeree_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <ImageButton
         android:id="@+id/grain_offeree_plus"
@@ -548,20 +502,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline8"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/divider3" />
-
-    <View
-        android:id="@+id/divider4"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="64dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <TextView
         android:id="@+id/wool_offerer_text"
@@ -575,10 +518,11 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_wool"
-        app:layout_constraintBottom_toTopOf="@+id/divider5"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/wool_offerer_minus"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <ImageButton
         android:id="@+id/wool_offerer_minus"
@@ -590,9 +534,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider5"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/wool_offerer_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <TextView
         android:id="@+id/wool_offerer_value"
@@ -603,9 +547,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toBottomOf="@+id/vertical_divider"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/wool_offerer_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <ImageButton
         android:id="@+id/wool_offerer_plus"
@@ -617,9 +561,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider5"
-        app:layout_constraintEnd_toStartOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <TextView
         android:id="@+id/wool_offeree_text"
@@ -633,11 +577,10 @@
         android:layout_marginTop="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="@string/resource_wool"
-        app:layout_constraintBottom_toTopOf="@+id/divider5"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/wool_offeree_minus"
-        app:layout_constraintStart_toEndOf="@+id/vertical_divider"
-        app:layout_constraintTop_toBottomOf="@+id/divider4"
-        app:layout_constraintVertical_bias="0.517" />
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <ImageButton
         android:id="@+id/wool_offeree_minus"
@@ -649,9 +592,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_minus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider5"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/wool_offeree_value"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <TextView
         android:id="@+id/wool_offeree_value"
@@ -662,9 +605,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/default_trading_value"
-        app:layout_constraintBottom_toBottomOf="@+id/vertical_divider"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toStartOf="@+id/wool_offeree_plus"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <ImageButton
         android:id="@+id/wool_offeree_plus"
@@ -676,35 +619,9 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/ic_plus"
         android:onClick="onMinusPlusClick"
-        app:layout_constraintBottom_toTopOf="@+id/divider5"
+        app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
-
-    <View
-        android:id="@+id/divider5"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="64dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
-
-    <View
-        android:id="@+id/vertical_divider"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@+id/divider5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="@+id/divider4"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/player_trading_list"
@@ -716,7 +633,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vertical_divider" />
+        app:layout_constraintTop_toTopOf="@+id/guideline9" />
 
     <Button
         android:id="@+id/send"
@@ -732,4 +649,54 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="88dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="152dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="216dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="280dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="344dp" />
+
 </android.support.constraint.ConstraintLayout>
