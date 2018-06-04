@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Debug;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
@@ -153,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.trading:
                 tv.append("trading clicked!");
                 Intent in2 = new Intent(this, TradingActivity.class);
+                //Debug.startMethodTracing("trading_" + new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss").format(new Date()));
                 startActivity(in2);
                 break;
             default:

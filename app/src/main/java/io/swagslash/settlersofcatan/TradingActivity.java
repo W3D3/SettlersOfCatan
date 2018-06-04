@@ -1,16 +1,16 @@
 package io.swagslash.settlersofcatan;
 
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Debug;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class TradingActivity extends AppCompatActivity{
+public class TradingActivity extends AppCompatActivity {
 
     private RecyclerView rv;
     private RecyclerView.Adapter rva;
@@ -112,5 +112,6 @@ public class TradingActivity extends AppCompatActivity{
                 break;
         }
         tv.setText(String.valueOf(val));
+        //Debug.stopMethodTracing();
     }
 }
