@@ -1,4 +1,9 @@
 io.swagslash.settlersofcatan
+io.swagslash.settlersofcatan.controller
+io.swagslash.settlersofcatan.grid
+io.swagslash.settlersofcatan.network.wifi
+io.swagslash.settlersofcatan.network.wifi.gui
 io.swagslash.settlersofcatan.pieces
 io.swagslash.settlersofcatan.pieces.items
 io.swagslash.settlersofcatan.pieces.utility
+io.swagslash.settlersofcatan.utility

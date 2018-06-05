@@ -42,7 +42,7 @@ public class ResourceDistributionTests {
         for (Hex hex : b.getHexagons()) {
             for(int i = 0; i < 6; i++)
             {
-                if(hex.getVertexPositions(i).equals(selectedVertex.getCoordinates())) {
+                if(hex.getVertices().get(i).getCoordinates().equals(selectedVertex.getCoordinates())) {
                     adjacentHexes.add(hex);
                     System.out.println(hex.toString());
                 }
