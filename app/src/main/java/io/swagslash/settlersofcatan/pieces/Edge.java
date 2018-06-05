@@ -90,6 +90,8 @@ public class Edge {
         return (unitType == EdgeType.ROAD);
     }
 
+
+
     /**
      * Determine if the player can build on this edge
      *
@@ -101,6 +103,10 @@ public class Edge {
         if (owner != null) {
             return false;
         }
+
+
+
+
 
         // check for edgeUnits between each vertex
         Vertex curVertex = null;
