@@ -360,7 +360,7 @@ public class HexView extends View {
         switch (SettlerApp.board.getPhase()) {
 
             case SETUP_SETTLEMENT:
-                GameController.buildSettlement(vertex);
+                GameController.getInstance().buildSettlement(vertex, SettlerApp.getPlayer());
                 SettlerApp.board.setPhase(Board.Phase.IDLE);
                 generateVerticePaths();
                 redraw();
