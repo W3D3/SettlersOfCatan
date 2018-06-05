@@ -48,8 +48,6 @@ public class  BrowserActivity extends AppCompatActivity implements DiscoveryCall
 
         lobbies = (LobbyServiceFragment) getSupportFragmentManager().findFragmentById(R.id.lobbyFrag);
         DiscoveryCallback.activity = this;
-
-
     }
 
     @Override

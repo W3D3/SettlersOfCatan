@@ -1,13 +1,8 @@
 package io.swagslash.settlersofcatan.pieces;
 
-/**
- * Created by wedenigc on 19.03.18.
- */
-
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -16,49 +11,60 @@ import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
+import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 
 /**
- * Represents a Catan board that holds all the Hexes
+ * Represents a Catan board that holds all the Hexes etc.
  */
-@JsonObject
 public class Board {
 
 
     private Phase phase;
 
-    @JsonField
     private List<Hex> hexagons;
-    private HashMap<HexPoint, Vertex> pointToVertices;
-    private List<Edge> edges;
+    private HashMap<HexPoint, Vertex> vertices;
+    private HashMap<HexPointPair, Edge> edges;
     private List<Player> players;
     private HexGridLayout gridLayout;
 
     private boolean randomDiscard;
     private int winningPoints;
 
-    public Board(){
-    }
-
     public Board(List<String> playerNames, boolean randomDiscard, int winningPoints) {
         this.randomDiscard = randomDiscard;
         this.winningPoints = winningPoints;
         this.hexagons = new ArrayList<>();
-        this.pointToVertices = new HashMap<>();
+        this.vertices = new HashMap<>();
+        this.edges = new HashMap<>();
+        this.players = new ArrayList<>(playerNames.size());
 
-        if(playerNames.size() < 2 || playerNames.size() > 4)
+        if (playerNames.size() < 2 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
-        players = new ArrayList<>(playerNames.size());
-        for (int i = 0; i < playerNames.size(); i++) {
-            players.add(i, new Player(this, i, Player.Color.NONE, playerNames.get(i)));
+        generatePlayers(playerNames);
+        this.phase = Phase.IDLE;
+    }
 
-        }
+    public Collection<Vertex> getVerticesList() {
+        return vertices.values();
+    }
+
+    public Collection<Edge> getEdgesList() {
+        return edges.values();
+    }
+
+    public HashMap<HexPoint, Vertex> getVertices() {
+        return vertices;
+    }
+
+    public HashMap<HexPointPair, Edge> getEdges() {
+        return edges;
     }
 
     public enum Phase {
         SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY,
         PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
-        FINISHED_GAME;
+        FINISHED_GAME, IDLE;
     }
 
     public void setPhase(Phase phase) {
@@ -73,12 +79,23 @@ public class Board {
         return players.get(playerId);
     }
 
-    public HashMap<HexPoint, Vertex> getVertices() {
-        return pointToVertices;
+    public Player getPlayerByName(String name) {
+        for (Player p : players) {
+            if(p.getPlayerName().equals(name)) return p;
+        }
+        return null;
     }
 
     public Vertex getVertexByPosition(HexPoint position) {
-        return pointToVertices.get(position);
+        return vertices.get(position);
+    }
+
+    public Edge getEdgeByPosition(HexPointPair pair) {
+        return edges.get(pair);
+    }
+
+    public Edge getEdgeByPosition(HexPoint first, HexPoint second) {
+        return this.getEdgeByPosition(new HexPointPair(first, second));
     }
 
     public List<Hex> getHexagons() {
@@ -86,8 +103,6 @@ public class Board {
     }
 
     public void setupBoard() {
-        //if(diameter % 2 == 0) throw new UnsupportedOperationException("Cannot create a Catan board with even diameter.");
-
         this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
 
         List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();
@@ -98,16 +113,40 @@ public class Board {
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
             boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
             Hex hex = new Hex(this, terrainsShuffled.pop(), location);
-            if(needsNumberToken) hex.setNumberToken(numberTokens.pop());
-            hex.calculateVertices(gridLayout);
+            if (needsNumberToken) hex.setNumberToken(numberTokens.pop());
+            hex.calculateVerticesAndEdges(gridLayout);
             hexagons.add(hex);
-            for (HexPoint point : hex.getVerticesPositions()) {
-                if(!this.pointToVertices.containsKey(point)) {
-                    this.pointToVertices.put(point, new Vertex(this, point));
+            for (Vertex v : hex.getVertices()) {
+                if (!vertices.containsValue(v)) {
+                    this.vertices.put(v.getCoordinates(), v);
+                }
+            }
+            for (Edge e : hex.getEdges()) {
+                e.connectToVertices();
+                if (!edges.containsValue(e)) {
+                    this.edges.put(e.getCoordinates(), e);
                 }
             }
 
         }
+
+        //vertices.get(0).buildSettlement(this.getPlayerById(0));
+    }
+
+    private void generatePlayers(List<String> playerNames) {
+        final Stack<Integer> colorStack = CatanUtil.getColorsShuffled();
+        for (int i = 0; i < playerNames.size(); i++) {
+            Player p = new Player(this, i, colorStack.pop(), playerNames.get(i));
+            this.players.add(p);
+        }
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 
     public void setHexagons(List<Hex> hexagons) {

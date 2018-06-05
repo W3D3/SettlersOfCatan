@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.GridActivity;
+import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.network.wifi.DataCallback;
@@ -65,7 +66,7 @@ public class ClientLobbyActivity extends AppCompatActivity implements DataCallba
 
             Board board = LoganSquare.parse((String) data, Board.class);
             SettlerApp.board = board;
-            Intent i = new Intent(getApplicationContext(), GridActivity.class);
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(i);
         }
         catch (IOException ex)

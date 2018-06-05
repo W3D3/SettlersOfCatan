@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
+import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 
 /**
@@ -17,6 +18,16 @@ public class CatanUtil {
     public static final List<AxialHexLocation> hexes = initStartingSequence();
     public static final Stack<NumberToken> tokens = initNumberTokens();
     public static Stack<Hex.TerrainType> terrains = initTerrainList();
+    public static final Stack<Integer> colors = initColors();
+
+    private static Stack<Integer> initColors() {
+        Stack<Integer> colors = new Stack<>();
+        colors.push(Player.Color.BLUE.getVal());
+        colors.push(Player.Color.RED.getVal());
+        colors.push(Player.Color.YELLOW.getVal());
+        colors.push(Player.Color.WHITE.getVal());
+        return colors;
+    }
 
     //TODO find an algo to do this and not hardcode it for a board  with diameter 5
 
@@ -104,5 +115,11 @@ public class CatanUtil {
         terrainTypesStack.addAll(terrains);
         Collections.shuffle(terrainTypesStack);
         return terrainTypesStack;
+    }
+
+    public static Stack<Integer> getColorsShuffled() {
+        Stack<Integer> colorsStack = new Stack<>();
+        colorsStack.addAll(colors);
+        return colorsStack;
     }
 }
