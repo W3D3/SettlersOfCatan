@@ -1,8 +1,6 @@
 package io.swagslash.settlersofcatan.pieces.items;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +27,12 @@ public class Inventory {
     public void addResource(Resource resource) {
         Integer count = this.resourceHand.get(resource.getResourceType());
         count++;
+        this.resourceHand.put(resource.getResourceType(), count);
+    }
+
+    public void removeResource(Resource resource){
+        Integer count = this.resourceHand.get(resource.getResourceType());
+        count--;
         this.resourceHand.put(resource.getResourceType(), count);
     }
 
