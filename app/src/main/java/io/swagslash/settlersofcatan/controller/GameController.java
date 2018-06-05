@@ -13,7 +13,7 @@ public class GameController {
         //TODO remove resources
         SettlerApp.getPlayer().getInventory();
         vertex.buildSettlement(SettlerApp.getPlayer());
-        SettlerApp.getManager().sendToAll(new VertexBuildAction(SettlerApp.getPlayer(), VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex));
+        SettlerApp.getManager().sendToAll(new VertexBuildAction(SettlerApp.getPlayer(), VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex.getCoordinates()));
         return true;
     }
 }

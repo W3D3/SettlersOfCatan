@@ -1,12 +1,14 @@
 package io.swagslash.settlersofcatan.controller.actions;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.Vertex;
+import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 
 public class VertexBuildAction extends GameAction {
 
     ActionType type;
-    Vertex affectedVertex;
+    HexPoint affectedVertexCoordinates;
 
     public VertexBuildAction() {
         super();
@@ -16,10 +18,10 @@ public class VertexBuildAction extends GameAction {
         super(actor);
     }
 
-    public VertexBuildAction(Player actor, ActionType type, Vertex affectedVertex) {
+    public VertexBuildAction(Player actor, ActionType type, HexPoint affectedVertexCoordinates) {
         super(actor);
         this.type = type;
-        this.affectedVertex = affectedVertex;
+        this.affectedVertexCoordinates = affectedVertexCoordinates;
     }
 
     public ActionType getType() {
@@ -31,11 +33,12 @@ public class VertexBuildAction extends GameAction {
     }
 
     public Vertex getAffectedVertex() {
-        return affectedVertex;
+
+        return SettlerApp.board.getVertexByPosition(affectedVertexCoordinates);
     }
 
-    public void setAffectedVertex(Vertex affectedVertex) {
-        this.affectedVertex = affectedVertex;
+    public void setAffectedVertexCoordinates(HexPoint affectedVertexCoordinates) {
+        this.affectedVertexCoordinates = affectedVertexCoordinates;
     }
 
     public enum ActionType {

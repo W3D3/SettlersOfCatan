@@ -16,9 +16,9 @@ import java.util.List;
 import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.GameServer;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
-import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.LobbyMemberFragment;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
@@ -58,7 +58,7 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
                 }
                 players.add(SettlerApp.playerName);
                 SettlerApp.generateBoard(players);
-                network.sendToAll(SettlerApp.board);
+//                network.sendToAll(SettlerApp.board);
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 network.switchOut();
                 startActivity(i);

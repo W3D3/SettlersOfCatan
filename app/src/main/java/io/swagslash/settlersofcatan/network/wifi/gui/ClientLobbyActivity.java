@@ -8,17 +8,12 @@ import android.view.View;
 
 import com.esotericsoftware.kryonet.Connection;
 
-import java.lang.reflect.Array;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.util.Arrays;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
-import io.swagslash.settlersofcatan.network.wifi.GameClient;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
@@ -89,6 +84,12 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
             network.switchOut();
             startActivity(i);
             return;
+        }
+        if (object instanceof Network.SetupInfo) {
+            SettlerApp.generateBoard((Network.SetupInfo) object);
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            network.switchOut();
+            startActivity(i);
         }
     }
 }

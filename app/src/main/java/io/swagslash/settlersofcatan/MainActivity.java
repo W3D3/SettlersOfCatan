@@ -242,8 +242,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else if (action.getType() == VertexBuildAction.ActionType.BUILD_CITY) {
                     action.getAffectedVertex().buildCity(action.getActor());
                 }
+                hexView.generateVerticePaths();
             }
-//            hexView.invalidate();
+            hexView.redraw();
             return;
         }
     }

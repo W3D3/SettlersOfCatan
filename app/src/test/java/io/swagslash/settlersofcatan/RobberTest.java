@@ -20,41 +20,39 @@ public class RobberTest {
     Unit Tests of the Robber Class
      */
     @Test
-    public void TestChoosePlayer(){
-        Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1,1)));
+    public void TestChoosePlayer() {
+        Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
 
-       try {
-           Player p = rob.choosePlayer(new Player(null, 0, Color.BLUE, "Player 1"),
-                   new Player(null, 1, Color.RED, "Player 2"),
-                   new Player(null, 2, Color.WHITE, "Player 3"),
-                   new Player(null, 3, Color.GREEN, "Player 4"));
-           Assert.assertTrue(true);
-       }
-       catch (Exception e){
+        try {
+            Player p = rob.choosePlayer(new Player(null, 0, Color.BLUE, "Player 1"),
+                    new Player(null, 1, Color.RED, "Player 2"),
+                    new Player(null, 2, Color.WHITE, "Player 3"),
+                    new Player(null, 3, Color.GREEN, "Player 4"));
+            Assert.assertTrue(true);
+        } catch (Exception e) {
 
-       }
+        }
 
 
     }
 
     @Test
-    public void TestRobDraw(){
-        Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1,1)));
+    public void TestRobDraw() {
+        Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
         try {
             rob.drawRobber(new AxialHexLocation(2, 2));
             Assert.assertTrue(true);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
 
     @Test
-    public void TestselectedPlayer(){
-        Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1,1)));
+    public void TestselectedPlayer() {
+        Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
         Player p = new Player(null, 3, Color.GREEN, "Player 4");
         rob.selectPlayer(p);
-        Assert.assertEquals(p,rob.selectedPlayer);
+        Assert.assertEquals(p, rob.selectedPlayer);
 
 
     }
@@ -64,7 +62,7 @@ public class RobberTest {
      */
 
     @Test
-    public void TestRobResourceMethod(){
+    public void TestRobResourceMethod() {
 
         Player p2 = new Player(null, 1, Color.RED, "Player 2");
         Player p3 = new Player(null, 2, Color.WHITE, "Player 3");
@@ -73,7 +71,7 @@ public class RobberTest {
         p2.getInventory().addResource(new Resource(Resource.ResourceType.ORE));
         p2.getInventory().addResource(new Resource(Resource.ResourceType.ORE));
 
-        Robber.rob(p2,p3);
+        Robber.rob(p2, p3);
 
         Assert.assertEquals(2, (int) p2.getInventory().getResourceHand().get(Resource.ResourceType.ORE));
         Assert.assertEquals(1, (int) p3.getInventory().getResourceHand().get(Resource.ResourceType.ORE));
@@ -81,9 +79,8 @@ public class RobberTest {
     }
 
 
-
     @Test
-    public void TestRobResourceMethod2(){
+    public void TestRobResourceMethod2() {
 
         Player p2 = new Player(null, 1, Color.RED, "Player 2");
         Player p3 = new Player(null, 2, Color.WHITE, "Player 3");
@@ -91,16 +88,16 @@ public class RobberTest {
         p2.getInventory().addResource(new Resource(Resource.ResourceType.WOOD));
 
 
-        Robber.rob(p2,p3);
+        Robber.rob(p2, p3);
 
-        Assert.assertEquals(0,(int) p2.getInventory().getResourceHand().get(Resource.ResourceType.WOOD));
+        Assert.assertEquals(0, (int) p2.getInventory().getResourceHand().get(Resource.ResourceType.WOOD));
         Assert.assertEquals(1, (int) p3.getInventory().getResourceHand().get(Resource.ResourceType.WOOD));
 
     }
 
 
     @Test
-    public void TestRob(){
+    public void TestRob() {
 
         try {
             Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
@@ -113,8 +110,7 @@ public class RobberTest {
             rob.robPlayer(newLocation, raueber);
 
             Assert.assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
 
         }
     }

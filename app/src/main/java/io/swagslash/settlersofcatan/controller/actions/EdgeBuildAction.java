@@ -1,11 +1,13 @@
 package io.swagslash.settlersofcatan.controller.actions;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.Edge;
+import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 
 public class EdgeBuildAction extends GameAction {
 
-    Edge affectedEdge;
+    HexPointPair affectedEdgeCoordinates;
 
     public EdgeBuildAction() {
         super();
@@ -15,17 +17,17 @@ public class EdgeBuildAction extends GameAction {
         super(actor);
     }
 
-    public EdgeBuildAction(Player actor, Edge affectedEdge) {
+    public EdgeBuildAction(Player actor, HexPointPair affectedEdgeCoordinates) {
         super(actor);
-        this.affectedEdge = affectedEdge;
+        this.affectedEdgeCoordinates = affectedEdgeCoordinates;
     }
 
     public Edge getAffectedEdge() {
-        return affectedEdge;
+        return SettlerApp.board.getEdgeByPosition(affectedEdgeCoordinates);
     }
 
-    public void setAffectedEdge(Edge affectedEdge) {
-        this.affectedEdge = affectedEdge;
+    public void setAffectedEdgeCoordinates(HexPointPair affectedEdgeCoordinates) {
+        this.affectedEdgeCoordinates = affectedEdgeCoordinates;
     }
 }
 

@@ -30,7 +30,7 @@ public class Inventory {
         this.resourceHand.put(resource.getResourceType(), count);
     }
 
-    public void removeResource(Resource resource){
+    public void removeResource(Resource resource) {
         Integer count = this.resourceHand.get(resource.getResourceType());
         count--;
         this.resourceHand.put(resource.getResourceType(), count);

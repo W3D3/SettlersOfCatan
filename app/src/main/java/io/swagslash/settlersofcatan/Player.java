@@ -26,6 +26,9 @@ public class Player {
     private int longestTradeRoute;
     private Inventory inventory;
 
+    public Player() {
+    }
+
     public Player(Board board, int playerNumber, int color, String playerName) {
         this.board = board;
         this.playerNumber = playerNumber;

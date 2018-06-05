@@ -103,11 +103,15 @@ public class Board {
     }
 
     public void setupBoard() {
+        setupBoard(CatanUtil.getTerrainsShuffled());
+    }
+
+    public void setupBoard(Stack<Hex.TerrainType> terrainTypeStack) {
         this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
 
         List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();
         Stack<NumberToken> numberTokens = CatanUtil.getTokensInStartingSequence();
-        Stack<Hex.TerrainType> terrainsShuffled = CatanUtil.getTerrainsShuffled();
+        Stack<Hex.TerrainType> terrainsShuffled = terrainTypeStack;
 
 
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {

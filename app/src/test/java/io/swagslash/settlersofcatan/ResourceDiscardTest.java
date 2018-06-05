@@ -20,20 +20,19 @@ public class ResourceDiscardTest {
      */
 
     @Test
-    public void TestOnCreat(){
-        try{
+    public void TestOnCreat() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
-            assertThat(viewById,notNullValue());
-            }
-        catch(Exception e){
+            assertThat(viewById, notNullValue());
+        } catch (Exception e) {
         }
     }
 
     @Test
-    public void Test2(){
-        try{
+    public void Test2() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
@@ -41,14 +40,13 @@ public class ResourceDiscardTest {
 
             //When no exception Test bestanden
             assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
         }
     }
 
     @Test
-    public void TestconfirmDiscard(){
-        try{
+    public void TestconfirmDiscard() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
@@ -56,52 +54,48 @@ public class ResourceDiscardTest {
 
             //When no exception Test bestanden
             assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
         }
     }
 
     @Test
-    public void TestRandomDiscard(){
-        try{
+    public void TestRandomDiscard() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
             r.randomDiscard();
             //When no exception Test bestanden
             assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
         }
     }
 
     @Test
-    public void TestCountdown(){
-        try{
+    public void TestCountdown() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
             r.countdown25to0();
             //When no exception Test bestanden
             assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
         }
     }
 
     @Test
-    public void TestResource(){
-        try{
+    public void TestResource() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
-            int sumResource = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
+            int sumResource = r.erz + r.wolle + r.getreide + r.holz + r.lehm;
             r.randomDiscard();
-            int sumResourceAfterRandomDiscard = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
-           Assert.assertNotEquals(sumResource,sumResourceAfterRandomDiscard);
+            int sumResourceAfterRandomDiscard = r.erz + r.wolle + r.getreide + r.holz + r.lehm;
+            Assert.assertNotEquals(sumResource, sumResourceAfterRandomDiscard);
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
         }
     }
 

@@ -7,6 +7,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
@@ -25,7 +27,9 @@ import io.swagslash.settlersofcatan.pieces.utility.EdgeDirection;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridOrientation;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
+import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 import io.swagslash.settlersofcatan.pieces.utility.VertexDirection;
+import io.swagslash.settlersofcatan.utility.Pair;
 
 public class Network {
     //Port Numbers randomly chosen
@@ -46,6 +50,7 @@ public class Network {
         kryo.register(Hex.class);
         kryo.register(Edge.class);
         kryo.register(Vertex.class);
+        kryo.register(Vertex[].class);
         kryo.register(HexPoint[].class);
         kryo.register(Edge.EdgeType.class);
         kryo.register(EdgeDirection.class);
@@ -69,6 +74,10 @@ public class Network {
         kryo.register(VertexBuildAction.class);
         kryo.register(EdgeBuildAction.class);
         kryo.register(VertexBuildAction.ActionType.class);
+        kryo.register(HexPointPair.class);
+        kryo.register(Pair.class);
+        kryo.register(Stack.class);
+        kryo.register(SetupInfo.class);
     }
 
     static public class RegisterName {
@@ -113,6 +122,30 @@ public class Network {
 
         public void setMessage(String message) {
             this.message = message;
+        }
+    }
+
+    static public class SetupInfo {
+        public List<String> playerNames;
+        public Stack<Hex.TerrainType> terrainTypeStack;
+
+        public SetupInfo() {
+        }
+
+        public List<String> getPlayerNames() {
+            return playerNames;
+        }
+
+        public void setPlayerNames(List<String> playerNames) {
+            this.playerNames = playerNames;
+        }
+
+        public Stack<Hex.TerrainType> getTerrainTypeStack() {
+            return terrainTypeStack;
+        }
+
+        public void setTerrainTypeStack(Stack<Hex.TerrainType> terrainTypeStack) {
+            this.terrainTypeStack = terrainTypeStack;
         }
     }
 
