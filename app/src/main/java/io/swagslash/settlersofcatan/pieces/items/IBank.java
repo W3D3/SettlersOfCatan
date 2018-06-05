@@ -32,7 +32,7 @@ public interface IBank {
     boolean payForCity(Player player);
 
     /**
-     * Removes the resources that are needed for a evolution(?) card
+     * Removes the resources that are needed for a development card
      * from the player's inventory if possible
      * @param player the player that pays
      * @return true if the resources have been payed
