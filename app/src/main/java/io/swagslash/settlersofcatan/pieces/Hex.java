@@ -113,15 +113,16 @@ public class Hex {
         return Resource.getResourceForTerrain(this.terrainType);
     }
 
-    public void distributeResources(int diceRoll) {
+    public boolean distributeResources(int diceRoll) {
         if (diceRoll != this.numberToken.getNumber() || hasRobber) {
-            return;
+            return false;
         }
 
         for (int i = 0; i < 6; i++) {
             //TODO each vertex gets resources
             vertices.get(i).distributeResources(this.getResourceProduced());
         }
+        return true;
     }
 
     @Override

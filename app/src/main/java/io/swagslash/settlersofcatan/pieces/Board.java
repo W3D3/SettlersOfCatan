@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.pieces.items.ICard;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -26,6 +27,7 @@ public class Board {
     private HashMap<HexPointPair, Edge> edges;
     private List<Player> players;
     private HexGridLayout gridLayout;
+    private Stack<ICard> cardStack;
 
     private boolean randomDiscard;
     private int winningPoints;
@@ -155,5 +157,9 @@ public class Board {
 
     public void setHexagons(List<Hex> hexagons) {
         this.hexagons = hexagons;
+    }
+
+    public Stack<ICard> getCardStack() {
+        return cardStack;
     }
 }
