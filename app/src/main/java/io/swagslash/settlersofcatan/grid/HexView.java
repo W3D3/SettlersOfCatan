@@ -1,18 +1,16 @@
 package io.swagslash.settlersofcatan.grid;
 
-import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DiscretePathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Region;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
-import android.util.Log;
-import android.util.Pair;
+import android.graphics.Shader;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -24,11 +22,9 @@ import android.widget.Toast;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.pieces.Board;
@@ -36,10 +32,10 @@ import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
-import io.swagslash.settlersofcatan.pieces.utility.HexUtility;
+import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
- * Created by thoma on 10.04.2018.
+ * Created by thomas on 10.04.2018.
  */
 
 public class HexView extends View {
@@ -50,44 +46,23 @@ public class HexView extends View {
     WindowManager manager;
     int maxX;
     int maxY;
-    private GestureDetector gestureDetector;
-    private ScaleGestureDetector scaleDetector;
     int scale = 1;
     Pair<Integer, Integer> offset = null;
-
     List<Path> takenVertices;
     List<Path> freeVertices;
     List<Path> takenEdges;
     List<Path> freeEdges;
-
     ZoomLayout zoomLayout = null;
-
     //Hexagon paint
     Paint strokePaint;
     Paint fillPaint;
-
     // Vertex Paint
     Paint circlePaint;
     Paint edgePaint;
-
     Region clip;
+    private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleDetector;
     private Paint vertexClickPaint;
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    public WindowManager getManager() {
-        return manager;
-    }
-
-    public void setManager(WindowManager manager) {
-        this.manager = manager;
-    }
 
     public HexView(Context context) {
         super(context);
@@ -119,6 +94,22 @@ public class HexView extends View {
         edgePaint.setStyle(Paint.Style.STROKE);
         edgePaint.setStrokeWidth(4);
 
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    public WindowManager getManager() {
+        return manager;
+    }
+
+    public void setManager(WindowManager manager) {
+        this.manager = manager;
     }
 
     public ZoomLayout getZoomLayout() {
@@ -171,7 +162,7 @@ public class HexView extends View {
     }
 
     private void generateVerticePaths() {
-        for (Vertex v : board.getVertices()) {
+        for (Vertex v : board.getVerticesList()) {
             HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
             v.calculatePath(offset, scale);
         }
@@ -184,9 +175,15 @@ public class HexView extends View {
         clip.set(0, 0, c.getWidth(), c.getHeight());
 
         //Background white
-        this.fillPaint.setStyle(Paint.Style.FILL);
-        this.fillPaint.setColor(Color.GRAY);
-        c.drawPaint(fillPaint);
+
+        Paint bg = new Paint();
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water_texture);
+        BitmapShader fillBMPshader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+        bg.setShader(fillBMPshader);
+
+        bg.setStyle(Paint.Style.FILL);
+        //this.fillPaint.setColor(Color.parseColor("#138fdc"));
+        c.drawPaint(bg);
 
         strokePaint.setStrokeWidth(3);
         strokePaint.setPathEffect(null);
@@ -211,9 +208,8 @@ public class HexView extends View {
 
         for (Hex h : board.getHexagons()) {
             for (Edge e : h.getEdges()) {
-                HexPoint[] points = e.getPositions();
-                HexPoint from = points[0];
-                HexPoint to = points[1];
+                HexPoint from = e.getCoordinates().first;
+                HexPoint to = e.getCoordinates().first;
                 HexPoint drawFrom = from.scale(offset, scale);
                 HexPoint drawTo = to.scale(offset, scale);
                 switch (e.getUnitType()) {
@@ -232,13 +228,13 @@ public class HexView extends View {
 
         //TODO draw vertices
 
-        for (Vertex vertex : board.getVertices()) {
+        for (Vertex vertex : board.getVerticesList()) {
             Region region = new Region();
             region.setPath(vertex.getPath(), clip);
             vertex.setRegion(region);
             switch (vertex.getUnitType()) {
                 case NONE:
-                    if(SettlerApp.board.getPhase() == Board.Phase.SETUP_SETTLEMENT) {
+                    if (SettlerApp.board.getPhase() == Board.Phase.SETUP_SETTLEMENT) {
                         c.drawPath(vertex.getPath(), vertexClickPaint);
                     }
                     break;
@@ -259,27 +255,6 @@ public class HexView extends View {
 
     public void showFreeSettlements() {
         redraw();
-    }
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            redraw();
-            return true;
-
-        }
-
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            redraw();
-        }
-
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            redraw();
-            return true;
-        }
     }
 
     @Override
@@ -354,7 +329,7 @@ public class HexView extends View {
     }
 
     private Vertex getVertexFromCoordinates(int x, int y) {
-        final List<Vertex> vertices = SettlerApp.board.getVertices();
+        final ArrayList<Vertex> vertices = (ArrayList<Vertex>) SettlerApp.board.getVerticesList();
         for (int i = 0; i < vertices.size(); i++) {
             Region r = vertices.get(i).getRegion();
             if (r.contains(x, y)) {
@@ -411,6 +386,27 @@ public class HexView extends View {
 
     public void redraw() {
         this.invalidate();
+    }
+
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            redraw();
+            return true;
+
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            redraw();
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            redraw();
+            return true;
+        }
     }
 
 
