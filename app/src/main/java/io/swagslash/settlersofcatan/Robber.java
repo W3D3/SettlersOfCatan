@@ -1,27 +1,18 @@
 package io.swagslash.settlersofcatan;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.database.MatrixCursor;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.app.Activity;
 import android.util.Log;
-import android.view.View;
-import android.content.Intent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
-import io.swagslash.settlersofcatan.grid.HexView;
-import io.swagslash.settlersofcatan.gui.MainActivity;
-import io.swagslash.settlersofcatan.network.wifi.gui.StartActivity;
-import io.swagslash.settlersofcatan.pieces.Board;
-import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
+import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 
@@ -32,14 +23,55 @@ import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 
 public class Robber extends Activity{
 
-    private Hex currentField;
     Player selectedPlayer;
+    private Hex currentField;
 
     public Robber(Hex currentField) {
 
         this.currentField = currentField;
     }
 
+    /*
+    Remove 1 Card from the choosen Player randomly
+     */
+    public static void rob(Player player, Player robber) {
+
+        //Map ist so ausgelegt, dass der Key der Typ ist und der Integer Wert die Anzahl der Ressourcenkarten angebt.
+        int numberWood = player.getInventory().getResourceHand().get(Resource.ResourceType.WOOD);
+        int numberBrick = player.getInventory().getResourceHand().get(Resource.ResourceType.BRICK);
+        int numberWool = player.getInventory().getResourceHand().get(Resource.ResourceType.WOOL);
+        int numberGrain = player.getInventory().getResourceHand().get(Resource.ResourceType.GRAIN);
+        int numberOre = player.getInventory().getResourceHand().get(Resource.ResourceType.ORE);
+        int size = numberBrick + numberGrain + numberWood + numberWool + numberOre;
+        Random R = new Random();
+        int rand = R.nextInt(size);
+        //Steal Wood
+        if (rand < numberWood) {
+            player.getInventory().getResourceHand().put(Resource.ResourceType.WOOD, numberWood - 1);
+            robber.getInventory().addResource(new Resource(Resource.ResourceType.WOOD));
+        }
+        //Steal Brick
+        else if (rand < numberWood + numberBrick) {
+            player.getInventory().getResourceHand().put(Resource.ResourceType.BRICK, numberBrick - 1);
+            robber.getInventory().addResource(new Resource(Resource.ResourceType.BRICK));
+        }
+        //Steal Wool
+        else if (rand < numberWood + numberBrick + numberWool) {
+            player.getInventory().getResourceHand().put(Resource.ResourceType.WOOL, numberWool - 1);
+            robber.getInventory().addResource(new Resource(Resource.ResourceType.WOOL));
+        }
+        //Steal Grain
+        else if (rand < numberWood + numberBrick + numberWool + numberGrain) {
+            player.getInventory().getResourceHand().put(Resource.ResourceType.GRAIN, numberGrain - 1);
+            robber.getInventory().addResource(new Resource(Resource.ResourceType.GRAIN));
+        }
+        //Steal l Ore
+        else {
+            player.getInventory().getResourceHand().put(Resource.ResourceType.ORE, numberOre - 1);
+            robber.getInventory().addResource(new Resource(Resource.ResourceType.ORE));
+        }
+
+    }
 
     public void robPlayer(Hex choosenField, Player robber){
         Player playerToRob = null;
@@ -100,69 +132,19 @@ public class Robber extends Activity{
 
     }
 
-
     /*
     Explore the neighbourhood of the currentfield, where the Robber stand
      */
     public HashMap<Player,Boolean> lookUpPlayerNextToRobPlace(Hex currentField){
         HashMap<Player,Boolean> currentFieldNeighbourhood= new HashMap<Player, Boolean>();
 
-            //Lookup each Vertice1 from each edge to know which players are next to this Field,
-            //its complicated but
-            for (Edge e : currentField.getEdges()
-                 ) {
-                if(e.getVertice1().getOwner() != null){
-                    currentFieldNeighbourhood.put(e.getVertice1().getOwner(),true);
-                }
+        for (Vertex vertex : currentField.getVertices()) {
+            if (vertex.getOwner() != null) {
+                currentFieldNeighbourhood.put(vertex.getOwner(), true);
             }
+        }
 
         return currentFieldNeighbourhood;
-    }
-
-
-
-
-
-    /*
-    Remove 1 Card from the choosen Player randomly
-     */
-    public static void rob(Player player, Player robber){
-
-        //Map ist so ausgelegt, dass der Key der Typ ist und der Integer Wert die Anzahl der Ressourcenkarten angebt.
-        int numberWood = player.getInventory().getResourceHand().get(Resource.ResourceType.WOOD);
-        int numberBrick = player.getInventory().getResourceHand().get(Resource.ResourceType.BRICK);
-        int numberWool = player.getInventory().getResourceHand().get(Resource.ResourceType.WOOL);
-        int numberGrain = player.getInventory().getResourceHand().get(Resource.ResourceType.GRAIN);
-        int numberOre = player.getInventory().getResourceHand().get(Resource.ResourceType.ORE);
-        int size = numberBrick+numberGrain+numberWood+numberWool+numberOre;
-        Random R = new Random();
-        int rand = R.nextInt(size);
-        //Steal Wood
-        if(rand<numberWood) {
-            player.getInventory().getResourceHand().put(Resource.ResourceType.WOOD, numberWood - 1);
-            robber.getInventory().addResource(new Resource(Resource.ResourceType.WOOD));
-        }
-        //Steal Brick
-            else if (rand < numberWood+numberBrick){
-                player.getInventory().getResourceHand().put(Resource.ResourceType.BRICK,numberBrick-1);
-                robber.getInventory().addResource(new Resource(Resource.ResourceType.BRICK));
-            }
-            //Steal Wool
-            else if (rand < numberWood+numberBrick+numberWool){
-                player.getInventory().getResourceHand().put(Resource.ResourceType.WOOL,numberWool-1);
-                robber.getInventory().addResource(new Resource(Resource.ResourceType.WOOL));
-            }
-            //Steal Grain
-            else if (rand < numberWood+numberBrick+numberWool+numberGrain){
-                player.getInventory().getResourceHand().put(Resource.ResourceType.GRAIN,numberGrain-1);
-                robber.getInventory().addResource(new Resource(Resource.ResourceType.GRAIN));
-            }
-            //Steal l Ore
-            else{
-                player.getInventory().getResourceHand().put(Resource.ResourceType.ORE,numberOre-1);
-                robber.getInventory().addResource(new Resource(Resource.ResourceType.ORE));
-            }
-
     }
 
 

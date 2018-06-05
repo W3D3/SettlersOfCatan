@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.Player;
-import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.utility.Pair;
@@ -74,7 +73,7 @@ public class Vertex {
 
     private void giveResourceToOwner(int amount, Resource resource) {
         for (int i = 0; i < amount; i++) {
-            SettlerApp.board.getPlayerById(owner.getPlayerNumber()).getInventory().addResource(resource);
+            owner.getInventory().addResource(resource);
         }
     }
 

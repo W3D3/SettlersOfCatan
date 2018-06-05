@@ -1,10 +1,11 @@
 package io.swagslash.settlersofcatan;
 
+import android.graphics.Color;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Vertex;
@@ -24,7 +25,7 @@ public class VertexTest {
   @Test
     public void TestVertex(){
 
-    Player p = new Player(null,0, Player.Color.GREEN,"Player 1");
+    Player p = new Player(null, 0, Color.GREEN, "Player 1");
     Vertex v = new Vertex(null, new HexPoint(4,4));
     v.buildSettlement(p);
 
@@ -37,11 +38,10 @@ public class VertexTest {
   namelist.add("Player 2");
   namelist.add("Player 3");
   Board b = new Board(namelist,true,10);
-    Player p = b.getPlayerById(1);
+    Player p = b.getPlayerById(2);
     p.getInventory().getResourceHand();
     Vertex v = new Vertex(b, new HexPoint(4,4));
     v.buildSettlement(p);
-    v.setOwner(p);
     v.distributeResources(new Resource(Resource.ResourceType.ORE));
 
     Assert.assertEquals(1, (int)p.getInventory().getResourceHand().get(Resource.ResourceType.ORE));

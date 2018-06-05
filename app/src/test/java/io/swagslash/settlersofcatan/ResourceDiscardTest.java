@@ -1,15 +1,9 @@
 package io.swagslash.settlersofcatan;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import io.swagslash.settlersofcatan.gui.MainActivity;
-import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;

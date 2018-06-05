@@ -90,20 +90,6 @@ public class Edge {
         return (unitType == EdgeType.ROAD);
     }
 
-    /*
-  Get vertices 1
-   */
-    public Vertex getVertice0(){
-        return this.vertexes.iterator().next();
-    }
-
-    /*
-    Get vertices 1
-     */
-    public Vertex getVertice1(){
-        Vertex dummy = this.vertexes.iterator().next();
-        return this.vertexes.iterator().next();
-    }
 
 
     /**

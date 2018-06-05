@@ -1,8 +1,9 @@
 package io.swagslash.settlersofcatan;
 
+import android.graphics.Color;
+
 import org.junit.Assert;
 import org.junit.Test;
-
 
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
@@ -23,10 +24,10 @@ public class RobberTest {
         Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1,1)));
 
        try {
-           Player p = rob.choosePlayer(new Player(null, 0, Player.Color.BLUE, "Player 1"),
-                   new Player(null, 1, Player.Color.RED, "Player 2"),
-                   new Player(null, 2, Player.Color.WHITE, "Player 3"),
-                   new Player(null, 3, Player.Color.GREEN, "Player 4"));
+           Player p = rob.choosePlayer(new Player(null, 0, Color.BLUE, "Player 1"),
+                   new Player(null, 1, Color.RED, "Player 2"),
+                   new Player(null, 2, Color.WHITE, "Player 3"),
+                   new Player(null, 3, Color.GREEN, "Player 4"));
            Assert.assertTrue(true);
        }
        catch (Exception e){
@@ -51,7 +52,7 @@ public class RobberTest {
     @Test
     public void TestselectedPlayer(){
         Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1,1)));
-        Player p = new Player(null, 3, Player.Color.GREEN, "Player 4");
+        Player p = new Player(null, 3, Color.GREEN, "Player 4");
         rob.selectPlayer(p);
         Assert.assertEquals(p,rob.selectedPlayer);
 
@@ -65,8 +66,8 @@ public class RobberTest {
     @Test
     public void TestRobResourceMethod(){
 
-      Player p2 =  new Player(null, 1, Player.Color.RED, "Player 2");
-      Player p3 =  new Player(null, 2, Player.Color.WHITE, "Player 3");
+        Player p2 = new Player(null, 1, Color.RED, "Player 2");
+        Player p3 = new Player(null, 2, Color.WHITE, "Player 3");
 
         p2.getInventory().addResource(new Resource(Resource.ResourceType.ORE));
         p2.getInventory().addResource(new Resource(Resource.ResourceType.ORE));
@@ -84,8 +85,8 @@ public class RobberTest {
     @Test
     public void TestRobResourceMethod2(){
 
-        Player p2 =  new Player(null, 1, Player.Color.RED, "Player 2");
-        Player p3 =  new Player(null, 2, Player.Color.WHITE, "Player 3");
+        Player p2 = new Player(null, 1, Color.RED, "Player 2");
+        Player p3 = new Player(null, 2, Color.WHITE, "Player 3");
 
         p2.getInventory().addResource(new Resource(Resource.ResourceType.WOOD));
 
@@ -105,8 +106,8 @@ public class RobberTest {
             Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
 
 
-            Player p2 = new Player(null, 1, Player.Color.RED, "Player 2");
-            Player raueber = new Player(null, 2, Player.Color.WHITE, "Player 3");
+            Player p2 = new Player(null, 1, Color.RED, "Player 2");
+            Player raueber = new Player(null, 2, Color.WHITE, "Player 3");
             Hex newLocation = new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 2));
 
             rob.robPlayer(newLocation, raueber);
