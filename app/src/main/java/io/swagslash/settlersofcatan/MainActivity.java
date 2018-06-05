@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,11 +21,13 @@ import com.esotericsoftware.kryonet.Connection;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
-import java.io.IOException;
-
+import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
+import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
+import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
@@ -222,6 +225,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(network.isHost()){
                 network.sendtoAllExcept(connection.getID(), object);
             }
+            return;
+        }
+        if (object instanceof Network.TestMessage) {
+            Log.d("Received", ((Network.TestMessage) object).getMessage());
+            return;
+        }
+
+        if (object instanceof GameAction) {
+            if (object instanceof EdgeBuildAction) {
+
+            } else if (object instanceof VertexBuildAction) {
+                VertexBuildAction action = (VertexBuildAction) object;
+                if (action.getType() == VertexBuildAction.ActionType.BUILD_SETTLEMENT) {
+                    action.getAffectedVertex().buildSettlement(action.getActor());
+                } else if (action.getType() == VertexBuildAction.ActionType.BUILD_CITY) {
+                    action.getAffectedVertex().buildCity(action.getActor());
+                }
+            }
+//            hexView.invalidate();
             return;
         }
     }

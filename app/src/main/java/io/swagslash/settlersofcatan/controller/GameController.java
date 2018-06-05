@@ -1,7 +1,7 @@
 package io.swagslash.settlersofcatan.controller;
 
-import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 
 /**
@@ -13,6 +13,7 @@ public class GameController {
         //TODO remove resources
         SettlerApp.getPlayer().getInventory();
         vertex.buildSettlement(SettlerApp.getPlayer());
+        SettlerApp.getManager().sendToAll(new VertexBuildAction(SettlerApp.getPlayer(), VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex));
         return true;
     }
 }

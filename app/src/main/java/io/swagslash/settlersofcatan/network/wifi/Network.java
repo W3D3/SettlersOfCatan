@@ -9,6 +9,9 @@ import com.esotericsoftware.kryonet.EndPoint;
 import java.util.HashMap;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
+import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
@@ -61,6 +64,11 @@ public class Network {
         kryo.register(Path.class);
         kryo.register(Region.class);
         kryo.register(Path.Direction.class);
+        kryo.register(TestMessage.class);
+        kryo.register(GameAction.class);
+        kryo.register(VertexBuildAction.class);
+        kryo.register(EdgeBuildAction.class);
+        kryo.register(VertexBuildAction.ActionType.class);
     }
 
     static public class RegisterName {
@@ -90,6 +98,21 @@ public class Network {
 
         public void setNames(String[] names) {
             this.names = names;
+        }
+    }
+
+    static public class TestMessage {
+        public String message;
+
+        public TestMessage() {
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 

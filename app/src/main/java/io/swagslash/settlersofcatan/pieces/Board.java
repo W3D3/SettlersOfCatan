@@ -5,14 +5,11 @@ package io.swagslash.settlersofcatan.pieces;
  */
 
 
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
-import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -63,7 +60,7 @@ public class Board {
 
     public void setPhase(Phase phase) {
         if(phase == Phase.IDLE) {
-            SettlerApp.getManager().sendToAll(this);
+//          SettlerApp.getManager().sendToAll(this);
         }
         this.phase = phase;
     }
