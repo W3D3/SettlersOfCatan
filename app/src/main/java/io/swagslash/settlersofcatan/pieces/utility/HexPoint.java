@@ -1,25 +1,12 @@
 package io.swagslash.settlersofcatan.pieces.utility;
 
-import android.util.Pair;
+import io.swagslash.settlersofcatan.utility.Pair;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-
-import java.text.DecimalFormat;
-
-/**
- * Created by logan on 2017-01-31.
- */
-@JsonObject
-public class HexPoint
-{
-    @JsonField
+public class HexPoint {
     public double x;
-    @JsonField
     public double y;
 
-    public HexPoint(double x, double y)
-    {
+    public HexPoint(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -46,14 +33,14 @@ public class HexPoint
     }
 
     /**
-     *@param precision number of decimal digits
+     * @param precision number of decimal digits
      */
     private boolean areEqualDouble(double a, double b, int precision) {
         return Math.abs(a - b) <= Math.pow(10, -precision);
     }
 
-    public HexPoint scale(Pair<Integer,Integer> offset, int scale){
-        return new HexPoint(this.x*scale+offset.first, this.y*scale+offset.second);
+    public HexPoint scale(Pair<Integer, Integer> offset, int scale) {
+        return new HexPoint(this.x * scale + offset.first, this.y * scale + offset.second);
     }
 
     public double getX() {

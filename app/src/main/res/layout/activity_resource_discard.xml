@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.swagslash.settlersofcatan.ResourceDiscardActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="368dp"
+        android:layout_height="495dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textViewTitel"
+            android:layout_width="260dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:text="Werfen Sie die hälfte Ihrer Karten ab!"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/buttonHolz"
+            android:layout_width="104dp"
+            android:layout_height="67dp"
+            android:layout_marginStart="52dp"
+            android:layout_marginLeft="52dp"
+            android:layout_marginTop="24dp"
+            android:background="#795F22"
+            android:text="HOLZ"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonGetreide" />
+
+        <Button
+            android:id="@+id/buttonWolle"
+            android:layout_width="104dp"
+            android:layout_height="67dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="24dp"
+            android:background="#9ffca6"
+            android:text="Schaf"
+            app:layout_constraintStart_toEndOf="@+id/buttonHolz"
+            app:layout_constraintTop_toBottomOf="@+id/buttonLehm" />
+
+        <TextView
+            android:id="@+id/textViewGetreide"
+            android:layout_width="24dp"
+            android:layout_height="17dp"
+            android:layout_marginTop="116dp"
+            android:text="0"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toStartOf="@+id/buttonGetreide"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/buttonGetreide"
+            android:layout_width="104dp"
+            android:layout_height="67dp"
+            android:layout_marginStart="52dp"
+            android:layout_marginLeft="52dp"
+            android:layout_marginTop="116dp"
+            android:background="#d8d520"
+            android:text="GETREIDE"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/buttonLehm"
+            android:layout_width="104dp"
+            android:layout_height="67dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="116dp"
+            android:background="#d81b02"
+            android:text="LEHM"
+            app:layout_constraintStart_toEndOf="@+id/buttonGetreide"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/buttonErz"
+            android:layout_width="104dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="52dp"
+            android:layout_marginLeft="52dp"
+            android:layout_marginTop="24dp"
+            android:background="#e2e2e2"
+            android:text="ERZ"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonHolz" />
+
+        <Button
+            android:id="@+id/buttonClear"
+            android:layout_width="107dp"
+            android:layout_height="29dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Zurücksetzen"
+            android:textSize="8sp"
+            app:layout_constraintStart_toEndOf="@+id/buttonErz"
+            app:layout_constraintTop_toBottomOf="@+id/buttonWolle" />
+
+        <Button
+            android:id="@+id/buttonConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Bestätigen"
+            app:layout_constraintStart_toEndOf="@+id/buttonErz"
+            app:layout_constraintTop_toBottomOf="@+id/buttonClear" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52dp"
+            android:layout_marginLeft="52dp"
+            android:layout_marginTop="24dp"
+            android:text="Countdown"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonErz" />
+
+        <TextView
+            android:id="@+id/textViewLehm"
+            android:layout_width="24dp"
+            android:layout_height="17dp"
+            android:layout_marginTop="116dp"
+            android:text="0"
+            android:textAlignment="center"
+            app:layout_constraintStart_toEndOf="@+id/buttonLehm"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewHolz"
+            android:layout_width="24dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="27dp"
+
+            android:layout_marginLeft="27dp"
+            android:layout_marginTop="74dp"
+            android:text="0"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toStartOf="@+id/buttonHolz"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewGetreide" />
+
+        <TextView
+            android:id="@+id/textViewWolle"
+            android:layout_width="24dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="74dp"
+            android:text="0"
+            android:textAlignment="center"
+            app:layout_constraintStart_toEndOf="@+id/buttonWolle"
+            app:layout_constraintTop_toBottomOf="@+id/textViewLehm" />
+
+        <TextView
+            android:id="@+id/textViewErz"
+            android:layout_width="24dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="73dp"
+            android:text="0"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toStartOf="@+id/buttonErz"
+            app:layout_constraintTop_toBottomOf="@+id/textViewHolz" />
+
+        <TextView
+            android:id="@+id/textViewtimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="24dp"
+            android:text="25"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/buttonErz" />
+
+        <TextView
+            android:id="@+id/textViewNoch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="350dp"
+            android:text="Noch"
+            app:layout_constraintStart_toEndOf="@+id/buttonConfirm"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewNochNumber"
+            android:layout_width="26dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="350dp"
+            app:layout_constraintStart_toEndOf="@+id/textViewNoch"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>
