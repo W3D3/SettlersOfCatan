@@ -6,6 +6,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
+import io.swagslash.settlersofcatan.pieces.items.Bank;
 import io.swagslash.settlersofcatan.pieces.items.IBank;
 import io.swagslash.settlersofcatan.pieces.items.ICard;
 
@@ -19,7 +20,6 @@ public class GameController {
     Board board;
 
     private GameController() {
-        // TODO init bank and board
         bank = new Bank();
         board = SettlerApp.board;
     }
@@ -32,7 +32,7 @@ public class GameController {
 
     public boolean buildRoad(Edge edge, Player player) {
         if (edge.canBuildRoad(player)) {
-            if (bank.payForRoad(player)) {
+            if (bank.payForStreet(player)) {
                 edge.buildRoad(player);
                 return true;
             }
@@ -68,7 +68,6 @@ public class GameController {
         for (Hex hex : board.getHexagons()) {
             if (hex.distributeResources(num))
                 System.out.println(hex.toString() + " distrubuted resources.");
-            ;
         }
 
         return false;
