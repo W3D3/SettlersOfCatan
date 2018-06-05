@@ -111,7 +111,7 @@ public class TradingActivity extends AppCompatActivity {
                 }
                 break;
         }
-        tv.setText(String.valueOf(val));
+        tv.setText(String.format("%02d", val));
         //Debug.stopMethodTracing();
     }
 }

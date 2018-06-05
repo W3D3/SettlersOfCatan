@@ -7,153 +7,32 @@
     android:background="@android:drawable/editbox_dropdown_light_frame"
     tools:layout_editor_absoluteY="81dp">
 
-    <TextView
-        android:id="@+id/player_name"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginStart="3dp"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:paddingLeft="8dp"
-        android:text="Player"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/ore_view3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/grain_view3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/player_name"
-        app:srcCompat="@android:drawable/btn_dialog" />
+        <TextView
+            android:id="@+id/player_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Player"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="121dp"
+            tools:layout_editor_absoluteY="9dp" />
 
-    <TextView
-        android:id="@+id/ore_count3"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:clickable="false"
-        android:gravity="center_horizontal"
-        android:text="12"
-        android:textColor="@android:color/background_dark"
-        android:textIsSelectable="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/ore_view3"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/ore_view3"
-        app:layout_constraintTop_toBottomOf="@+id/ore_view3" />
-
-    <ImageView
-        android:id="@+id/grain_view3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/lumber_view3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ore_view3"
-        app:layout_constraintTop_toBottomOf="@+id/player_name"
-        app:srcCompat="@android:drawable/btn_dialog" />
-
-    <TextView
-        android:id="@+id/grain_count3"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
-        android:text="12"
-        android:textColor="@android:color/background_dark"
-        android:textIsSelectable="false"
-        app:layout_constraintEnd_toEndOf="@+id/grain_view3"
-        app:layout_constraintStart_toStartOf="@+id/grain_view3"
-        app:layout_constraintTop_toBottomOf="@+id/grain_view3" />
-
-    <ImageView
-        android:id="@+id/lumber_view3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/wool_view3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/grain_view3"
-        app:layout_constraintTop_toBottomOf="@+id/player_name"
-        app:srcCompat="@android:drawable/btn_dialog" />
-
-    <TextView
-        android:id="@+id/lumber_count3"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
-        android:text="12"
-        android:textColor="@android:color/background_dark"
-        android:textIsSelectable="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/lumber_view3"
-        app:layout_constraintStart_toStartOf="@+id/lumber_view3"
-        app:layout_constraintTop_toBottomOf="@+id/lumber_view3" />
-
-    <ImageView
-        android:id="@+id/wool_view3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/bricks_view3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/lumber_view3"
-        app:layout_constraintTop_toBottomOf="@+id/player_name"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:srcCompat="@android:drawable/btn_dialog" />
-
-    <TextView
-        android:id="@+id/wool_count3"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
-        android:text="12"
-        android:textColor="@android:color/background_dark"
-        android:textIsSelectable="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/wool_view3"
-        app:layout_constraintStart_toStartOf="@+id/wool_view3"
-        app:layout_constraintTop_toBottomOf="@+id/wool_view3" />
-
-    <ImageView
-        android:id="@+id/bricks_view3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/wool_view3"
-        app:layout_constraintTop_toBottomOf="@+id/player_name"
-        app:srcCompat="@android:drawable/btn_dialog" />
-
-    <TextView
-        android:id="@+id/bricks_count3"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
-        android:text="12"
-        android:textColor="@android:color/background_dark"
-        android:textIsSelectable="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/bricks_view3"
-        app:layout_constraintStart_toStartOf="@+id/bricks_view3"
-        app:layout_constraintTop_toBottomOf="@+id/bricks_view3" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
