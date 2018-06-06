@@ -2,6 +2,8 @@ package io.swagslash.settlersofcatan.controller;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
+import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
@@ -34,6 +36,7 @@ public class GameController {
         if (edge.canBuildRoad(player)) {
             if (bank.payForStreet(player)) {
                 edge.buildRoad(player);
+                SettlerApp.getManager().sendToAll(new EdgeBuildAction(player, edge.getCoordinates()));
                 return true;
             }
         }
@@ -44,10 +47,16 @@ public class GameController {
         if (vertex.canBuildSettlement(player)) {
             if (bank.payForSettlement(player)) {
                 vertex.buildSettlement(player);
+                SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex.getCoordinates()));
                 return true;
             }
         }
         return false;
+    }
+
+    public void buildFreeSettlement(Vertex vertex, Player player) {
+        vertex.buildSettlement(player);
+        SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex.getCoordinates()));
     }
 
     public boolean buildCity(Vertex vertex, Player player) {
@@ -55,6 +64,7 @@ public class GameController {
         if (vertex.canBuildCity(player)) {
             if (bank.payForCity(player)) {
                 vertex.buildSettlement(player);
+                SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_CITY, vertex.getCoordinates()));
                 return true;
             }
         }

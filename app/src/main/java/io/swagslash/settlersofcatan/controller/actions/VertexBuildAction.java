@@ -9,6 +9,7 @@ public class VertexBuildAction extends GameAction {
 
     ActionType type;
     HexPoint affectedVertexCoordinates;
+    boolean isFree;
 
     public VertexBuildAction() {
         super();

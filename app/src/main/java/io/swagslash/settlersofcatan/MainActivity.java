@@ -23,12 +23,15 @@ import com.otaliastudios.zoom.ZoomLayout;
 
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.TurnAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.Hex;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
 
@@ -54,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.setupHexView();
         network = SettlerApp.getManager();
         network.switchIn(this);
+        SettlerApp.getPlayer().getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.FOREST));
+        SettlerApp.getPlayer().getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.PASTURE));
+        SettlerApp.getPlayer().getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.FIELD));
+        SettlerApp.getPlayer().getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.HILL));
         //setContentView(R.layout.activity_main);
 
 
@@ -234,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (object instanceof GameAction) {
             if (object instanceof EdgeBuildAction) {
-
+                hexView.redraw();
             } else if (object instanceof VertexBuildAction) {
                 VertexBuildAction action = (VertexBuildAction) object;
                 if (action.getType() == VertexBuildAction.ActionType.BUILD_SETTLEMENT) {
@@ -243,9 +250,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     action.getAffectedVertex().buildCity(action.getActor());
                 }
                 hexView.generateVerticePaths();
+                hexView.redraw();
+            } else if (object instanceof TurnAction) {
+                if (!((TurnAction) object).isEndTurn()) {
+                    if (((TurnAction) object).isInitialTurn()) {
+                        SettlerApp.board.setPhase(Board.Phase.FREE_SETTLEMENT);
+                    }
+                    SettlerApp.board.setPhase(Board.Phase.PLAYER_TURN);
+                }
             }
-            hexView.redraw();
-            return;
+
+
         }
     }
 }

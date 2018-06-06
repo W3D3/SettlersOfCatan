@@ -5,6 +5,7 @@ import android.app.Application;
 import java.util.List;
 import java.util.Stack;
 
+import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.GameClient;
 import io.swagslash.settlersofcatan.network.wifi.Network;
@@ -17,6 +18,7 @@ public class SettlerApp extends Application {
     public static String playerName;
     private static AbstractNetworkManager network;
     public static Board board;
+    public static GameController controller;
 
     public String getPlayerName() {
         return playerName;

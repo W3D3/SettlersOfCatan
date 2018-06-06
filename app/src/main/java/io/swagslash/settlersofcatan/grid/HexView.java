@@ -362,11 +362,15 @@ public class HexView extends View {
 
             case SETUP_SETTLEMENT:
                 GameController.getInstance().buildSettlement(vertex, SettlerApp.getPlayer());
-                SettlerApp.board.setPhase(Board.Phase.IDLE);
+                SettlerApp.board.setPhase(Board.Phase.PLAYER_TURN);
                 generateVerticePaths();
                 redraw();
                 break;
-            case SETUP_ROAD:
+            case FREE_SETTLEMENT:
+                GameController.getInstance().buildFreeSettlement(vertex, SettlerApp.getPlayer());
+                SettlerApp.board.setPhase(Board.Phase.FREE_ROAD);
+                generateVerticePaths();
+                redraw();
                 break;
             case SETUP_CITY:
                 break;

@@ -8,6 +8,7 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 public class EdgeBuildAction extends GameAction {
 
     HexPointPair affectedEdgeCoordinates;
+    boolean isFree;
 
     public EdgeBuildAction() {
         super();
