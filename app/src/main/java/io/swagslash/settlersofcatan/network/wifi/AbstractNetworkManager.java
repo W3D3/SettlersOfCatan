@@ -1,12 +1,8 @@
 package io.swagslash.settlersofcatan.network.wifi;
 
-import android.app.Activity;
-
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
 
@@ -33,7 +29,9 @@ public abstract class AbstractNetworkManager {
 
     public abstract void sendtoHost(Object message);
 
-    public void discover(){    }
+    public List<InetAddress> discover() {
+        return null;
+    }
 
     public void connect(InetAddress address){
 
@@ -74,5 +72,8 @@ public abstract class AbstractNetworkManager {
 
     public Client getClient(){
         return null;
+    }
+
+    public void destroy() {
     }
 }

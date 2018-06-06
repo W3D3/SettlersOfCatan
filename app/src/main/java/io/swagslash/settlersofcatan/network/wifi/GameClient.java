@@ -4,10 +4,7 @@ import com.esotericsoftware.kryonet.Client;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.List;
-
-import io.swagslash.settlersofcatan.SettlerApp;
 
 public class GameClient extends AbstractNetworkManager {
 
@@ -17,7 +14,6 @@ public class GameClient extends AbstractNetworkManager {
 
     public GameClient() {
        client = new Client(16384,16384);
-//       client.start();
        Network.register(client);
     }
 
@@ -69,17 +65,8 @@ public class GameClient extends AbstractNetworkManager {
     }
 
     @Override
-    public void discover() {
-        new Thread("Discover") {
-            public void run () {
-                    List<NetworkDevice> devices = new ArrayList<>();
-                    for (InetAddress address:client.discoverHosts(Network.UDP, 5000)) {
-                    devices.add(new NetworkDevice("Lobby " + devices.size(), address));
-                    hosts = devices;
-                }
-
-            }
-        }.start();
+    public List<InetAddress> discover() {
+        return client.discoverHosts(Network.UDP, 2000);
     }
 
     @Override
@@ -111,6 +98,7 @@ public class GameClient extends AbstractNetworkManager {
 
     @Override
     public void disconnect() {
+        sendToAll(new Network.LeaveMessage());
         client.close();
     }
 

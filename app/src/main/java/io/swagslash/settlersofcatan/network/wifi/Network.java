@@ -78,6 +78,7 @@ public class Network {
         kryo.register(Pair.class);
         kryo.register(Stack.class);
         kryo.register(SetupInfo.class);
+        kryo.register(LeaveMessage.class);
     }
 
     static public class RegisterName {
@@ -146,6 +147,11 @@ public class Network {
 
         public void setTerrainTypeStack(Stack<Hex.TerrainType> terrainTypeStack) {
             this.terrainTypeStack = terrainTypeStack;
+        }
+    }
+
+    static public class LeaveMessage {
+        public LeaveMessage() {
         }
     }
 

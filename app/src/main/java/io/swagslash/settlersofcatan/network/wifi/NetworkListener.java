@@ -2,12 +2,8 @@ package io.swagslash.settlersofcatan.network.wifi;
 
 import android.util.Log;
 
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
-
-import java.io.IOException;
 
 import io.swagslash.settlersofcatan.SettlerApp;
 

@@ -1,7 +1,6 @@
 package io.swagslash.settlersofcatan.network.wifi.gui;
 
 import android.content.Intent;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,20 +16,18 @@ import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.GameClient;
 import io.swagslash.settlersofcatan.network.wifi.GameServer;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.LobbyMemberFragment;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
-import io.swagslash.settlersofcatan.pieces.Board;
 
-public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManager.ChannelListener, INetworkCallback{
+public class HostLobbyActivity extends AppCompatActivity implements INetworkCallback {
 
     private AbstractNetworkManager network;
     private final String TAG ="LOBBY";
     private LobbyMemberFragment frag;
-
-    private boolean backAllowed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +50,10 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
             case R.id.btnStartGame:
                 List<String> players = new ArrayList<>();
                 for (Connection con: network.getConnections()) {
-
                     players.add(((GameServer.GameConnection)con).name);
                 }
                 players.add(SettlerApp.playerName);
                 SettlerApp.generateBoard(players);
-//                network.sendToAll(SettlerApp.board);
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 network.switchOut();
                 startActivity(i);
@@ -72,6 +67,9 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
 
     public void closeLobby(){
         if(network.isHost()){
+            SettlerApp.getManager().destroy();
+            SettlerApp.setNetwork(new GameClient());
+
             super.onBackPressed();
         }
         else{
@@ -80,24 +78,13 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
     }
 
     @Override
-    public void onChannelDisconnected() {
-
-    }
-
-
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        if (!backAllowed) {
 
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -122,12 +109,6 @@ public class HostLobbyActivity extends AppCompatActivity implements WifiP2pManag
                         frag.setMember(network.getDevices());
                     }
                 });
-
-            }
-
-            if(object instanceof Board){
-                //TODO: handle Board data and send to all
-                return;
             }
 
     }

@@ -99,4 +99,9 @@ public class GameServer extends AbstractNetworkManager {
     public void disconnect() {
         server.stop();
     }
+
+    @Override
+    public void destroy() {
+        server.stop();
+    }
 }

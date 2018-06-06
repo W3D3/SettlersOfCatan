@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.esotericsoftware.kryonet.Connection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.MainActivity;
@@ -34,6 +35,7 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
         setContentView(R.layout.activity_client_lobby);
         network = SettlerApp.getManager();
         network.switchIn(this);
+        member = new ArrayList<>();
 
 
     }
@@ -72,6 +74,7 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
         if (object instanceof Network.UpdateNames) {
             Network.UpdateNames updateNames = (Network.UpdateNames)object;
             Log.d(TAG, updateNames.names.toString());
+
             member.clear();
             for(String s: updateNames.names){
                member.add(new NetworkDevice(s, null));

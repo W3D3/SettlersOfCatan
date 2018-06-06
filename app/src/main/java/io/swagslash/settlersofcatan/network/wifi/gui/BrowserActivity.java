@@ -4,56 +4,66 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
-
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
-import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.MyLobbyServiceRecyclerViewAdapter;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
 
-public class  BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, SwipeRefreshLayout.OnRefreshListener, INetworkCallback{
+public class BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, INetworkCallback {
 
     public static final String TAG = "LOBBYBROWSER";
-
-    private SwipeRefreshLayout swipeRefreshLayout;
-
     private AbstractNetworkManager network;
-
-    private boolean backAllowed = false;
     private LobbyServiceFragment lobbies;
-
-    public Runnable refreshRunnable;
-    private Handler refreshHandler;
+    private boolean discovering = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        com.esotericsoftware.minlog.Log
-                .set(com.esotericsoftware.minlog.Log.LEVEL_DEBUG);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
         network = SettlerApp.getManager();
         network.init(this);
-        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
-        swipeRefreshLayout.setOnRefreshListener(this);
-        setRefreshing();
         lobbies = (LobbyServiceFragment) getSupportFragmentManager().findFragmentById(R.id.lobbyFrag);
-        network.discover();
+        discover();
+    }
+
+    private void discover() {
+        new Thread("Discover") {
+            public void run() {
+                List<NetworkDevice> devices = new ArrayList<>();
+                List<InetAddress> discDevices = SettlerApp.getManager().discover();
+                if (discDevices != null) {
+                    for (InetAddress address : discDevices) {
+                        devices.add(new NetworkDevice("Lobby " + devices.size(), address));
+                        final List<NetworkDevice> foundLobbies = devices;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                lobbies.setLobbies(foundLobbies);
+                            }
+                        });
+                    }
+                }
+                if (discovering) {
+                    discover();
+                }
+            }
+        }.start();
     }
 
     @Override
@@ -71,7 +81,6 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
                 createLobby();
                 break;
             case R.id.btnDiscover:
-                lobbies.setLobbies(network.getHosts());
                 break;
                    }
     }
@@ -84,36 +93,13 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
 
     @Override
     public void onDestroy() {
+        discovering = false;
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        if (!backAllowed) {
 
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onRefresh() {
-        network.discover();
-        setRefreshing();
-    }
-
-
-    private void setRefreshing() {
-        refreshRunnable = new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(),"No Devices found!", Toast.LENGTH_LONG);
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        };
-
-        refreshHandler = new Handler();
-        refreshHandler.postDelayed(refreshRunnable, 10000);
     }
 
     @Override
@@ -124,7 +110,6 @@ public class  BrowserActivity extends AppCompatActivity implements MyLobbyServic
     @Override
     public void onClick(NetworkDevice host) {
         new EstablishConnection(host.getAddress()).execute();
-//        network.connect(host.getAddress());
     }
 
     private class EstablishConnection extends AsyncTask<Void, Void, Boolean> {
