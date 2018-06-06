@@ -2,16 +2,20 @@ package io.swagslash.settlersofcatan.controller.actions;
 
 import io.swagslash.settlersofcatan.Player;
 
-public class YourTurnAction extends GameAction {
+public class TurnAction extends GameAction {
     boolean isInitialTurn;
+    boolean isEndTurn;
 
-    public YourTurnAction() {
+    public TurnAction() {
         super();
+        this.isInitialTurn = false;
+        this.isEndTurn = false;
     }
 
-    public YourTurnAction(Player actor, boolean isInitialTurn) {
+    public TurnAction(Player actor, boolean isInitialTurn, boolean isEndTurn) {
         super(actor);
         this.isInitialTurn = isInitialTurn;
+        this.isEndTurn = isEndTurn;
     }
 
     public boolean isInitialTurn() {
@@ -20,5 +24,13 @@ public class YourTurnAction extends GameAction {
 
     public void setInitialTurn(boolean initialTurn) {
         isInitialTurn = initialTurn;
+    }
+
+    public boolean isEndTurn() {
+        return isEndTurn;
+    }
+
+    public void setEndTurn(boolean endTurn) {
+        isEndTurn = endTurn;
     }
 }
