@@ -33,6 +33,7 @@ import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
+import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
@@ -109,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.cards.setOnClickListener(this);
 
 
+        if (SettlerApp.getManager().isHost()) {
+            TurnController.getInstance().startPlayerTurn();
+        }
 
     }
 
@@ -143,7 +147,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Integer min = 1;
                 int dice1 = random.nextInt((max - min) + 1) + min;
                 int dice2 = random.nextInt((max - min) + 1) + min;
-                GameController.getInstance().handleDiceRolls(dice1, dice2);
+                Network.DiceRoll roll = new Network.DiceRoll();
+                roll.setDic1(dice1);
+                roll.setDic2(dice2);
+                SettlerApp.getManager().sendToAll(roll);
                 Toast.makeText(this.getApplicationContext(), "ROLLED " + dice1 + dice2,
                         Toast.LENGTH_LONG).show();
                 SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
@@ -160,11 +167,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.trading:
                 tv.append("trading clicked!");
-                if (SettlerApp.getManager().isHost()) {
-                    TurnController.getInstance().startPlayerTurn();
-                }
-//                Intent in2 = new Intent(this, TradingActivity.class);
-//                startActivity(in2);
+                Intent in2 = new Intent(this, TradingActivity.class);
+                startActivity(in2);
                 break;
             default:
                 break;
@@ -306,8 +310,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             }
-
-
+        } else if (object instanceof Network.DiceRoll) {
+            Network.DiceRoll roll = (Network.DiceRoll) object;
+            GameController.getInstance().handleDiceRolls(roll.getDic1(), roll.getDic2());
+            if (network.isHost()) {
+                network.sendToAll(roll);
+            }
         }
 
 

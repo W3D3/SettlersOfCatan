@@ -49,10 +49,10 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
         switch (v.getId()) {
             case R.id.btnStartGame:
                 List<String> players = new ArrayList<>();
+                players.add(SettlerApp.playerName);
                 for (NetworkDevice nd : network.getDevices()) {
                     players.add(nd.getDeviceName());
                 }
-                players.add(SettlerApp.playerName);
                 SettlerApp.generateBoard(players);
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 network.switchOut();
