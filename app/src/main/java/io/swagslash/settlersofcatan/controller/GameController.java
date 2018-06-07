@@ -43,6 +43,15 @@ public class GameController {
         return false;
     }
 
+    public boolean buildFreeRoad(Edge edge, Player player) {
+        if (edge.canBuildRoad(player)) {
+            edge.buildRoad(player);
+            SettlerApp.getManager().sendToAll(new EdgeBuildAction(player, edge.getCoordinates()));
+            return true;
+        }
+        return false;
+    }
+
     public boolean buildSettlement(Vertex vertex, Player player) {
         if (vertex.canBuildSettlement(player)) {
             if (bank.payForSettlement(player)) {
@@ -55,8 +64,10 @@ public class GameController {
     }
 
     public void buildFreeSettlement(Vertex vertex, Player player) {
-        vertex.buildSettlement(player);
-        SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex.getCoordinates()));
+        if (vertex.canBuildFreeSettlement(player)) {
+            vertex.buildSettlement(player);
+            SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex.getCoordinates()));
+        }
     }
 
     public boolean buildCity(Vertex vertex, Player player) {

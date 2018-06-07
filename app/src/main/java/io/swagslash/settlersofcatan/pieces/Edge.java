@@ -1,8 +1,12 @@
 package io.swagslash.settlersofcatan.pieces;
 
+import android.graphics.Path;
+import android.graphics.Region;
+
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
+import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
  * Created by wedenigc on 19.03.18.
@@ -15,7 +19,8 @@ public class Edge {
     private Player owner;
     private Vertex[] vertexNeighbors;
     private transient Board board;
-
+    private Path path;
+    private Region region;
 
     public Edge() {
         this.unitType = EdgeType.NONE;
@@ -159,6 +164,46 @@ public class Edge {
     public int hashCode() {
         return 0;
     } //TODO fix maybe?
+
+    public void calculatePath(Pair<Integer, Integer> offset, int scale) {
+        Path path = new Path();
+        HexPoint a = this.getCoordinates().first.scale(offset, scale);
+        HexPoint b = this.getCoordinates().second.scale(offset, scale);
+        double x = Math.abs(a.x - b.x) / 2;
+        double y = Math.abs(a.y - b.y) / 2;
+
+
+        HexPoint drawPoint = new HexPoint(x, y);
+
+        switch (this.getUnitType()) {
+            case ROAD:
+                path.moveTo((float) a.x, (float) a.y);
+                path.lineTo((float) b.x, (float) b.y);
+                break;
+            case NONE:
+                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 40, Path.Direction.CW);
+                break;
+        }
+
+        path.close();
+        this.path = path;
+    }
+
+    public Path getPath() {
+        return path;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
 
     public enum EdgeType {
         NONE, ROAD

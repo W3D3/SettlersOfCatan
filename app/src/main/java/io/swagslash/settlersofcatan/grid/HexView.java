@@ -59,6 +59,7 @@ public class HexView extends View {
     // Vertex Paint
     Paint circlePaint;
     Paint edgePaint;
+    Paint roadPaint;
     Region clip;
     private GestureDetector gestureDetector;
     private ScaleGestureDetector scaleDetector;
@@ -93,6 +94,11 @@ public class HexView extends View {
         edgePaint.setColor(Color.BLUE);
         edgePaint.setStyle(Paint.Style.STROKE);
         edgePaint.setStrokeWidth(4);
+
+        roadPaint = new Paint();
+        roadPaint.setColor(Color.GRAY);
+        roadPaint.setStyle(Paint.Style.STROKE);
+        roadPaint.setStrokeWidth(8);
 
     }
 
@@ -154,7 +160,7 @@ public class HexView extends View {
         }
 
         generateVerticePaths();
-
+        generateEdgePaths();
 
         //ready to draw
         setWillNotDraw(false);
@@ -165,6 +171,12 @@ public class HexView extends View {
         for (Vertex v : board.getVerticesList()) {
             HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
             v.calculatePath(offset, scale);
+        }
+    }
+
+    public void generateEdgePaths() {
+        for (Edge e : board.getEdgesList()) {
+            e.calculatePath(offset, scale);
         }
     }
 
@@ -207,27 +219,26 @@ public class HexView extends View {
 
         }
 
-        for (Hex h : board.getHexagons()) {
-            for (Edge e : h.getEdges()) {
-                HexPoint from = e.getCoordinates().first;
-                HexPoint to = e.getCoordinates().first;
-                HexPoint drawFrom = from.scale(offset, scale);
-                HexPoint drawTo = to.scale(offset, scale);
-                switch (e.getUnitType()) {
-                    case ROAD:
-                        edgePaint.setColor(e.getOwner().getColor());
-                        c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, edgePaint);
-                        break;
-                    case NONE:
-                        //c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, edgePaint);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+//        for (Hex h : board.getHexagons()) {
+//            for (Edge e : h.getEdges()) {
+//                HexPoint from = e.getCoordinates().first;
+//                HexPoint to = e.getCoordinates().first;
+//                HexPoint drawFrom = from.scale(offset, scale);
+//                HexPoint drawTo = to.scale(offset, scale);
+//                switch (e.getUnitType()) {
+//                    case ROAD:
+//                        roadPaint.setColor(e.getOwner().getColor());
+//                        c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, roadPaint);
+//                        break;
+//                    case NONE:
+//                        //c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, edgePaint);
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//        }
 
-        //TODO draw vertices
 
         for (Vertex vertex : board.getVerticesList()) {
             Region region = new Region();
@@ -235,7 +246,8 @@ public class HexView extends View {
             vertex.setRegion(region);
             switch (vertex.getUnitType()) {
                 case NONE:
-                    if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT) {
+                    if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT ||
+                            SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY) {
                         c.drawPath(vertex.getPath(), vertexClickPaint);
                     }
                     break;
@@ -249,6 +261,25 @@ public class HexView extends View {
                     break;
             }
 
+        }
+
+        for (Edge edge : board.getEdgesList()) {
+            Region region = new Region();
+            region.setPath(edge.getPath(), clip);
+            edge.setRegion(region);
+            switch (edge.getUnitType()) {
+                case ROAD:
+                    roadPaint.setColor(edge.getOwner().getColor());
+                    c.drawPath(edge.getPath(), roadPaint);
+                    break;
+                case NONE:
+                    if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_ROAD) {
+                        c.drawPath(edge.getPath(), vertexClickPaint);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
 
@@ -275,6 +306,7 @@ public class HexView extends View {
                 @Override
                 public boolean onSingleTapConfirmed(MotionEvent e) {
                     handleVertexClick(e);
+                    handleEdgeClick(e);
                     showHexDetailFromMotionEvent(e, "Single Tap");
 
                     return true;
@@ -340,6 +372,17 @@ public class HexView extends View {
         return null;
     }
 
+    private Edge getEdgeFromCoordinates(int x, int y) {
+        final ArrayList<Edge> edges = new ArrayList<>(SettlerApp.board.getEdgesList());
+        for (int i = 0; i < edges.size(); i++) {
+            Region r = edges.get(i).getRegion();
+            if (r.contains(x, y)) {
+                return edges.get(i);
+            }
+        }
+        return null;
+    }
+
     private void showHexDetailFromMotionEvent(MotionEvent event, String msg) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
         Hex hex = getHexFromCoordinates(coordinates.first, coordinates.second);
@@ -385,6 +428,23 @@ public class HexView extends View {
             case TRADE_RESPONDED:
                 break;
             case FINISHED_GAME:
+                break;
+        }
+    }
+
+    private void handleEdgeClick(MotionEvent event) {
+        Pair<Integer, Integer> coordinates = getCoordinates(event);
+        Edge edge = getEdgeFromCoordinates(coordinates.first, coordinates.second);
+        if (edge == null) return;
+
+        System.out.println(edge.toString());
+        switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
+
+            case SETUP_ROAD:
+                GameController.getInstance().buildRoad(edge, SettlerApp.getPlayer());
+                break;
+            case FREE_ROAD:
+                GameController.getInstance().buildFreeRoad(edge, SettlerApp.getPlayer());
                 break;
         }
     }

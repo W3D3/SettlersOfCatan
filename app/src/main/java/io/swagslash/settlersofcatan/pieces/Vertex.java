@@ -120,6 +120,13 @@ public class Vertex {
         return this.isConnectedToRoadOwnedBy(p) && this.hasNoNeighbourBuildings();
     }
 
+    public boolean canBuildFreeSettlement(Player p) {
+        // Building for free is possible if:
+        // No adjacent space is occuppied
+
+        return this.hasNoNeighbourBuildings();
+    }
+
     /**
      * Determines if a {@link Player} p can build a city on this {@link Vertex}
      *
