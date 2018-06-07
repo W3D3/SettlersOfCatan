@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
@@ -81,7 +82,7 @@ public class Network {
         kryo.register(SetupInfo.class);
         kryo.register(LeaveMessage.class);
         kryo.register(TurnAction.class);
-        kryo.register(DiceRoll.class);
+        kryo.register(DiceRollAction.class);
     }
 
     static public class RegisterName {
@@ -155,30 +156,6 @@ public class Network {
 
     static public class LeaveMessage {
         public LeaveMessage() {
-        }
-    }
-
-    static public class DiceRoll {
-        public int dic1;
-        public int dic2;
-
-        public DiceRoll() {
-        }
-
-        public int getDic1() {
-            return dic1;
-        }
-
-        public void setDic1(int dic1) {
-            this.dic1 = dic1;
-        }
-
-        public int getDic2() {
-            return dic2;
-        }
-
-        public void setDic2(int dic2) {
-            this.dic2 = dic2;
         }
     }
 
