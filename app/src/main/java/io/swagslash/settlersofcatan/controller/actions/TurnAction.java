@@ -8,6 +8,14 @@ public class TurnAction extends GameAction {
 
     public TurnAction() {
         super();
+        this.isInitialTurn = false;
+        this.isEndTurn = false;
+    }
+
+    public TurnAction(Player actor) {
+        super(actor);
+        this.isInitialTurn = false;
+        this.isEndTurn = false;
     }
 
     public TurnAction(Player actor, boolean isInitialTurn, boolean isEndTurn) {
