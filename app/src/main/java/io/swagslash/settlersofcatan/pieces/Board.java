@@ -66,7 +66,7 @@ public class Board {
     public enum Phase {
         SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY,
         PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
-        FINISHED_GAME, IDLE;
+        FINISHED_GAME, IDLE, DICE_ROLL;
     }
 
     public void setPhase(Phase phase) {
