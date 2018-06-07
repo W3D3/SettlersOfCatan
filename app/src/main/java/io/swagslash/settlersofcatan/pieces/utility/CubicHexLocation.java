@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by logan on 2017-01-31.
  */
 
-class CubicHexLocation
+public class CubicHexLocation
 {
     public CubicHexLocation(int q, int r, int s)
     {

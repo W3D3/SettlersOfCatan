@@ -79,4 +79,10 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_trading">TradingActivity</string>
+    <string name="error_noname">Please enter name!</string>
+    <string name="hint_enter_name">Please enter name!</string>
+    <string name="label_app_name">Settlers of Catan</string>
+    <string name="btn_play">Play Game</string>
+    <string name="btn_discover">Discover Lobbies</string>
+    <string name="btn_create_lobby">Create Lobby</string>
 </resources>

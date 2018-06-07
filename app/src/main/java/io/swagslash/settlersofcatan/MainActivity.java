@@ -4,10 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
@@ -16,23 +16,26 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bluelinelabs.logansquare.LoganSquare;
+import com.esotericsoftware.kryonet.Connection;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
-import com.peak.salut.Callbacks.SalutDataCallback;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.Random;
 
+import io.swagslash.settlersofcatan.controller.GameController;
+import io.swagslash.settlersofcatan.controller.TurnController;
+import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
+import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.TurnAction;
+import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
-import io.swagslash.settlersofcatan.network.wifi.DataCallback;
-import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.pieces.Board;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, DataCallback.IDataCallback{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
 
     private final int FAB_MENU_DISTANCE = 145;
 
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     HexView hexView;
     private Board board;
+    private AbstractNetworkManager network;
 
     //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
@@ -53,9 +57,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setupHexView();
+        network = SettlerApp.getManager();
+        network.switchIn(this);
         //setContentView(R.layout.activity_main);
 
-        DataCallback.actActivity = this;
+
+        TabLayout tabs = findViewById(R.id.tabs);
+        for (View view : tabs.getTouchables()) {
+            view.setClickable(false);
+        }
 
         //fab menu animation
         this.fabOpen = false;
@@ -98,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
 
+
+
     }
 
     @Override
@@ -111,8 +123,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.fab_settlement:
                 tv.append("settlement clicked!");
-                SettlerApp.board.setPhase(Board.Phase.SETUP_SETTLEMENT);
-                hexView.showFreeSettlements();
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_SETTLEMENT);
+                    hexView.showFreeSettlements();
+                }
                 break;
             case R.id.fab_city:
                 tv.append("city clicked!");
@@ -121,10 +135,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tv.append("street clicked!");
                 break;
             case R.id.dice:
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
+                    return;
                 tv.append("dice clicked!");
+                Random random = new Random();
+                Integer max = 6;
+                Integer min = 1;
+                int dice1 = random.nextInt((max - min) + 1) + min;
+                int dice2 = random.nextInt((max - min) + 1) + min;
+                GameController.getInstance().handleDiceRolls(dice1, dice2);
+                Toast.makeText(this.getApplicationContext(), "ROLLED " + dice1 + dice2,
+                        Toast.LENGTH_LONG).show();
+                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 break;
             case R.id.end_of_turn:
-                tv.append("end of turn clicked!");
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.getManager().sendtoHost(new TurnAction(SettlerApp.getPlayer(), false, true));
+                }
                 break;
             case R.id.cards:
                 tv.append("cards clicked!");
@@ -133,8 +160,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.trading:
                 tv.append("trading clicked!");
-                Intent in2 = new Intent(this, TradingActivity.class);
-                startActivity(in2);
+                if (SettlerApp.getManager().isHost()) {
+                    TurnController.getInstance().startPlayerTurn();
+                }
+//                Intent in2 = new Intent(this, TradingActivity.class);
+//                startActivity(in2);
                 break;
             default:
                 break;
@@ -207,34 +237,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if(SettlerApp.getManager().getNetwork().isRunningAsHost)
-            SettlerApp.getManager().getNetwork().stopNetworkService(false);
-        else
-            SettlerApp.getManager().getNetwork().unregisterClient(false);
     }
 
-    @Override
-    public void onDataReceived(Object o) {
 
-        try {
-            SettlerApp.board = (Board) LoganSquare.parse((String) o, Board.class);
-            System.out.println((String) o);
-            if (SettlerApp.getManager().isHost()) {
-                System.out.println( "################### I AM HOST " + SettlerApp.playerName);
-                SettlerApp.getManager().sendToAll(SettlerApp.board);
-            }
-            System.out.println( "################## DATA RECEIVED " + SettlerApp.playerName);
-            hexView.setBoard(SettlerApp.board);
-            hexView.prepare();
-            hexView.redraw();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onBackPressed() {
         return; //TODO maybe dialog option to exit?
+    }
+
+    @Override
+    public void received(Connection connection, Object object) {
+
+        if (object instanceof GameAction) {
+            if (object instanceof EdgeBuildAction) {
+                hexView.redraw();
+            } else if (object instanceof VertexBuildAction) {
+                VertexBuildAction action = (VertexBuildAction) object;
+                if (action.getType() == VertexBuildAction.ActionType.BUILD_SETTLEMENT) {
+                    action.getAffectedVertex().buildSettlement(action.getActor());
+                } else if (action.getType() == VertexBuildAction.ActionType.BUILD_CITY) {
+                    action.getAffectedVertex().buildCity(action.getActor());
+                }
+                hexView.generateVerticePaths();
+                hexView.redraw();
+            } else if (object instanceof TurnAction) {
+                final TurnAction turn = (TurnAction) object;
+                if (!turn.isEndTurn()) {
+
+                    final TabLayout tabs = findViewById(R.id.tabs);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tabs.getTabAt(turn.getActor().getPlayerNumber()).select();
+                        }
+                    });
+
+                    if (turn.getActor().equals(SettlerApp.getPlayer())) {
+                        if (turn.isInitialTurn()) {
+                            SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_SETTLEMENT);
+                            hexView.showFreeSettlements();
+
+                        } else {
+                            SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PRODUCTION);
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "YOUR TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+
+                } else {
+                    if (SettlerApp.getManager().isHost()) {
+                        TurnController.getInstance().advancePlayer();
+                        //TODO: check if player won
+                        TurnController.getInstance().startPlayerTurn();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "end turn",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                    }
+                }
+            }
+
+
+        }
+
+
     }
 }

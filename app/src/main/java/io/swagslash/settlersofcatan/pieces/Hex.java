@@ -39,6 +39,7 @@ public class Hex {
             this.vertices.add(null);
         }
         this.edges = new ArrayList<>();
+        this.hasRobber = false;
     }
 
     public List<Vertex> getVertices() {
@@ -113,20 +114,22 @@ public class Hex {
         return Resource.getResourceForTerrain(this.terrainType);
     }
 
-    public void distributeResources(int diceRoll) {
-        if (diceRoll != this.numberToken.getNumber() || hasRobber) {
-            return;
+    public boolean distributeResources(int diceRoll) {
+        if (this.numberToken == null || diceRoll != this.numberToken.getNumber() || hasRobber) {
+            return false;
         }
 
         for (int i = 0; i < 6; i++) {
             //TODO each vertex gets resources
             vertices.get(i).distributeResources(this.getResourceProduced());
         }
+        return true;
     }
 
     @Override
     public String toString() {
-        return this.hexLocation.toString() + " " + this.terrainType.toString();
+        int num = numberToken == null ? -1 : this.numberToken.getNumber();
+        return this.hexLocation.toString() + " " + this.terrainType.toString() + " " + num;
     }
 
     public void calculatePath(Pair<Integer, Integer> offsets, Integer scale) {

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.controller.PhaseController;
+import io.swagslash.settlersofcatan.pieces.items.ICard;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -19,13 +21,14 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 public class Board {
 
 
-    private Phase phase;
+    private PhaseController phaseController;
 
     private List<Hex> hexagons;
     private HashMap<HexPoint, Vertex> vertices;
     private HashMap<HexPointPair, Edge> edges;
     private List<Player> players;
     private HexGridLayout gridLayout;
+    private Stack<ICard> cardStack;
 
     private boolean randomDiscard;
     private int winningPoints;
@@ -42,7 +45,7 @@ public class Board {
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
         generatePlayers(playerNames);
-        this.phase = Phase.IDLE;
+        this.phaseController = new PhaseController();
     }
 
     public Collection<Vertex> getVerticesList() {
@@ -61,18 +64,16 @@ public class Board {
         return edges;
     }
 
-    public enum Phase {
-        SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY,
-        PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
-        FINISHED_GAME, IDLE;
+    public Stack<ICard> getCardStack() {
+        return cardStack;
     }
 
-    public void setPhase(Phase phase) {
-        this.phase = phase;
+    public PhaseController getPhaseController() {
+        return phaseController;
     }
 
-    public Phase getPhase() {
-        return phase;
+    public void setPhaseController(PhaseController phaseController) {
+        this.phaseController = phaseController;
     }
 
     public Player getPlayerById(int playerId) {
@@ -103,11 +104,15 @@ public class Board {
     }
 
     public void setupBoard() {
+        setupBoard(CatanUtil.getTerrainsShuffled());
+    }
+
+    public void setupBoard(Stack<Hex.TerrainType> terrainTypeStack) {
         this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
 
         List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();
         Stack<NumberToken> numberTokens = CatanUtil.getTokensInStartingSequence();
-        Stack<Hex.TerrainType> terrainsShuffled = CatanUtil.getTerrainsShuffled();
+        Stack<Hex.TerrainType> terrainsShuffled = terrainTypeStack;
 
 
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
@@ -151,5 +156,11 @@ public class Board {
 
     public void setHexagons(List<Hex> hexagons) {
         this.hexagons = hexagons;
+    }
+
+    public enum Phase {
+        SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY, FREE_SETTLEMENT, FREE_ROAD,
+        PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
+        FINISHED_GAME, IDLE, DICE_ROLL;
     }
 }

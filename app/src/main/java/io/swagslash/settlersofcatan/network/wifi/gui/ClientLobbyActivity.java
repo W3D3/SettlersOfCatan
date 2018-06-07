@@ -1,44 +1,43 @@
 package io.swagslash.settlersofcatan.network.wifi.gui;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
-import com.bluelinelabs.logansquare.LoganSquare;
-import com.peak.salut.Callbacks.SalutDataCallback;
-import com.peak.salut.Salut;
-import com.peak.salut.SalutDevice;
+import com.esotericsoftware.kryonet.Connection;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import io.swagslash.settlersofcatan.GridActivity;
 import io.swagslash.settlersofcatan.MainActivity;
-import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
-import io.swagslash.settlersofcatan.network.wifi.DataCallback;
-import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
+import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
+import io.swagslash.settlersofcatan.network.wifi.Network;
+import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
 import io.swagslash.settlersofcatan.pieces.Board;
 
-public class ClientLobbyActivity extends AppCompatActivity implements DataCallback.IDataCallback {
+public class ClientLobbyActivity extends AppCompatActivity implements INetworkCallback {
 
     private static final String TAG = "CLIENTLOBBY";
-    private Salut network;
+    private AbstractNetworkManager network;
 
     private boolean backAllowed = false;
 
-    private List<SalutDevice> member;
+    private List<NetworkDevice> member;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_lobby);
-        DataCallback.actActivity = this;
+        network = SettlerApp.getManager();
+        network.switchIn(this);
+        member = new ArrayList<>();
 
-        network = SettlerApp.getManager().getNetwork();
+
     }
 
     public void onClick(View v){
@@ -50,39 +49,15 @@ public class ClientLobbyActivity extends AppCompatActivity implements DataCallba
     }
 
     void leaveLobby(){
-        network.unregisterClient(false);
+        network.disconnect();
         super.onBackPressed();
     }
 
     @Override
-    public void onDataReceived(Object data) {
-        Log.d(TAG, "Received network data.");
-        try
-        {
-//            io.swagslash.settlersofcatan.network.wifi.Message newMessage = LoganSquare.parse((String) data, io.swagslash.settlersofcatan.network.wifi.Message.class);
-//            Log.d(TAG, newMessage.description);  //See you on the other side!
-//            TextView textView = findViewById(R.id.tv_Message);
-//            textView.setText(newMessage.description);
-
-            Board board = LoganSquare.parse((String) data, Board.class);
-            SettlerApp.board = board;
-            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(i);
-        }
-        catch (IOException ex)
-        {
-            Log.e(TAG, "Failed to parse network data.");
-        }
-    }
-
-    @Override
     public void onDestroy() {
+        network.disconnect();
         super.onDestroy();
 
-        if(network.isRunningAsHost)
-            network.stopNetworkService(false);
-        else
-            network.unregisterClient(false);
     }
 
     @Override
@@ -91,6 +66,33 @@ public class ClientLobbyActivity extends AppCompatActivity implements DataCallba
 
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void received(Connection connection, Object object) {
+        if (object instanceof Network.UpdateNames) {
+            Network.UpdateNames updateNames = (Network.UpdateNames)object;
+            Log.d(TAG, updateNames.names.toString());
+
+            member.clear();
+            for(String s: updateNames.names){
+               member.add(new NetworkDevice(s, null));
+            }
+            return;
+        }
+        if (object instanceof Board) {
+            SettlerApp.board = (Board) object;
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            network.switchOut();
+            startActivity(i);
+            return;
+        }
+        if (object instanceof Network.SetupInfo) {
+            SettlerApp.generateBoard((Network.SetupInfo) object);
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            network.switchOut();
+            startActivity(i);
         }
     }
 }

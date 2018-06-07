@@ -2,52 +2,68 @@ package io.swagslash.settlersofcatan.network.wifi.gui;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
-import com.peak.salut.Callbacks.SalutCallback;
-import com.peak.salut.Salut;
-import com.peak.salut.SalutDevice;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.List;
 
-import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.R;
-import io.swagslash.settlersofcatan.network.wifi.DiscoveryCallback;
-import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
+import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.MyLobbyServiceRecyclerViewAdapter;
+import io.swagslash.settlersofcatan.network.wifi.Network;
+import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
 
-public class  BrowserActivity extends AppCompatActivity implements DiscoveryCallback.IDiscoveryCallback, MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, SwipeRefreshLayout.OnRefreshListener{
+public class BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, INetworkCallback {
 
     public static final String TAG = "LOBBYBROWSER";
-
-    public Salut network;
-    private SwipeRefreshLayout swipeRefreshLayout;
-
-    private boolean backAllowed = false;
+    private AbstractNetworkManager network;
     private LobbyServiceFragment lobbies;
-
-    public Runnable refreshRunnable;
-    private Handler refreshHandler;
+    private boolean discovering = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
-        createNetwork();
-        setupNetwork();
-        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
-        swipeRefreshLayout.setOnRefreshListener(this);
-        setRefreshing();
-
+        network = SettlerApp.getManager();
+        network.init(this);
         lobbies = (LobbyServiceFragment) getSupportFragmentManager().findFragmentById(R.id.lobbyFrag);
-        DiscoveryCallback.activity = this;
+        discover();
+    }
+
+    private void discover() {
+        new Thread("Discover") {
+            public void run() {
+                List<NetworkDevice> devices = new ArrayList<>();
+                List<InetAddress> discDevices = SettlerApp.getManager().discover();
+                if (discDevices != null) {
+                    for (InetAddress address : discDevices) {
+                        devices.add(new NetworkDevice("Lobby " + devices.size(), address));
+                        final List<NetworkDevice> foundLobbies = devices;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                lobbies.setLobbies(foundLobbies);
+                            }
+                        });
+                    }
+                }
+                if (discovering) {
+                    discover();
+                }
+            }
+        }.start();
     }
 
     @Override
@@ -59,118 +75,82 @@ public class  BrowserActivity extends AppCompatActivity implements DiscoveryCall
         super.onRestart();
     }
 
-    @Override
-    public void onClick(SalutDevice device) {
-        Log.d(TAG,"Try Register");
-        network.registerWithHost(device, new SalutCallback() {
-            @Override
-            public void call() {
-                Intent i = new Intent(getApplicationContext(), ClientLobbyActivity.class);
-                startActivity(i);
-            }
-        }, new SalutCallback() {
-            @Override
-            public void call() {
-                Log.d(TAG, "We failed to register.");
-            }
-        });
-    }
-
-
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnCreateLobby:
                 createLobby();
                 break;
             case R.id.btnDiscover:
-                startDiscovery();
                 break;
                    }
     }
 
     public void createLobby() {
-        stopDiscovery();
         Intent i = new Intent(getApplicationContext(), HostLobbyActivity.class);
+        network.switchOut();
+        discovering = false;
         startActivity(i);
     }
 
     @Override
     public void onDestroy() {
+        discovering = false;
         super.onDestroy();
-
-        if(network.isRunningAsHost)
-            network.stopNetworkService(false);
-        else
-            network.unregisterClient(false);
     }
 
     @Override
     public void onBackPressed() {
-        if (!backAllowed) {
 
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
-    public void onRefresh() {
-        setupDiscovery();
-        lobbies.setLobbies(new ArrayList<SalutDevice>());
-        setRefreshing();
-    }
+    public void received(Connection connection, Object object) {
 
-    private void stopDiscovery(){
-        if(network.isDiscovering){
-            network.stopServiceDiscovery(false);
-        }
-    }
-
-    private void startDiscovery(){
-        network.discoverNetworkServices(new DiscoveryCallback(), true);
     }
 
     @Override
-    public void call() {
-        lobbies.setLobbies(network.foundDevices);
+    public void onClick(NetworkDevice host) {
+        new EstablishConnection(host.getAddress()).execute();
+    }
 
-        swipeRefreshLayout.setRefreshing(false);
-        if (refreshHandler != null) {
-            refreshHandler.removeCallbacks(refreshRunnable);
+    private class EstablishConnection extends AsyncTask<Void, Void, Boolean> {
+        InetAddress ip;
+        Client client;
+
+        public EstablishConnection(InetAddress ip) {
+            this.ip = ip;
+            this.client = network.getClient();
         }
-    }
 
-    private void setupDiscovery() {
-        network = SettlerApp.getManager().getNetwork();
-
-        stopDiscovery();
-        startDiscovery();
-    }
-
-    private void setupNetwork(){
-        INetworkManager manager = SettlerApp.getManager();
-        network = manager.getNetwork();
-    }
-
-    private void setRefreshing() {
-        refreshRunnable = new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(),"No Devices found!", Toast.LENGTH_LONG);
-                swipeRefreshLayout.setRefreshing(false);
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            Boolean connectionEstablished = false;
+            client.setKeepAliveTCP(1000);
+            new Thread(client).start();
+            try {
+                client.connect(150000, ip, Network.TCP, Network.UDP);
+                connectionEstablished = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                connectionEstablished = false;
             }
-        };
+            return connectionEstablished;
+        }
 
-        refreshHandler = new Handler();
-        refreshHandler.postDelayed(refreshRunnable, 10000);
-    }
-
-    void createNetwork(){
-        INetworkManager manager = SettlerApp.getManager();
-        Salut network = manager.getNetwork();
-
-        if (network == null) {
-            manager.init(this);
+        @Override
+        protected void onPostExecute(Boolean connectionEstablished) {
+            if (connectionEstablished.booleanValue()) {
+                network.setClient(client);
+                Network.RegisterName regname = new Network.RegisterName();
+                regname.setName(SettlerApp.playerName);
+                SettlerApp.getManager().sendtoHost(regname);
+                Intent intent = new Intent(getApplicationContext(),ClientLobbyActivity.class);
+                network.switchOut();
+                startActivity(intent);
+                finish();
+            } else {
+                Log.d(TAG,"Connection failed");
+            }
         }
     }
 }

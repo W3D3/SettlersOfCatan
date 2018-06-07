@@ -3,20 +3,16 @@ package io.swagslash.settlersofcatan;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
-import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
-import io.swagslash.settlersofcatan.pieces.utility.HexUtility;
 import io.swagslash.settlersofcatan.pieces.utility.VertexDirection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by wedenigc on 20.03.18.
@@ -42,7 +38,7 @@ public class ResourceDistributionTests {
         for (Hex hex : b.getHexagons()) {
             for(int i = 0; i < 6; i++)
             {
-                if(hex.getVertices().get(i).getCoordinates().equals(selectedVertex.getCoordinates())) {
+                if (hex.getVertices().get(i).getCoordinates().equals(selectedVertex.getCoordinates())) {
                     adjacentHexes.add(hex);
                     System.out.println(hex.toString());
                 }

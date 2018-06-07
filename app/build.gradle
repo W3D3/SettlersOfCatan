@@ -20,6 +20,11 @@ android {
     }
 }
 
+jacocoAndroidUnitTestReport {
+    excludes += ['**/*Activity*',
+                 '**/*View*']
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
@@ -32,9 +37,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation 'com.github.markrjr:Salut:v0.4.9'
-    annotationProcessor 'com.bluelinelabs:logansquare-compiler:1.3.4'
-    implementation 'com.bluelinelabs:logansquare:1.3.4'
+    implementation "com.esotericsoftware:kryonet:2.22.0-RC1"
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support:cardview-v7:26.1.0'
 }

@@ -161,7 +161,7 @@ public class HexView extends View {
         invalidate();
     }
 
-    private void generateVerticePaths() {
+    public void generateVerticePaths() {
         for (Vertex v : board.getVerticesList()) {
             HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
             v.calculatePath(offset, scale);
@@ -180,6 +180,7 @@ public class HexView extends View {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water_texture);
         BitmapShader fillBMPshader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         bg.setShader(fillBMPshader);
+
 
         bg.setStyle(Paint.Style.FILL);
         //this.fillPaint.setColor(Color.parseColor("#138fdc"));
@@ -234,7 +235,7 @@ public class HexView extends View {
             vertex.setRegion(region);
             switch (vertex.getUnitType()) {
                 case NONE:
-                    if (SettlerApp.board.getPhase() == Board.Phase.SETUP_SETTLEMENT) {
+                    if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT) {
                         c.drawPath(vertex.getPath(), vertexClickPaint);
                     }
                     break;
@@ -329,7 +330,7 @@ public class HexView extends View {
     }
 
     private Vertex getVertexFromCoordinates(int x, int y) {
-        final ArrayList<Vertex> vertices = (ArrayList<Vertex>) SettlerApp.board.getVerticesList();
+        final ArrayList<Vertex> vertices = new ArrayList<>(SettlerApp.board.getVerticesList());
         for (int i = 0; i < vertices.size(); i++) {
             Region r = vertices.get(i).getRegion();
             if (r.contains(x, y)) {
@@ -355,17 +356,21 @@ public class HexView extends View {
         if (vertex == null) return;
 
         System.out.println(vertex.toString());
-        Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ ",
-                Toast.LENGTH_SHORT).show();
-        switch (SettlerApp.board.getPhase()) {
+        //Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ ",
+        //        Toast.LENGTH_SHORT).show();
+        switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 
             case SETUP_SETTLEMENT:
-                GameController.buildSettlement(vertex);
-                SettlerApp.board.setPhase(Board.Phase.IDLE);
+                GameController.getInstance().buildSettlement(vertex, SettlerApp.getPlayer());
+                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 generateVerticePaths();
                 redraw();
                 break;
-            case SETUP_ROAD:
+            case FREE_SETTLEMENT:
+                GameController.getInstance().buildFreeSettlement(vertex, SettlerApp.getPlayer());
+                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                generateVerticePaths();
+                redraw();
                 break;
             case SETUP_CITY:
                 break;

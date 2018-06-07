@@ -24,14 +24,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".network.wifi.gui.HostLobbyActivity" />
-        <activity android:name=".GridActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".MainActivity" >
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,6 +34,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".network.wifi.gui.BrowserActivity" />
+        <activity android:name=".RobPlayerActivity"></activity>
         <activity android:name=".network.wifi.gui.ClientLobbyActivity"></activity>
         <activity
             android:name=".DisplayCardsActivity"
