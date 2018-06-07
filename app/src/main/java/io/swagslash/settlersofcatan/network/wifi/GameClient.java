@@ -51,13 +51,13 @@ public class GameClient extends AbstractNetworkManager {
 
     @Override
     public void sendToAll(final Object message) {
-        if (!client.isConnected()){
-            try {
-                client.reconnect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (!client.isConnected()){
+//            try {
+//                client.reconnect();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
         new Thread("Sending") {
             public void run () {
                 client.sendTCP(message);

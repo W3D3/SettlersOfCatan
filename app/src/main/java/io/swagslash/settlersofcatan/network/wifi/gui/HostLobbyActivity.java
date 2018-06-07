@@ -49,8 +49,8 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
         switch (v.getId()) {
             case R.id.btnStartGame:
                 List<String> players = new ArrayList<>();
-                for (Connection con: network.getConnections()) {
-                    players.add(((GameServer.GameConnection)con).name);
+                for (NetworkDevice nd : network.getDevices()) {
+                    players.add(nd.getDeviceName());
                 }
                 players.add(SettlerApp.playerName);
                 SettlerApp.generateBoard(players);

@@ -141,6 +141,9 @@ public class BrowserActivity extends AppCompatActivity implements MyLobbyService
         protected void onPostExecute(Boolean connectionEstablished) {
             if (connectionEstablished.booleanValue()) {
                 network.setClient(client);
+                Network.RegisterName regname = new Network.RegisterName();
+                regname.setName(SettlerApp.playerName);
+                SettlerApp.getManager().sendtoHost(regname);
                 Intent intent = new Intent(getApplicationContext(),ClientLobbyActivity.class);
                 network.switchOut();
                 startActivity(intent);

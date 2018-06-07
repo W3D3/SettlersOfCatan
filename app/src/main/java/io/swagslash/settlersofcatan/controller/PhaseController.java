@@ -19,7 +19,7 @@ public class PhaseController {
         transitionMap.put(Board.Phase.IDLE, Board.Phase.PRODUCTION);
         transitionMap.put(Board.Phase.PRODUCTION, Board.Phase.PLAYER_TURN);
         transitionMap.put(Board.Phase.PLAYER_TURN, Board.Phase.IDLE);
-        transitionMap.put(Board.Phase.FREE_SETTLEMENT, Board.Phase.FREE_ROAD);
+        transitionMap.put(Board.Phase.FREE_SETTLEMENT, Board.Phase.PLAYER_TURN); // todo fix
 
     }
 
@@ -29,9 +29,11 @@ public class PhaseController {
 
     public void setCurrentPhase(Board.Phase phase) {
         this.currentPhase = phase;
+        System.out.println(phase.toString());
     }
 
-    public void advancePhase() {
-        this.setCurrentPhase(transitionMap.get(currentPhase));
-    }
+//    public void advancePhase() {
+//        this.setCurrentPhase(transitionMap.get(currentPhase));
+//        System.out.println(getCurrentPhase().toString());
+//    }
 }

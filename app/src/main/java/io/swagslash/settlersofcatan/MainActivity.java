@@ -16,11 +16,15 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
+import java.util.Random;
+
+import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
@@ -104,10 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
 
-        if (SettlerApp.getManager().isHost()) {
-            TurnController.getInstance().startPlayerTurn();
 
-        }
 
     }
 
@@ -134,7 +135,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tv.append("street clicked!");
                 break;
             case R.id.dice:
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
+                    return;
                 tv.append("dice clicked!");
+                Random random = new Random();
+                Integer max = 6;
+                Integer min = 1;
+                int dice1 = random.nextInt((max - min) + 1) + min;
+                int dice2 = random.nextInt((max - min) + 1) + min;
+                GameController.getInstance().handleDiceRolls(dice1, dice2);
+                Toast.makeText(this.getApplicationContext(), "ROLLED " + dice1 + dice2,
+                        Toast.LENGTH_LONG).show();
+                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 break;
             case R.id.end_of_turn:
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
@@ -148,8 +160,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.trading:
                 tv.append("trading clicked!");
-                Intent in2 = new Intent(this, TradingActivity.class);
-                startActivity(in2);
+                if (SettlerApp.getManager().isHost()) {
+                    TurnController.getInstance().startPlayerTurn();
+                }
+//                Intent in2 = new Intent(this, TradingActivity.class);
+//                startActivity(in2);
                 break;
             default:
                 break;
@@ -249,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (object instanceof TurnAction) {
                 final TurnAction turn = (TurnAction) object;
                 if (!turn.isEndTurn()) {
-                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+
                     final TabLayout tabs = findViewById(R.id.tabs);
                     runOnUiThread(new Runnable() {
                         @Override
@@ -262,15 +277,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (turn.isInitialTurn()) {
                             SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_SETTLEMENT);
                             hexView.showFreeSettlements();
+
                         } else {
-                            SettlerApp.board.getPhaseController().advancePhase();
+                            SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PRODUCTION);
                         }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "YOUR TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
+
                 } else {
                     if (SettlerApp.getManager().isHost()) {
                         TurnController.getInstance().advancePlayer();
                         //TODO: check if player won
                         TurnController.getInstance().startPlayerTurn();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "end turn",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+
                     }
                 }
             }

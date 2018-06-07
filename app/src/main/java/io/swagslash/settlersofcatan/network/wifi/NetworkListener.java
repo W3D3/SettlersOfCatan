@@ -5,8 +5,6 @@ import android.util.Log;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
-import io.swagslash.settlersofcatan.SettlerApp;
-
 public class NetworkListener extends Listener {
 
     INetworkCallback actActivitiy;
@@ -17,11 +15,11 @@ public class NetworkListener extends Listener {
 
     @Override
     public void connected(Connection connection) {
-        Network.RegisterName registerName;
-        registerName = new Network.RegisterName();
-        registerName.name = SettlerApp.playerName;
-        SettlerApp.getManager().sendtoHost(connection, registerName);
-//        SettlerApp.getManager().getClient().sendTCP(registerName);
+//        Network.RegisterName registerName;
+//        registerName = new Network.RegisterName();
+//        registerName.name = SettlerApp.playerName;
+//        SettlerApp.getManager().sendtoHost(connection, registerName);
+////        SettlerApp.getManager().getClient().sendTCP(registerName);
     }
 
     @Override

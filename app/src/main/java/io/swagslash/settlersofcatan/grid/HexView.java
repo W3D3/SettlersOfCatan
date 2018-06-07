@@ -356,8 +356,8 @@ public class HexView extends View {
         if (vertex == null) return;
 
         System.out.println(vertex.toString());
-        Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ ",
-                Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ ",
+        //        Toast.LENGTH_SHORT).show();
         switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 
             case SETUP_SETTLEMENT:
@@ -368,7 +368,7 @@ public class HexView extends View {
                 break;
             case FREE_SETTLEMENT:
                 GameController.getInstance().buildFreeSettlement(vertex, SettlerApp.getPlayer());
-                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_ROAD);
+                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 generateVerticePaths();
                 redraw();
                 break;
