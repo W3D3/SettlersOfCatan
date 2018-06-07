@@ -20,7 +20,7 @@ public class NetworkListener extends Listener {
         Network.RegisterName registerName;
         registerName = new Network.RegisterName();
         registerName.name = SettlerApp.playerName;
-        SettlerApp.getManager().sendtoHost(registerName);
+        SettlerApp.getManager().sendtoHost(connection, registerName);
 //        SettlerApp.getManager().getClient().sendTCP(registerName);
     }
 

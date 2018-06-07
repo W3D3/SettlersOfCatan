@@ -6,8 +6,8 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,6 +21,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
+import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
@@ -28,10 +29,7 @@ import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
-import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.pieces.Board;
-import io.swagslash.settlersofcatan.pieces.Hex;
-import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
 
@@ -57,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.setupHexView();
         network = SettlerApp.getManager();
         network.switchIn(this);
-        SettlerApp.getPlayer().getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.FOREST));
-        SettlerApp.getPlayer().getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.PASTURE));
-        SettlerApp.getPlayer().getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.FIELD));
-        SettlerApp.getPlayer().getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.HILL));
         //setContentView(R.layout.activity_main);
 
 
+        TabLayout tabs = findViewById(R.id.tabs);
+        for (View view : tabs.getTouchables()) {
+            view.setClickable(false);
+        }
 
         //fab menu animation
         this.fabOpen = false;
@@ -106,6 +104,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
 
+        if (SettlerApp.getManager().isHost()) {
+            TurnController.getInstance().startPlayerTurn();
+
+        }
+
     }
 
     @Override
@@ -119,8 +122,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.fab_settlement:
                 tv.append("settlement clicked!");
-                SettlerApp.board.setPhase(Board.Phase.SETUP_SETTLEMENT);
-                hexView.showFreeSettlements();
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_SETTLEMENT);
+                    hexView.showFreeSettlements();
+                }
                 break;
             case R.id.fab_city:
                 tv.append("city clicked!");
@@ -132,7 +137,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tv.append("dice clicked!");
                 break;
             case R.id.end_of_turn:
-                tv.append("end of turn clicked!");
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.getManager().sendtoHost(new TurnAction(SettlerApp.getPlayer(), false, true));
+                }
                 break;
             case R.id.cards:
                 tv.append("cards clicked!");
@@ -226,18 +233,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void received(Connection connection, Object object) {
-        if (object instanceof Board) {
-            SettlerApp.board = (Board) object;
-            hexView.redraw();
-            if(network.isHost()){
-                network.sendtoAllExcept(connection.getID(), object);
-            }
-            return;
-        }
-        if (object instanceof Network.TestMessage) {
-            Log.d("Received", ((Network.TestMessage) object).getMessage());
-            return;
-        }
 
         if (object instanceof GameAction) {
             if (object instanceof EdgeBuildAction) {
@@ -252,15 +247,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 hexView.generateVerticePaths();
                 hexView.redraw();
             } else if (object instanceof TurnAction) {
-                if (!((TurnAction) object).isEndTurn()) {
-                    if (((TurnAction) object).isInitialTurn()) {
-                        SettlerApp.board.setPhase(Board.Phase.FREE_SETTLEMENT);
+                final TurnAction turn = (TurnAction) object;
+                if (!turn.isEndTurn()) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    final TabLayout tabs = findViewById(R.id.tabs);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tabs.getTabAt(turn.getActor().getPlayerNumber()).select();
+                        }
+                    });
+
+                    if (turn.getActor().equals(SettlerApp.getPlayer())) {
+                        if (turn.isInitialTurn()) {
+                            SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_SETTLEMENT);
+                            hexView.showFreeSettlements();
+                        } else {
+                            SettlerApp.board.getPhaseController().advancePhase();
+                        }
                     }
-                    SettlerApp.board.setPhase(Board.Phase.PLAYER_TURN);
+                } else {
+                    if (SettlerApp.getManager().isHost()) {
+                        TurnController.getInstance().advancePlayer();
+                        //TODO: check if player won
+                        TurnController.getInstance().startPlayerTurn();
+                    }
                 }
             }
 
 
         }
+
+
     }
 }

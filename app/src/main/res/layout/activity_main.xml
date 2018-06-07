@@ -295,28 +295,6 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <ImageButton
-        android:id="@+id/end_of_turn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_directions" />
-
-    <ImageButton
-        android:id="@+id/trading"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@android:drawable/ic_menu_always_landscape_portrait"
-        app:layout_constraintBottom_toTopOf="@+id/end_of_turn"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/gridContainer"
         android:layout_width="match_parent"
@@ -347,6 +325,28 @@
         </com.otaliastudios.zoom.ZoomLayout>
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/end_of_turn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_directions" />
+
+    <ImageButton
+        android:id="@+id/trading"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:drawable/ic_menu_always_landscape_portrait"
+        app:layout_constraintBottom_toTopOf="@+id/end_of_turn"
+        app:layout_constraintStart_toStartOf="parent" />
     <TextView
         android:id="@+id/debug_view"
         android:layout_width="wrap_content"

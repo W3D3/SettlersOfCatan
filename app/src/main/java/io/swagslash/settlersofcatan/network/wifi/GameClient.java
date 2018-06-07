@@ -1,6 +1,7 @@
 package io.swagslash.settlersofcatan.network.wifi;
 
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -70,15 +71,19 @@ public class GameClient extends AbstractNetworkManager {
     }
 
     @Override
-    public void sendtoHost(Object message) {
-        if(!client.isConnected()) {
+    public void sendtoHost(Connection connection, final Object message) {
+        if (!client.isConnected()) {
             try {
                 client.reconnect();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        client.sendTCP(message);
+        new Thread("Sending") {
+            public void run() {
+                client.sendTCP(message);
+            }
+        }.start();
     }
 
     @Override

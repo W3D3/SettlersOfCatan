@@ -50,6 +50,7 @@ public class GameServer extends AbstractNetworkManager {
                  server.sendToAllTCP(message);
                  }
         }.start();
+        listener.getActActivitiy().received(null, message);
 
     }
 
@@ -59,8 +60,8 @@ public class GameServer extends AbstractNetworkManager {
     }
 
     @Override
-    public void sendtoHost(Object message) {
-
+    public void sendtoHost(Connection connection, Object message) {
+        listener.getActActivitiy().received(connection, message);
     }
 
     @Override
@@ -103,5 +104,10 @@ public class GameServer extends AbstractNetworkManager {
     @Override
     public void destroy() {
         server.stop();
+    }
+
+    @Override
+    public void sendtoHost(Object message) {
+        sendtoHost(null, message);
     }
 }

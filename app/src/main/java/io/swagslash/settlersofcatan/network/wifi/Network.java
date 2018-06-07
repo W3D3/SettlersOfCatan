@@ -13,6 +13,7 @@ import java.util.Stack;
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.TurnAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
@@ -79,6 +80,7 @@ public class Network {
         kryo.register(Stack.class);
         kryo.register(SetupInfo.class);
         kryo.register(LeaveMessage.class);
+        kryo.register(TurnAction.class);
     }
 
     static public class RegisterName {

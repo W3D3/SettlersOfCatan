@@ -27,7 +27,11 @@ public abstract class AbstractNetworkManager {
 
     }
 
-    public abstract void sendtoHost(Object message);
+    public void sendtoHost(Object message) {
+        sendtoHost(null, message);
+    }
+
+    public abstract void sendtoHost(Connection connection, Object message);
 
     public List<InetAddress> discover() {
         return null;

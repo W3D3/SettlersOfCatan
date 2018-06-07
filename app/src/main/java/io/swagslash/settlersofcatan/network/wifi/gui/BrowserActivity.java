@@ -88,6 +88,7 @@ public class BrowserActivity extends AppCompatActivity implements MyLobbyService
     public void createLobby() {
         Intent i = new Intent(getApplicationContext(), HostLobbyActivity.class);
         network.switchOut();
+        discovering = false;
         startActivity(i);
     }
 

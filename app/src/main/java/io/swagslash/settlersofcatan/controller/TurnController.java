@@ -3,7 +3,7 @@ package io.swagslash.settlersofcatan.controller;
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
-import io.swagslash.settlersofcatan.network.wifi.GameServer;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 /**
@@ -13,12 +13,13 @@ public class TurnController {
 
     private static TurnController instance;
     Board board;
-    private GameServer network;
+    private AbstractNetworkManager network;
     private int currentPlayer = 0;
     private int currentTurn = 0;
 
     private TurnController() {
         board = SettlerApp.board;
+        network = SettlerApp.getManager();
     }
 
     public static TurnController getInstance() {

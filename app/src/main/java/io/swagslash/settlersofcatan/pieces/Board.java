@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.controller.PhaseController;
 import io.swagslash.settlersofcatan.pieces.items.ICard;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
@@ -20,7 +21,7 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 public class Board {
 
 
-    private Phase phase;
+    private PhaseController phaseController;
 
     private List<Hex> hexagons;
     private HashMap<HexPoint, Vertex> vertices;
@@ -44,7 +45,7 @@ public class Board {
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
         generatePlayers(playerNames);
-        this.phase = Phase.IDLE;
+        this.phaseController = new PhaseController();
     }
 
     public Collection<Vertex> getVerticesList() {
@@ -63,18 +64,16 @@ public class Board {
         return edges;
     }
 
-    public enum Phase {
-        SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY,
-        PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
-        FINISHED_GAME, IDLE, DICE_ROLL;
+    public Stack<ICard> getCardStack() {
+        return cardStack;
     }
 
-    public void setPhase(Phase phase) {
-        this.phase = phase;
+    public PhaseController getPhaseController() {
+        return phaseController;
     }
 
-    public Phase getPhase() {
-        return phase;
+    public void setPhaseController(PhaseController phaseController) {
+        this.phaseController = phaseController;
     }
 
     public Player getPlayerById(int playerId) {
@@ -159,7 +158,9 @@ public class Board {
         this.hexagons = hexagons;
     }
 
-    public Stack<ICard> getCardStack() {
-        return cardStack;
+    public enum Phase {
+        SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY, FREE_SETTLEMENT, FREE_ROAD,
+        PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
+        FINISHED_GAME, IDLE, DICE_ROLL;
     }
 }
