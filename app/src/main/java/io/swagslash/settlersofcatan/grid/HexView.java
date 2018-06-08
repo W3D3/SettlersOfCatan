@@ -273,7 +273,8 @@ public class HexView extends View {
                     c.drawPath(edge.getPath(), roadPaint);
                     break;
                 case NONE:
-                    if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_ROAD) {
+                    if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_ROAD ||
+                            SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.FREE_ROAD) {
                         c.drawPath(edge.getPath(), vertexClickPaint);
                     }
                     break;
@@ -299,7 +300,7 @@ public class HexView extends View {
                 @Override
                 public boolean onDown(MotionEvent event) {
                     // triggers first for both single tap and long press
-                    //redraw();
+                    redraw();
                     return true;
                 }
 

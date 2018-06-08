@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.toogleFabMenu();
                 break;
             case R.id.fab_settlement:
+                if (!itsMyTurn()) return;
                 tv.append("settlement clicked!");
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_SETTLEMENT);
@@ -133,12 +134,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.fab_city:
+                if (!itsMyTurn()) return;
                 tv.append("city clicked!");
                 break;
             case R.id.fab_street:
+                if (!itsMyTurn()) return;
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_ROAD);
+                    hexView.redraw();
+                }
                 tv.append("street clicked!");
                 break;
             case R.id.dice:
+                if (!itsMyTurn()) return;
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
                     return;
                 tv.append("dice clicked!");
@@ -155,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 break;
             case R.id.end_of_turn:
+//                if(!itsMyTurn()) return;
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     SettlerApp.getManager().sendtoHost(new TurnAction(SettlerApp.getPlayer(), false, true));
                 }
@@ -315,5 +324,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
+    }
+
+    private boolean itsMyTurn() {
+        return TurnController.getInstance().getCurrentPlayer().equals(SettlerApp.getPlayer());
     }
 }
