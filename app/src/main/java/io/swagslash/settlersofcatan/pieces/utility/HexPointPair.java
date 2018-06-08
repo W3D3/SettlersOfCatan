@@ -4,8 +4,11 @@ package io.swagslash.settlersofcatan.pieces.utility;
  * Created by Christoph Wedenig (christoph@wedenig.org) on 18.05.18.
  */
 public class HexPointPair {
-    public final HexPoint first;
-    public final HexPoint second;
+    public HexPoint first;
+    public HexPoint second;
+
+    public HexPointPair() {
+    }
 
     /**
      * Constructor for a Pair.
@@ -48,5 +51,21 @@ public class HexPointPair {
     @Override
     public String toString() {
         return "HexPointPair {" + String.valueOf(first) + " " + String.valueOf(second) + "}";
+    }
+
+    public HexPoint getFirst() {
+        return first;
+    }
+
+    public void setFirst(HexPoint first) {
+        this.first = first;
+    }
+
+    public HexPoint getSecond() {
+        return second;
+    }
+
+    public void setSecond(HexPoint second) {
+        this.second = second;
     }
 }

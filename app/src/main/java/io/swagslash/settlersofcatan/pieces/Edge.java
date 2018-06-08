@@ -169,8 +169,8 @@ public class Edge {
         Path path = new Path();
         HexPoint a = this.getCoordinates().first.scale(offset, scale);
         HexPoint b = this.getCoordinates().second.scale(offset, scale);
-        double x = Math.abs(a.x - b.x) / 2;
-        double y = Math.abs(a.y - b.y) / 2;
+        double x = Math.abs(a.x - b.x) / 2 + Math.min(a.x, b.x);
+        double y = Math.abs(a.y - b.y) / 2 + Math.min(a.y, b.y);
 
 
         HexPoint drawPoint = new HexPoint(x, y);
@@ -181,7 +181,7 @@ public class Edge {
                 path.lineTo((float) b.x, (float) b.y);
                 break;
             case NONE:
-                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 40, Path.Direction.CW);
+                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 50, Path.Direction.CW);
                 break;
         }
 

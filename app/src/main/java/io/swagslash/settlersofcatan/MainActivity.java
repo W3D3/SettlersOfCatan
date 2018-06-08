@@ -29,6 +29,7 @@ import java.util.Set;
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.PhaseController;
 import io.swagslash.settlersofcatan.controller.TurnController;
+import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
@@ -171,8 +172,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Integer min = 1;
                 int dice1 = random.nextInt((max - min) + 1) + min;
                 int dice2 = random.nextInt((max - min) + 1) + min;
-                GameController.getInstance().handleDiceRolls(dice1, dice2);
-               tv.append("ROLLED " + dice1 + dice2);
+                DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), dice1, dice2);
+                //GameController.getInstance().handleDiceRolls(dice1,dice2);
+                SettlerApp.getManager().sendToAll(roll);
+                Toast.makeText(this.getApplicationContext(), "ROLLED " + dice1 + dice2,
+                        Toast.LENGTH_LONG).show();
                 SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 break;
             case R.id.end_of_turn:
@@ -351,6 +355,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     }
                 }
+            } else if (object instanceof DiceRollAction) {
+                DiceRollAction roll = (DiceRollAction) object;
+                GameController.getInstance().handleDiceRolls(roll.getDic1(), roll.getDic2());
             }
 
 

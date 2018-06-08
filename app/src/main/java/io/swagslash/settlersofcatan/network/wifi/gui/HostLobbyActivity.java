@@ -53,7 +53,6 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
                 for (NetworkDevice nd : network.getDevices()) {
                     players.add(nd.getDeviceName());
                 }
-
                 SettlerApp.generateBoard(players);
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 network.switchOut();
