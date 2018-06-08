@@ -38,6 +38,8 @@ import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.items.Inventory;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
 
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected FloatingActionButton fab, fabSettlement, fabCity, fabStreet;
     protected LinearLayout layoutSettlement, layoutCity, layoutStreet;
     protected Animation openMenu, closeMenu;
+    protected TextView oreCount, woodCount, woolCount, bricksCount, grainCount;
 
     HexView hexView;
     private Board board;
@@ -112,6 +115,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.endOfTurn.setOnClickListener(this);
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
+
+        //resource show
+        this.woodCount = findViewById(R.id.wood_count);
+        this.woolCount = findViewById(R.id.wool_count);
+        this.bricksCount = findViewById(R.id.bricks_count);
+        this.grainCount = findViewById(R.id.grain_count);
+        this.oreCount = findViewById(R.id.ore_count);
+
 
         this.player = SettlerApp.getPlayer();
 
@@ -345,28 +356,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         //TODO: check if player won
                         TurnController.getInstance().startPlayerTurn();
                         Log.d("HOST", "Giving control to next player. " + TurnController.getInstance().getCurrentPlayer());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(), "end turn",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        });
-
                     }
                 }
             } else if (object instanceof DiceRollAction) {
                 DiceRollAction roll = (DiceRollAction) object;
                 GameController.getInstance().handleDiceRolls(roll.getDic1(), roll.getDic2());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateResources();
+                    }
+                });
             }
-
-
         }
-
-
     }
 
     private boolean itsMyTurn() {
         return player.equals(TurnController.getInstance().getCurrentPlayer());
+    }
+
+    private void updateResources() {
+        Inventory inv = SettlerApp.getPlayer().getInventory();
+
+        this.oreCount.setText(inv.countResource(Resource.ResourceType.ORE).toString());
+        this.bricksCount.setText(inv.countResource(Resource.ResourceType.BRICK).toString());
+        this.woodCount.setText(inv.countResource(Resource.ResourceType.WOOD).toString());
+        this.woolCount.setText(inv.countResource(Resource.ResourceType.WOOL).toString());
+        this.grainCount.setText(inv.countResource(Resource.ResourceType.GRAIN).toString());
     }
 }

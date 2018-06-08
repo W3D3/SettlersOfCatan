@@ -133,7 +133,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
-            android:id="@+id/lumber_view"
+            android:id="@+id/wood_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -144,10 +144,10 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
             app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@android:drawable/btn_dialog" />
+            app:srcCompat="@android:color/holo_orange_dark" />
 
         <TextView
-            android:id="@+id/lumber_count"
+            android:id="@+id/wood_count"
             android:layout_width="32dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -170,7 +170,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
             app:layout_constraintBottom_toTopOf="@+id/ore_count"
-            app:layout_constraintStart_toEndOf="@+id/lumber_view"
+            app:layout_constraintStart_toEndOf="@+id/wood_view"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
             app:layout_constraintVertical_chainStyle="packed"
@@ -187,7 +187,7 @@
             android:textColor="@android:color/background_light"
             android:textIsSelectable="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/lumber_count"
+            app:layout_constraintStart_toEndOf="@+id/wood_count"
             app:layout_constraintTop_toBottomOf="@+id/ore_view"
             app:layout_constraintVertical_bias="0.0" />
 

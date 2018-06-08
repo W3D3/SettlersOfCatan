@@ -63,11 +63,13 @@ public class GameController {
         return false;
     }
 
-    public void buildFreeSettlement(Vertex vertex, Player player) {
+    public boolean buildFreeSettlement(Vertex vertex, Player player) {
         if (vertex.canBuildFreeSettlement(player)) {
             vertex.buildSettlement(player);
             SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex.getCoordinates()));
+            return true;
         }
+        return false;
     }
 
     public boolean buildCity(Vertex vertex, Player player) {
