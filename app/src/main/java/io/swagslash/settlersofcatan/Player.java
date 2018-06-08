@@ -131,4 +131,9 @@ public class Player {
             return val;
         }
     }
+
+    @Override
+    public String toString() {
+        return "(id: " + this.playerNumber + ") " + playerName;
+    }
 }

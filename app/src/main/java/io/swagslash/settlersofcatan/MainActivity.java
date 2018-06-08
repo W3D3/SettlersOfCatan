@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
@@ -23,8 +24,10 @@ import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.Random;
+import java.util.Set;
 
 import io.swagslash.settlersofcatan.controller.GameController;
+import io.swagslash.settlersofcatan.controller.PhaseController;
 import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     HexView hexView;
     private Board board;
     private AbstractNetworkManager network;
+    Player player;
 
     //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
@@ -108,8 +112,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
 
+        this.player = SettlerApp.getPlayer();
 
-
+        if(network.isHost()) {
+            Log.d("NETWORK", "Starting game." );
+            TurnController.getInstance().startPlayerTurn();
+        }
     }
 
     @Override
@@ -118,23 +126,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView tv = findViewById(R.id.debug_view);
         switch (i) {
             case R.id.fab_build_options:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant open build options.");
+                    return;
+                }
                 tv.append("clicked!");
                 this.toogleFabMenu();
                 break;
             case R.id.fab_settlement:
                 tv.append("settlement clicked!");
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant build settlement.");
+                    return;
+                }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_SETTLEMENT);
                     hexView.showFreeSettlements();
                 }
                 break;
             case R.id.fab_city:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant build city.");
+                    return;
+                }
                 tv.append("city clicked!");
                 break;
             case R.id.fab_street:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant build street.");
+                    return;
+                }
                 tv.append("street clicked!");
                 break;
             case R.id.dice:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant roll dice.");
+                    return;
+                }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
                     return;
                 tv.append("dice clicked!");
@@ -144,13 +172,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 int dice1 = random.nextInt((max - min) + 1) + min;
                 int dice2 = random.nextInt((max - min) + 1) + min;
                 GameController.getInstance().handleDiceRolls(dice1, dice2);
-                Toast.makeText(this.getApplicationContext(), "ROLLED " + dice1 + dice2,
-                        Toast.LENGTH_LONG).show();
+               tv.append("ROLLED " + dice1 + dice2);
                 SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 break;
             case R.id.end_of_turn:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT HIS TURN!");
+                    Log.d("PLAYER", "Current Player:" + player.toString());
+                    Log.d("PLAYER", "Turn of Player:" + TurnController.getInstance().getCurrentPlayer());
+                    return;
+                }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
-                    SettlerApp.getManager().sendtoHost(new TurnAction(SettlerApp.getPlayer(), false, true));
+
+                    SettlerApp.getManager().sendToAll(new TurnAction(SettlerApp.getPlayer(), false, true));
+                } else {
+                    Log.d("PLAYER", "WRONG PHASE FOR END OF TURN! Player is not done yet " + board.getPhaseController().getCurrentPhase());
                 }
                 break;
             case R.id.cards:
@@ -160,16 +196,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.trading:
                 tv.append("trading clicked!");
-                if (SettlerApp.getManager().isHost()) {
-                    TurnController.getInstance().startPlayerTurn();
-                }
-//                Intent in2 = new Intent(this, TradingActivity.class);
-//                startActivity(in2);
+                Intent in2 = new Intent(this, TradingActivity.class);
+                startActivity(in2);
                 break;
             default:
                 break;
         }
-        tv.setText(""); //TODO remove when debuggin
+        //tv.setText(""); //TODO remove when debuggin
     }
 
     private void toogleFabMenu() {
@@ -260,7 +293,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     action.getAffectedVertex().buildCity(action.getActor());
                 }
                 hexView.generateVerticePaths();
-                hexView.redraw();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hexView.redraw();
+                    }
+                });
+
             } else if (object instanceof TurnAction) {
                 final TurnAction turn = (TurnAction) object;
                 if (!turn.isEndTurn()) {
@@ -276,7 +315,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (turn.getActor().equals(SettlerApp.getPlayer())) {
                         if (turn.isInitialTurn()) {
                             SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_SETTLEMENT);
-                            hexView.showFreeSettlements();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    hexView.redraw();
+                                }
+                            });
 
                         } else {
                             SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PRODUCTION);
@@ -291,10 +335,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                 } else {
+                    TurnController.getInstance().advancePlayer();
+                    Log.d("PLAYER",  TurnController.getInstance().getCurrentPlayer() +  "ended his turn.");
                     if (SettlerApp.getManager().isHost()) {
-                        TurnController.getInstance().advancePlayer();
                         //TODO: check if player won
                         TurnController.getInstance().startPlayerTurn();
+                        Log.d("HOST", "Giving control to next player. " + TurnController.getInstance().getCurrentPlayer());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -311,5 +357,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
+    }
+
+    private boolean itsMyTurn() {
+        return player.equals(TurnController.getInstance().getCurrentPlayer());
     }
 }

@@ -29,7 +29,7 @@ public class NetworkListener extends Listener {
 
     @Override
     public void received(Connection connection, Object object) {
-        Log.d("Callback","Received Data");
+        //Log.d("Callback","Received Data");
         actActivitiy.received(connection, object);
     }
 
