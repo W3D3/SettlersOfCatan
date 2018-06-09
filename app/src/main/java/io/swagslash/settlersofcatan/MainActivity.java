@@ -320,7 +320,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             if (object instanceof EdgeBuildAction) {
-                hexView.redraw();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hexView.redraw();
+                    }
+                });
             } else if (object instanceof VertexBuildAction) {
                 // Another player has build on a vertex, show it!
                 VertexBuildAction action = (VertexBuildAction) object;
@@ -392,6 +397,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                hexView.generateVerticePaths();
+                hexView.generateEdgePaths();
                 hexView.redraw();
             }
         });

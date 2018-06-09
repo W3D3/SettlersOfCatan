@@ -240,6 +240,7 @@ public class HexView extends View {
 //        }
 
 
+
         for (Vertex vertex : board.getVerticesList()) {
             Region region = new Region();
             region.setPath(vertex.getPath(), clip);
@@ -247,7 +248,8 @@ public class HexView extends View {
             switch (vertex.getUnitType()) {
                 case NONE:
                     if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT ||
-                            SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY) {
+                            SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY ||
+                            SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.FREE_SETTLEMENT) {
                         c.drawPath(vertex.getPath(), vertexClickPaint);
                     }
                     break;
@@ -306,8 +308,8 @@ public class HexView extends View {
 
                 @Override
                 public boolean onSingleTapConfirmed(MotionEvent e) {
-                    handleVertexClick(e);
-                    handleEdgeClick(e);
+                    if(handleVertexClick(e)) return true;
+                    if(handleEdgeClick(e)) return true;
                     showHexDetailFromMotionEvent(e, "Single Tap");
 
                     return true;
@@ -394,62 +396,71 @@ public class HexView extends View {
                 Toast.LENGTH_SHORT).show();
     }
 
-    private void handleVertexClick(MotionEvent event) {
+    private boolean handleVertexClick(MotionEvent event) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
         Vertex vertex = getVertexFromCoordinates(coordinates.first, coordinates.second);
-        if (vertex == null) return;
+        if (vertex == null) return false;
+        boolean buildSuccess = false;
 
-        System.out.println(vertex.toString());
-        //Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ ",
-        //        Toast.LENGTH_SHORT).show();
         switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 
             case SETUP_SETTLEMENT:
                 if(GameController.getInstance().buildSettlement(vertex, SettlerApp.getPlayer())) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    buildSuccess = true;
                 }
                 generateVerticePaths();
                 redraw();
+
                 break;
             case FREE_SETTLEMENT:
                 if(GameController.getInstance().buildFreeSettlement(vertex, SettlerApp.getPlayer())) {
-                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
-                    generateVerticePaths();
-                    redraw();
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_ROAD);
+                    buildSuccess = true;
                 }
+
+                generateVerticePaths();
+                redraw();
                 break;
             case SETUP_CITY:
                 break;
-            case PRODUCTION:
-                break;
-            case PLAYER_TURN:
-                break;
-            case MOVING_ROBBER:
-                break;
-            case TRADE_PROPOSED:
-                break;
-            case TRADE_RESPONDED:
-                break;
-            case FINISHED_GAME:
+            default:
                 break;
         }
+        return buildSuccess;
     }
 
-    private void handleEdgeClick(MotionEvent event) {
+    private boolean handleEdgeClick(MotionEvent event) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
         Edge edge = getEdgeFromCoordinates(coordinates.first, coordinates.second);
-        if (edge == null) return;
+        if (edge == null) return false;
+        boolean buildSuccess = false;
 
-        System.out.println(edge.toString());
         switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 
             case SETUP_ROAD:
-                GameController.getInstance().buildRoad(edge, SettlerApp.getPlayer());
+
+
+                if(GameController.getInstance().buildRoad(edge, SettlerApp.getPlayer())) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    buildSuccess = true;
+                }
+                generateEdgePaths();
+                redraw();
+
                 break;
             case FREE_ROAD:
-                GameController.getInstance().buildFreeRoad(edge, SettlerApp.getPlayer());
+
+                if(GameController.getInstance().buildFreeRoad(edge, SettlerApp.getPlayer())) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    buildSuccess = true;
+                }
+                generateEdgePaths();
+                redraw();
+
                 break;
         }
+        return buildSuccess;
     }
 
     public void redraw() {
