@@ -189,10 +189,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 int dice1 = random.nextInt((max - min) + 1) + min;
                 int dice2 = random.nextInt((max - min) + 1) + min;
                 DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), dice1, dice2);
-                //GameController.getInstance().handleDiceRolls(dice1,dice2);
+                GameController.getInstance().handleDiceRolls(dice1,dice2);
                 SettlerApp.getManager().sendToAll(roll);
-                Toast.makeText(this.getApplicationContext(), "ROLLED " + dice1 + dice2,
-                        Toast.LENGTH_LONG).show();
+                int sum = dice1 + dice2;
+                Log.d("DICE", "ROLLED " + dice1 + " / " + dice2 + " SUM: " + sum);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -320,6 +320,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             if (object instanceof EdgeBuildAction) {
+                // Another player has build on a edge, show it!
+                EdgeBuildAction action = (EdgeBuildAction) object;
+                action.getAffectedEdge().buildRoad(action.getActor());
+                hexView.generateEdgePaths();
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

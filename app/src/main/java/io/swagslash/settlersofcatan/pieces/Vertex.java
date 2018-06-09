@@ -2,6 +2,7 @@ package io.swagslash.settlersofcatan.pieces;
 
 import android.graphics.Path;
 import android.graphics.Region;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,7 @@ public class Vertex {
     private void giveResourceToOwner(int amount, Resource resource) {
         for (int i = 0; i < amount; i++) {
             owner.getInventory().addResource(resource);
+            Log.d("INV", "Added " + resource + " to " + owner);
         }
     }
 
@@ -211,7 +213,7 @@ public class Vertex {
     }
 
     public boolean isOwnedByAnotherPlayer(Player player) {
-        return !owner.equals(player);
+        return !player.equals(owner);
     }
 
     public boolean isConnectedToRoadOwnedBy(Player player) {

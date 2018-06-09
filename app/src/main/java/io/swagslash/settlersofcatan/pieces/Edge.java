@@ -116,7 +116,7 @@ public class Edge {
             // or the player has an adjacent building
             curVertex = getVertexNeighbors()[i];
 
-            if (curVertex.hasNeighbourBuildingOf(player) || (curVertex.isConnectedToRoadOwnedBy(player)
+            if (player.equals(curVertex.getOwner()) || (curVertex.isConnectedToRoadOwnedBy(player)
                     && !(curVertex.isOwnedByAnotherPlayer(player)))) {
                 return true;
             }

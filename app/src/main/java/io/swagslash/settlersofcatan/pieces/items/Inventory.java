@@ -21,7 +21,7 @@ public class Inventory {
     }
 
     public Integer countResource(Resource.ResourceType type) {
-        return  resourceHand.get(type);
+        return resourceHand.get(type);
     }
 
     public void addResource(Resource resource) {
