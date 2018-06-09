@@ -24,6 +24,10 @@ public class TurnController {
         network = SettlerApp.getManager();
     }
 
+    public static void setInstance(TurnController instance) {
+        TurnController.instance = instance;
+    }
+
     public static TurnController getInstance() {
         if (instance == null) instance = new TurnController();
 
@@ -55,7 +59,6 @@ public class TurnController {
     public void advancePlayer() {
         currentTurn++;
         currentPlayer = nextPlayerId();
-        Log.d("TURN", "Turn of player with ID " + currentPlayer + "! Turn No. " + currentTurn);
     }
 
     private int nextPlayerId() {

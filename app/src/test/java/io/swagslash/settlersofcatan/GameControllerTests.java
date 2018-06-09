@@ -1,6 +1,7 @@
 package io.swagslash.settlersofcatan;
 
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
 /**
  * Created by Christoph Wedenig (christoph@wedenig.org) on 05.06.18.
  */
+
 public class GameControllerTests {
 
     Board b;

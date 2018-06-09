@@ -16,7 +16,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
  */
 public class TurnControllerTests {
 
-    private TurnController turnController;
+    TurnController turnController;
 
     @Before
     public void prepare() {
@@ -26,6 +26,8 @@ public class TurnControllerTests {
     @Test
     public void advancePlayerWorksProperlyOnInitPhase() {
 
+
+
         List<String> players = new ArrayList<>();
         players.add("P1");
         players.add("P2");
@@ -33,6 +35,7 @@ public class TurnControllerTests {
         players.add("P4");
         Board b = new Board(players, true, 10);
         b.setupBoard();
+        TurnController.setInstance(null);
         turnController = TurnController.getInstance();
         turnController.setBoard(b);
 
@@ -66,12 +69,13 @@ public class TurnControllerTests {
 
     @Test
     public void advancePlayerTwoPlayers() {
-
+        TurnController turnController;
         List<String> players = new ArrayList<>();
         players.add("P1");
         players.add("P2");
         Board b = new Board(players, true, 10);
         b.setupBoard();
+        TurnController.setInstance(null);
         turnController = TurnController.getInstance();
         turnController.setBoard(b);
 
