@@ -5,7 +5,11 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.Edge;
+import io.swagslash.settlersofcatan.pieces.Vertex;
 
 /**
  * Created by Christoph Wedenig (christoph@wedenig.org) on 07.06.18.
@@ -32,6 +36,17 @@ public class PhaseController {
     public void setCurrentPhase(Board.Phase phase) {
         Log.d("PLAYER", "Phase transition: " + currentPhase +  " >> " + phase );
         this.currentPhase = phase;
+    }
+
+    public boolean isAllowedToBuildOnVertex(Vertex vertex) {
+        return (currentPhase == Board.Phase.SETUP_SETTLEMENT && vertex.canBuildSettlement(SettlerApp.getPlayer())) ||
+                (currentPhase == Board.Phase.FREE_SETTLEMENT && vertex.canBuildFreeSettlement(SettlerApp.getPlayer())) ||
+                (currentPhase == Board.Phase.SETUP_CITY && vertex.canBuildCity(SettlerApp.getPlayer()));
+    }
+
+    public boolean isAllowedToBuildOnEdge(Edge edge) {
+        return (currentPhase == Board.Phase.SETUP_ROAD || currentPhase == Board.Phase.FREE_ROAD) &&
+                edge.canBuildRoad(SettlerApp.getPlayer());
     }
 
 //    public void advancePhase() {

@@ -181,7 +181,7 @@ public class Edge {
                 path.lineTo((float) b.x, (float) b.y);
                 break;
             case NONE:
-                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 50, Path.Direction.CW);
+                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 40, Path.Direction.CW);
                 break;
         }
 

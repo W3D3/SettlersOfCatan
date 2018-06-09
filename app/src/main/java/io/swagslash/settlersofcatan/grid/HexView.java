@@ -27,6 +27,7 @@ import java.util.List;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.GameController;
+import io.swagslash.settlersofcatan.controller.PhaseController;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
@@ -240,6 +241,7 @@ public class HexView extends View {
 //        }
 
 
+        PhaseController phaseController = board.getPhaseController();
 
         for (Vertex vertex : board.getVerticesList()) {
             Region region = new Region();
@@ -247,9 +249,7 @@ public class HexView extends View {
             vertex.setRegion(region);
             switch (vertex.getUnitType()) {
                 case NONE:
-                    if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT ||
-                            SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY ||
-                            SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.FREE_SETTLEMENT) {
+                    if (phaseController.isAllowedToBuildOnVertex(vertex)) {
                         c.drawPath(vertex.getPath(), vertexClickPaint);
                     }
                     break;
@@ -275,8 +275,7 @@ public class HexView extends View {
                     c.drawPath(edge.getPath(), roadPaint);
                     break;
                 case NONE:
-                    if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_ROAD ||
-                            SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.FREE_ROAD) {
+                    if(phaseController.isAllowedToBuildOnEdge(edge)) {
                         c.drawPath(edge.getPath(), vertexClickPaint);
                     }
                     break;
