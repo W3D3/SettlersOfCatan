@@ -20,4 +20,9 @@ public abstract class GameAction {
     public void setActor(Player actor) {
         this.actor = actor;
     }
+
+    @Override
+    public String toString() {
+        return "[" + actor.toString() + "] ";
+    }
 }

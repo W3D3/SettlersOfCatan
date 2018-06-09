@@ -125,10 +125,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         this.player = SettlerApp.getPlayer();
+        updateResources();
 
         if(network.isHost()) {
             Log.d("NETWORK", "Starting game." );
-            TurnController.getInstance().startPlayerTurn();
+            // FIXME this only works in oncreate because P1 is host,
+            // when selecting a random player to start, give them either enough time to open the activity
+            // or wait for a ping of all your clients
+
+            initialTurn();
         }
     }
 
@@ -188,6 +193,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 SettlerApp.getManager().sendToAll(roll);
                 Toast.makeText(this.getApplicationContext(), "ROLLED " + dice1 + dice2,
                         Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateResources();
+                    }
+                });
                 SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 break;
             case R.id.end_of_turn:
@@ -198,8 +209,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
-
-                    SettlerApp.getManager().sendToAll(new TurnAction(SettlerApp.getPlayer(), false, true));
+                    // end my own turn and tell all others my turn is over
+                    advanceTurn();
+                    SettlerApp.getManager().sendToAll(new TurnAction(SettlerApp.getPlayer()));
                 } else {
                     Log.d("PLAYER", "WRONG PHASE FOR END OF TURN! Player is not done yet " + board.getPhaseController().getCurrentPhase());
                 }
@@ -298,9 +310,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void received(Connection connection, Object object) {
 
         if (object instanceof GameAction) {
+
+            if(((GameAction)object).getActor().equals(player)) {
+                //discard package, own information
+                Log.d("RECEIVED",  "DISCARDED " + ((GameAction)object).toString() );
+                return;
+            } else  {
+                Log.d("RECEIVED",  "Received " + ((GameAction)object).toString() );
+            }
+
             if (object instanceof EdgeBuildAction) {
                 hexView.redraw();
             } else if (object instanceof VertexBuildAction) {
+                // Another player has build on a vertex, show it!
                 VertexBuildAction action = (VertexBuildAction) object;
                 if (action.getType() == VertexBuildAction.ActionType.BUILD_SETTLEMENT) {
                     action.getAffectedVertex().buildSettlement(action.getActor());
@@ -316,49 +338,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
 
             } else if (object instanceof TurnAction) {
+                // Another player ended his turn
+
                 final TurnAction turn = (TurnAction) object;
-                if (!turn.isEndTurn()) {
+                Log.d("PLAYER", turn.getActor() + "  ended his turn.");
 
-                    final TabLayout tabs = findViewById(R.id.tabs);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            tabs.getTabAt(turn.getActor().getPlayerNumber()).select();
-                        }
-                    });
+                advanceTurn();
 
-                    if (turn.getActor().equals(SettlerApp.getPlayer())) {
-                        if (turn.isInitialTurn()) {
-                            SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_SETTLEMENT);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    hexView.redraw();
-                                }
-                            });
-
-                        } else {
-                            SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PRODUCTION);
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(), "YOUR TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    }
-
-                } else {
-                    TurnController.getInstance().advancePlayer();
-                    Log.d("PLAYER",  TurnController.getInstance().getCurrentPlayer() +  "ended his turn.");
-                    if (SettlerApp.getManager().isHost()) {
-                        //TODO: check if player won
-                        TurnController.getInstance().startPlayerTurn();
-                        Log.d("HOST", "Giving control to next player. " + TurnController.getInstance().getCurrentPlayer());
-                    }
-                }
             } else if (object instanceof DiceRollAction) {
+                // Another player rolled the dice
                 DiceRollAction roll = (DiceRollAction) object;
                 GameController.getInstance().handleDiceRolls(roll.getDic1(), roll.getDic2());
                 runOnUiThread(new Runnable() {
@@ -373,6 +361,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean itsMyTurn() {
         return player.equals(TurnController.getInstance().getCurrentPlayer());
+    }
+
+    private void advanceTurn() {
+        //Log.d("PLAYER", "Player ended his turn. (" +  TurnController.getInstance().getCurrentPlayer() + ")");
+        TurnController.getInstance().advancePlayer();
+        Log.d("PLAYER", "STARTING TURN of Player (" +  TurnController.getInstance().getCurrentPlayer() + ")");
+
+        // SET TABS
+        final TabLayout tabs = findViewById(R.id.tabs);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tabs.getTabAt(TurnController.getInstance().getCurrentPlayer().getPlayerNumber()).select();
+            }
+        });
+
+        // CHECK IF IS OUR TURN
+        if(itsMyTurn()) {
+            if (TurnController.getInstance().isFreeSetupTurn()) {
+                initialTurn();
+            } else {
+                normalTurn();
+            }
+        }
+    }
+
+    private void initialTurn() {
+        SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_SETTLEMENT);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hexView.redraw();
+            }
+        });
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "INITIAL TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void normalTurn() {
+        SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PRODUCTION);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "YOUR TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void updateResources() {

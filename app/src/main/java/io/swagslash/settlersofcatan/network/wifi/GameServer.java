@@ -50,7 +50,7 @@ public class GameServer extends AbstractNetworkManager {
                  server.sendToAllTCP(message);
                  }
         }.start();
-        listener.getActActivitiy().received(null, message);
+        //listener.getActActivitiy().received(null, message);
 
     }
 

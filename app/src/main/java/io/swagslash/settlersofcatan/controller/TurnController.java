@@ -1,5 +1,7 @@
 package io.swagslash.settlersofcatan.controller;
 
+import android.util.Log;
+
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
@@ -36,23 +38,24 @@ public class TurnController {
         return board.getPlayerById(currentPlayer);
     }
 
-    private boolean isFreeSetupTurn() {
+    public boolean isFreeSetupTurn() {
         return (currentTurn / board.getPlayers().size() < 2);
     }
 
     /**
      * Can only be called from Host!
      */
-    public void startPlayerTurn() {
+    public void endPlayerTurn() {
         Player p = getCurrentPlayer();
 
-        TurnAction action = new TurnAction(p, isFreeSetupTurn(), false);
+        TurnAction action = new TurnAction(p);
         network.sendToAll(action);
     }
 
     public void advancePlayer() {
         currentTurn++;
         currentPlayer = nextPlayerId();
+        Log.d("TURN", "Turn of player with ID " + currentPlayer + "! Turn No. " + currentTurn);
     }
 
     private int nextPlayerId() {
@@ -65,6 +68,6 @@ public class TurnController {
                 return (currentPlayer - 1) % board.getPlayers().size();
             }
         }
-        return (currentPlayer + 1) % board.getPlayers().size();
+        return currentTurn % board.getPlayers().size();
     }
 }

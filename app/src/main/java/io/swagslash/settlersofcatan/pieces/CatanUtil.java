@@ -101,7 +101,9 @@ public class CatanUtil {
     }
 
     public static List<AxialHexLocation> getCatanBoardHexesInStartingSequence() {
-        return hexes;
+        Stack<AxialHexLocation> stack = new Stack<>();
+        stack.addAll(hexes);
+        return stack;
     }
 
     public static Stack<NumberToken> getTokensInStartingSequence() {

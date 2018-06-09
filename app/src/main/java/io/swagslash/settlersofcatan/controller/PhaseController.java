@@ -1,5 +1,7 @@
 package io.swagslash.settlersofcatan.controller;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,8 +30,8 @@ public class PhaseController {
     }
 
     public void setCurrentPhase(Board.Phase phase) {
+        Log.d("PLAYER", "Phase transition: " + currentPhase +  " >> " + phase );
         this.currentPhase = phase;
-        System.out.println(phase.toString());
     }
 
 //    public void advancePhase() {

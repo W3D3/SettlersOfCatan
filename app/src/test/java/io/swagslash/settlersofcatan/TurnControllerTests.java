@@ -20,6 +20,12 @@ public class TurnControllerTests {
 
     @Before
     public void prepare() {
+
+    }
+
+    @Test
+    public void advancePlayerWorksProperlyOnInitPhase() {
+
         List<String> players = new ArrayList<>();
         players.add("P1");
         players.add("P2");
@@ -29,21 +35,57 @@ public class TurnControllerTests {
         b.setupBoard();
         turnController = TurnController.getInstance();
         turnController.setBoard(b);
+
+
+        Assert.assertEquals("P1", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P2", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P3", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P4", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P4", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P3", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P2", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P1", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P1", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P2", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P3", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P4", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P1", turnController.getCurrentPlayer().getPlayerName());
     }
 
     @Test
-    public void advancePlayerWorksProperlyOnInitPhase() {
+    public void advancePlayerTwoPlayers() {
+
+        List<String> players = new ArrayList<>();
+        players.add("P1");
+        players.add("P2");
+        Board b = new Board(players, true, 10);
+        b.setupBoard();
+        turnController = TurnController.getInstance();
+        turnController.setBoard(b);
+
+
         Assert.assertEquals("P1", turnController.getCurrentPlayer().getPlayerName());
         turnController.advancePlayer();
         Assert.assertEquals("P2", turnController.getCurrentPlayer().getPlayerName());
         turnController.advancePlayer();
-        Assert.assertEquals("P3", turnController.getCurrentPlayer().getPlayerName());
+        Assert.assertEquals("P2", turnController.getCurrentPlayer().getPlayerName());
         turnController.advancePlayer();
-        Assert.assertEquals("P4", turnController.getCurrentPlayer().getPlayerName());
+        Assert.assertEquals("P1", turnController.getCurrentPlayer().getPlayerName());
         turnController.advancePlayer();
-        Assert.assertEquals("P4", turnController.getCurrentPlayer().getPlayerName());
-        turnController.advancePlayer();
-        Assert.assertEquals("P3", turnController.getCurrentPlayer().getPlayerName());
+        // init turn over, start with P1
+        Assert.assertEquals("P1", turnController.getCurrentPlayer().getPlayerName());
         turnController.advancePlayer();
         Assert.assertEquals("P2", turnController.getCurrentPlayer().getPlayerName());
         turnController.advancePlayer();
@@ -51,10 +93,8 @@ public class TurnControllerTests {
         turnController.advancePlayer();
         Assert.assertEquals("P2", turnController.getCurrentPlayer().getPlayerName());
         turnController.advancePlayer();
-        Assert.assertEquals("P3", turnController.getCurrentPlayer().getPlayerName());
-        turnController.advancePlayer();
-        Assert.assertEquals("P4", turnController.getCurrentPlayer().getPlayerName());
-        turnController.advancePlayer();
         Assert.assertEquals("P1", turnController.getCurrentPlayer().getPlayerName());
+        turnController.advancePlayer();
+        Assert.assertEquals("P2", turnController.getCurrentPlayer().getPlayerName());
     }
 }

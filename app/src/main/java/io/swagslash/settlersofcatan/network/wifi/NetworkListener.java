@@ -5,6 +5,8 @@ import android.util.Log;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
+import io.swagslash.settlersofcatan.SettlerApp;
+
 public class NetworkListener extends Listener {
 
     INetworkCallback actActivitiy;
@@ -29,7 +31,10 @@ public class NetworkListener extends Listener {
 
     @Override
     public void received(Connection connection, Object object) {
-        //Log.d("Callback","Received Data");
+        if(SettlerApp.getManager().isHost()) {
+            //Log.d("HOST","FORWARDING TO ALL CLIENTS");
+            SettlerApp.getManager().sendtoAllExcept(connection.getID(), object);
+        }
         actActivitiy.received(connection, object);
     }
 
