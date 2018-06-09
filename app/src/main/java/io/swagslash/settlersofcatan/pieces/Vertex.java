@@ -75,7 +75,6 @@ public class Vertex {
     private void giveResourceToOwner(int amount, Resource resource) {
         for (int i = 0; i < amount; i++) {
             owner.getInventory().addResource(resource);
-            Log.d("INV", "Added " + resource + " to " + owner);
         }
     }
 
