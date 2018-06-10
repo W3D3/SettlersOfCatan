@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
-
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
@@ -63,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
