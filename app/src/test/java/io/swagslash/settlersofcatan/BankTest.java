@@ -52,14 +52,10 @@ public class BankTest {
         inventory1.addResource(brick);
         inventory1.addResource(wood);
 
-        // can pay
+        // pay resources
         assertTrue(bank.payForStreet(p1));
 
-
-        // remove 1 from brick
-        inventory1.removeResource(brick);
-
-        // cannot pay
+        // not enough resources to pay
         assertFalse(bank.payForStreet(p1));
     }
 
@@ -71,14 +67,10 @@ public class BankTest {
         inventory1.addResource(grain);
         inventory1.addResource(wool);
 
-        // can pay
+        // pay resources
         assertTrue(bank.payForSettlement(p1));
 
-
-        // remove 1 from brick
-        inventory1.removeResource(brick);
-
-        // cannot pay
+        // not enough resources to pay
         assertFalse(bank.payForSettlement(p1));
     }
 
@@ -92,14 +84,10 @@ public class BankTest {
             inventory1.addResource(ore);
         }
 
-        // can pay
+        // pay resources
         assertTrue(bank.payForCity(p1));
 
-
-        // remove 1 from ore
-        inventory1.removeResource(ore);
-
-        // cannot pay
+        // not enough resources to pay
         assertFalse(bank.payForCity(p1));
     }
 
@@ -110,14 +98,84 @@ public class BankTest {
         inventory1.addResource(grain);
         inventory1.addResource(ore);
 
-        // can pay
+        // pay resources
         assertTrue(bank.payForCard(p1));
 
+        // not enough resources to pay
+        assertFalse(bank.payForCard(p1));
+    }
 
-        // remove 1 from brick
+    @Test
+    public void testCanPayForStreet() {
+        // add 1 to brick and wood
+        inventory1.addResource(brick);
+        inventory1.addResource(wood);
+
+        // should be able to pay
+        assertTrue(bank.canPayForStreet(p1));
+
+        // remove resource from hand
+        inventory1.removeResource(brick);
+
+        // should not be able to pay
+        assertFalse(bank.canPayForStreet(p1));
+    }
+
+    @Test
+    public void testCanPayForSettlement() {
+        // add 1 to brick, wood, grain and wool
+        inventory1.addResource(brick);
+        inventory1.addResource(wood);
+        inventory1.addResource(grain);
+        inventory1.addResource(wool);
+
+        // should be able to pay
+        assertTrue(bank.canPayForSettlement(p1));
+
+        // remove resource from hand
+        inventory1.removeResource(grain);
+
+        // should not be able to pay
+        assertFalse(bank.canPayForSettlement(p1));
+    }
+
+    @Test
+    public void testCanPayForCity() {
+        // add 2 to grain and 3 to ore
+        for (int i = 0; i < 3; i++) {
+            if (i < 2) {
+                inventory1.addResource(grain);
+            }
+            inventory1.addResource(ore);
+        }
+        inventory1.addResource(ore);
+
+        // should be able to pay
+        assertTrue(bank.canPayForCity(p1));
+
+        // remove resource from hand (4 - 2 = 2 ores --> 3 needed)
+        inventory1.removeResource(ore);
+        inventory1.removeResource(ore);
+
+        // should not be able to pay
+        assertFalse(bank.canPayForCity(p1));
+    }
+
+    @Test
+    public void testCanPayForCard() {
+        // add 1 to wool, grain and ore
+        inventory1.addResource(wool);
+        inventory1.addResource(grain);
+        inventory1.addResource(ore);
+
+
+        // should be able to pay
+        assertTrue(bank.canPayForCard(p1));
+
+        // remove resource from hand
         inventory1.removeResource(wool);
 
-        // cannot pay
-        assertFalse(bank.payForCard(p1));
+        // should not be able to pay
+        assertFalse(bank.canPayForCard(p1));
     }
 }
