@@ -3,14 +3,12 @@ package io.swagslash.settlersofcatan;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
-import android.os.Build;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,23 +18,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import io.swagslash.settlersofcatan.pieces.items.Resource;
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
-import com.peak.salut.Callbacks.SalutDataCallback;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
 
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.DataCallback;
-import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, DataCallback.IDataCallback{
@@ -62,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
 
-    @SuppressLint("WrongViewCast")
+    //@SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
