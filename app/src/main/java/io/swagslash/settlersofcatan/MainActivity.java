@@ -27,16 +27,28 @@ import java.io.IOException;
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.DataCallback;
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.utility.Dice;
+import io.swagslash.settlersofcatan.utility.DiceSix;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, DataCallback.IDataCallback{
 
-    private final int FAB_MENU_DISTANCE = 160;
+    private static final int FABMENUDISTANCE = 160;
 
     protected Button cards;
-    protected ImageButton dice_1, dice_2, endOfTurn, trading;
-    protected FloatingActionButton fab, fabSettlement, fabCity, fabStreet;
-    protected LinearLayout layoutSettlement, layoutCity, layoutStreet;
-    protected Animation openMenu, closeMenu;
+    protected ImageButton diceOne;
+    protected ImageButton diceTwo;
+    protected ImageButton endOfTurn;
+    protected ImageButton trading;
+    protected FloatingActionButton fab;
+    protected FloatingActionButton fabSettlement;
+    protected FloatingActionButton fabCity;
+    protected FloatingActionButton fabStreet;
+    protected LinearLayout layoutSettlement;
+    protected LinearLayout layoutCity;
+    protected LinearLayout layoutStreet;
+    protected Animation openMenu;
+    protected Animation closeMenu;
+    protected boolean fabOpen;
 
     //sensor
     protected SensorManager sensorManager;
@@ -47,16 +59,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     HexView hexView;
     private Board board;
-    protected boolean fabOpen;
 
     //@SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
+        /*
         this.setupHexView();
         DataCallback.actActivity = this;
+        */
 
         //fab menu animation
         this.fabOpen = false;
@@ -71,18 +84,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.layoutSettlement.setVisibility(View.INVISIBLE);
 
         this.fabCity = findViewById(R.id.fab_city);
-        //this.fabOptions.add(this.fabCity);
         this.layoutCity = findViewById(R.id.layout_city);
         this.layoutCity.setVisibility(View.INVISIBLE);
 
         this.fabStreet = findViewById(R.id.fab_street);
-        //this.fabOptions.add(this.fabStreet);
         this.layoutStreet = findViewById(R.id.layout_street);
         this.layoutStreet.setVisibility(View.INVISIBLE);
 
         //image_btns
-        this.dice_1 = findViewById(R.id.dice_1);
-        this.dice_2 = findViewById(R.id.dice_2);
+        this.diceOne = findViewById(R.id.dice_1);
+        this.diceTwo = findViewById(R.id.dice_2);
         this.endOfTurn = findViewById(R.id.end_of_turn);
         this.trading = findViewById(R.id.trading);
 
@@ -106,14 +117,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             shakeListener = new ShakeListener() {
                 @Override
                 public void onShake() {
-                    Dice d6 = new Dice();
+                    Dice d6 = new DiceSix();
 
                     int roll1 = d6.roll();
                     int roll2 = d6.roll();
                     shakeValue = roll1 + roll2;
 
-                    dice_1.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll1, "drawable", getPackageName()));
-                    dice_2.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll2, "drawable", getPackageName()));
+                    diceOne.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll1, "drawable", getPackageName()));
+                    diceTwo.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll2, "drawable", getPackageName()));
 
                     Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
                     t.show();
@@ -178,11 +189,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             byte offset = 1;
             this.layoutSettlement.startAnimation(openMenu);
-            this.layoutSettlement.animate().translationY(-1 * (offset++ * FAB_MENU_DISTANCE));
+            this.layoutSettlement.animate().translationY(-1 * (offset++ * FABMENUDISTANCE));
             this.layoutCity.startAnimation(openMenu);
-            this.layoutCity.animate().translationY(-1 * (offset++ * FAB_MENU_DISTANCE));
+            this.layoutCity.animate().translationY(-1 * (offset++ * FABMENUDISTANCE));
             this.layoutStreet.startAnimation(openMenu);
-            this.layoutStreet.animate().translationY(-1 * (offset * FAB_MENU_DISTANCE));
+            this.layoutStreet.animate().translationY(-1 * (offset * FABMENUDISTANCE));
         }
         this.fabOpen = !this.fabOpen;
     }
@@ -202,8 +213,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
 
-        final ZoomLayout zl = (ZoomLayout) findViewById(R.id.zoomContainer);
-        final LinearLayout container = (LinearLayout) findViewById(R.id.gridContainer);
+        final ZoomLayout zl = findViewById(R.id.zoomContainer);
+        final LinearLayout container = findViewById(R.id.gridContainer);
         //Button btn = (Button) findViewById(R.id.button);
         zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
         Display mdisp = getWindowManager().getDefaultDisplay();
@@ -236,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onDataReceived(Object o) {
 
         try {
-            SettlerApp.board = (Board) LoganSquare.parse((String) o, Board.class);
+            SettlerApp.board = LoganSquare.parse((String) o, Board.class);
             System.out.println((String) o);
             if (SettlerApp.getManager().isHost()) {
                 System.out.println( "################### I AM HOST " + SettlerApp.playerName);
@@ -253,6 +264,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        return; //TODO maybe dialog option to exit?
+        //TODO: maybe dialog option to exit?
     }
 }

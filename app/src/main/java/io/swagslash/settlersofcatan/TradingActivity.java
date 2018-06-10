@@ -9,22 +9,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Vector;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
-import io.swagslash.settlersofcatan.pieces.utility.TradeOffer;
+import io.swagslash.settlersofcatan.utility.TradeOffer;
 
 public class TradingActivity extends AppCompatActivity {
 
-    private RecyclerView rv;
-    private RecyclerView.Adapter rva;
-    private RecyclerView.LayoutManager rvl;
-
-    protected TextView oreOffererValue, woodOffererValue, bricksOffererValue, grainOffererValue, woolOffererValue;
-    private Vector<TextView> offerTextViews = new Vector<>();
-    protected TextView oreOffereeValue, woodOffereeValue, bricksOffereeValue, grainOffereeValue, woolOffereeValue;
-    private Vector<TextView> demandTextViews = new Vector<>();
+    private ArrayList<TextView> offerTextViews = new ArrayList<>();
+    private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
     private TradeOffer tradeOffer = new TradeOffer();
     private HashSet<Integer> selectedPlayers = new HashSet<>();
@@ -45,29 +39,19 @@ public class TradingActivity extends AppCompatActivity {
         this.min = 0;
         this.max = 99;
 
-        this.oreOffererValue = findViewById(R.id.ore_offerer_value);
-        this.offerTextViews.add(oreOffererValue);
-        this.woodOffererValue = findViewById(R.id.wood_offerer_value);
-        this.offerTextViews.add(woodOffererValue);
-        this.bricksOffererValue = findViewById(R.id.brick_offerer_value);
-        this.offerTextViews.add(bricksOffererValue);
-        this.grainOffererValue = findViewById(R.id.grain_offerer_value);
-        this.offerTextViews.add(grainOffererValue);
-        this.woolOffererValue = findViewById(R.id.wool_offerer_value);
-        this.offerTextViews.add(woolOffererValue);
+        this.offerTextViews.add((TextView) findViewById(R.id.ore_offerer_value));
+        this.offerTextViews.add((TextView) findViewById(R.id.wood_offerer_value));
+        this.offerTextViews.add((TextView) findViewById(R.id.brick_offerer_value));
+        this.offerTextViews.add((TextView) findViewById(R.id.grain_offerer_value));
+        this.offerTextViews.add((TextView) findViewById(R.id.wool_offerer_value));
 
-        this.oreOffereeValue = findViewById(R.id.ore_offeree_value);
-        this.demandTextViews.add(oreOffereeValue);
-        this.woodOffereeValue = findViewById(R.id.wood_offeree_value);
-        this.demandTextViews.add(woodOffereeValue);
-        this.bricksOffereeValue = findViewById(R.id.brick_offeree_value);
-        this.demandTextViews.add(bricksOffereeValue);
-        this.grainOffereeValue = findViewById(R.id.grain_offeree_value);
-        this.demandTextViews.add(grainOffereeValue);
-        this.woolOffereeValue = findViewById(R.id.wool_offeree_value);
-        this.demandTextViews.add(woolOffereeValue);
+        this.demandTextViews.add((TextView) findViewById(R.id.ore_offeree_value));
+        this.demandTextViews.add((TextView) findViewById(R.id.wood_offeree_value));
+        this.demandTextViews.add((TextView) findViewById(R.id.brick_offeree_value));
+        this.demandTextViews.add((TextView) findViewById(R.id.grain_offeree_value));
+        this.demandTextViews.add((TextView) findViewById(R.id.wool_offeree_value));
 
-        rv = findViewById(R.id.player_trading_list);
+        RecyclerView rv = findViewById(R.id.player_trading_list);
         rv.addOnItemTouchListener(new RecyclerItemClickListener(this, rv, new ClickListener() {
             @Override
             public void onClick(View v, int pos) {
@@ -87,12 +71,12 @@ public class TradingActivity extends AppCompatActivity {
         }));
         rv.setHasFixedSize(true);
 
-        rvl = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager rvl = new LinearLayoutManager(this);
         rv.setLayoutManager(rvl);
 
         // TODO: get players
         String[] test = {"Player1", "Player2", "Player3", "Player4"};
-        rva = new PlayerListAdapter(test);
+        RecyclerView.Adapter rva = new PlayerListAdapter(test);
         rv.setAdapter(rva);
     }
 
@@ -135,7 +119,7 @@ public class TradingActivity extends AppCompatActivity {
     }
 
     private void readValues(boolean offerOrDemand) {
-        Vector<TextView> readTextViews;
+        ArrayList<TextView> readTextViews;
         Resource.ResourceType readResource;
         int readValue;
         String toastText;

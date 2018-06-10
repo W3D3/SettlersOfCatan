@@ -1,13 +1,13 @@
-package io.swagslash.settlersofcatan.pieces.utility;
+package io.swagslash.settlersofcatan.utility;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class TradeOffer {
 
-    private HashMap<Resource.ResourceType, Integer> offer = new HashMap<>();
-    private HashMap<Resource.ResourceType, Integer> demand = new HashMap<>();
+    private EnumMap<Resource.ResourceType, Integer> offer = new EnumMap<>(Resource.ResourceType.class);
+    private EnumMap<Resource.ResourceType, Integer> demand = new EnumMap<>(Resource.ResourceType.class);
 
     public TradeOffer() {
         for (Resource.ResourceType tmp : Resource.ResourceType.values()) {
@@ -38,14 +38,6 @@ public class TradeOffer {
         }
     }
 
-    @Override
-    public String toString() {
-        return "TradeOffer{" +
-                "offer=" + offer.toString() +
-                ", demand=" + demand.toString() +
-                '}';
-    }
-
     public Integer getResource(Resource.ResourceType type, boolean offerOrDemand) {
         if (!type.equals(Resource.ResourceType.NOTHING)) {
             if (offerOrDemand) {
@@ -56,5 +48,13 @@ public class TradeOffer {
         } else {
             throw new IllegalArgumentException("wrong resource type");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "TradeOffer{" +
+                "offer=" + offer.toString() +
+                ", demand=" + demand.toString() +
+                '}';
     }
 }

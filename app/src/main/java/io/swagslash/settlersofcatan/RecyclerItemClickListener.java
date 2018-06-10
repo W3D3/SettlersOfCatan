@@ -16,7 +16,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
     private ClickListener cl;
     private GestureDetector gd;
 
-    public RecyclerItemClickListener(Context c, final RecyclerView rv, final ClickListener cl){
+    RecyclerItemClickListener(Context c, final RecyclerView rv, final ClickListener cl) {
         this.cl = cl;
         this.gd = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -46,11 +46,13 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     @Override
     public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
+        throw new UnsupportedOperationException();
+        // do nothing
     }
 
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
+        throw new UnsupportedOperationException();
+        // do nothing
     }
 }
