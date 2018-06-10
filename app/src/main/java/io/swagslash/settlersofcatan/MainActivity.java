@@ -1,13 +1,14 @@
 package io.swagslash.settlersofcatan;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,32 +16,34 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
-import com.peak.salut.Callbacks.SalutDataCallback;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
 
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.DataCallback;
-import io.swagslash.settlersofcatan.network.wifi.INetworkManager;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, DataCallback.IDataCallback{
 
-    private final int FAB_MENU_DISTANCE = 145;
+    private final int FAB_MENU_DISTANCE = 160;
 
     protected Button cards;
-    protected ImageButton dice, endOfTurn, trading;
+    protected ImageButton dice_1, dice_2, endOfTurn, trading;
     protected FloatingActionButton fab, fabSettlement, fabCity, fabStreet;
     protected LinearLayout layoutSettlement, layoutCity, layoutStreet;
     protected Animation openMenu, closeMenu;
+
+    //sensor
+    protected SensorManager sensorManager;
+    protected Sensor sensor;
+    protected ShakeDetector shakeDetector;
+    protected ShakeListener shakeListener;
+    protected Object shakeValue;
 
     HexView hexView;
     private Board board;
@@ -48,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
 
-    @SuppressLint("WrongViewCast")
+    //@SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.layoutStreet.setVisibility(View.INVISIBLE);
 
         //image_btns
-        this.dice = findViewById(R.id.dice);
+        this.dice_1 = findViewById(R.id.dice_1);
+        this.dice_2 = findViewById(R.id.dice_2);
         this.endOfTurn = findViewById(R.id.end_of_turn);
         this.trading = findViewById(R.id.trading);
 
@@ -93,53 +97,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.fabSettlement.setOnClickListener(this);
         this.fabCity.setOnClickListener(this);
         this.fabStreet.setOnClickListener(this);
-        this.dice.setOnClickListener(this);
         this.endOfTurn.setOnClickListener(this);
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
 
+        //sensor init
+        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            shakeDetector = new ShakeDetector();
+            shakeListener = new ShakeListener() {
+                @Override
+                public void onShake() {
+                    Dice d6 = new Dice();
+
+                    int roll1 = d6.roll();
+                    int roll2 = d6.roll();
+                    shakeValue = roll1 + roll2;
+
+                    dice_1.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll1, "drawable", getPackageName()));
+                    dice_2.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll2, "drawable", getPackageName()));
+
+                    Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
+                    t.show();
+                }
+            };
+            shakeDetector.setShakeListener(shakeListener);
+            sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        sensorManager.unregisterListener(shakeDetector);
+        super.onPause();
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        TextView tv = findViewById(R.id.debug_view);
         switch (i) {
             case R.id.fab_build_options:
-                tv.append("clicked!");
                 this.toogleFabMenu();
                 break;
             case R.id.fab_settlement:
-                tv.append("settlement clicked!");
                 SettlerApp.board.setPhase(Board.Phase.SETUP_SETTLEMENT);
                 hexView.showFreeSettlements();
                 break;
             case R.id.fab_city:
-                tv.append("city clicked!");
                 break;
             case R.id.fab_street:
-                tv.append("street clicked!");
-                break;
-            case R.id.dice:
-                tv.append("dice clicked!");
                 break;
             case R.id.end_of_turn:
-                tv.append("end of turn clicked!");
                 break;
             case R.id.cards:
-                tv.append("cards clicked!");
                 Intent in = new Intent(this, DisplayCardsActivity.class);
                 startActivity(in);
                 break;
             case R.id.trading:
-                tv.append("trading clicked!");
                 Intent in2 = new Intent(this, TradingActivity.class);
+                //Debug.startMethodTracing("trading_" + new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss").format(new Date()));
                 startActivity(in2);
                 break;
             default:
                 break;
         }
-        tv.setText(""); //TODO remove when debuggin
     }
 
     private void toogleFabMenu() {
@@ -151,13 +179,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.layoutStreet.startAnimation(closeMenu);
             this.layoutStreet.animate().translationY(0);
         } else {
-            /*
-            byte offset = 1;
-            for(FloatingActionButton f : this.fabOptions){
-                f.startAnimation(openMenu);
-                f.animate().translationY(-1*(offset++*FAB_MENU_DISTANCE));
-            }
-            */
             byte offset = 1;
             this.layoutSettlement.startAnimation(openMenu);
             this.layoutSettlement.animate().translationY(-1 * (offset++ * FAB_MENU_DISTANCE));

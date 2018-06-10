@@ -73,7 +73,7 @@
             android:foreground="@android:color/background_light"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bricks_view"
+            app:layout_constraintStart_toEndOf="@+id/brick_view"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -82,6 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
+            android:contentDescription="@string/resource_desc"
             app:layout_constraintBottom_toTopOf="@+id/ore_count"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -96,7 +97,7 @@
             android:layout_marginStart="4dp"
             android:clickable="false"
             android:gravity="center_horizontal"
-            android:text="12"
+            android:text="@string/default_min_value"
             android:textColor="@android:color/background_light"
             android:textIsSelectable="false"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -110,6 +111,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
+            android:contentDescription="@string/resource_desc"
             app:layout_constraintBottom_toTopOf="@+id/ore_count"
             app:layout_constraintStart_toEndOf="@+id/ore_view"
             app:layout_constraintTop_toTopOf="parent"
@@ -124,7 +126,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:gravity="center_horizontal"
-            android:text="12"
+            android:text="@string/default_min_value"
             android:textColor="@android:color/background_light"
             android:textIsSelectable="false"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -133,12 +135,13 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
-            android:id="@+id/lumber_view"
+            android:id="@+id/wood_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
+            android:contentDescription="@string/resource_desc"
             app:layout_constraintBottom_toTopOf="@+id/ore_count"
             app:layout_constraintStart_toEndOf="@+id/grain_view"
             app:layout_constraintTop_toTopOf="parent"
@@ -147,13 +150,13 @@
             app:srcCompat="@android:drawable/btn_dialog" />
 
         <TextView
-            android:id="@+id/lumber_count"
+            android:id="@+id/wood_count"
             android:layout_width="32dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:gravity="center_horizontal"
-            android:text="12"
+            android:text="@string/default_min_value"
             android:textColor="@android:color/background_light"
             android:textIsSelectable="false"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -169,8 +172,9 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
+            android:contentDescription="@string/resource_desc"
             app:layout_constraintBottom_toTopOf="@+id/ore_count"
-            app:layout_constraintStart_toEndOf="@+id/lumber_view"
+            app:layout_constraintStart_toEndOf="@+id/wood_view"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
             app:layout_constraintVertical_chainStyle="packed"
@@ -183,21 +187,22 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:gravity="center_horizontal"
-            android:text="12"
+            android:text="@string/default_min_value"
             android:textColor="@android:color/background_light"
             android:textIsSelectable="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/lumber_count"
+            app:layout_constraintStart_toEndOf="@+id/wood_count"
             app:layout_constraintTop_toBottomOf="@+id/ore_view"
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
-            android:id="@+id/bricks_view"
+            android:id="@+id/brick_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
+            android:contentDescription="@string/resource_desc"
             app:layout_constraintBottom_toTopOf="@+id/ore_count"
             app:layout_constraintStart_toEndOf="@+id/wool_view"
             app:layout_constraintTop_toTopOf="parent"
@@ -206,13 +211,13 @@
             app:srcCompat="@android:drawable/btn_dialog" />
 
         <TextView
-            android:id="@+id/bricks_count"
+            android:id="@+id/brick_count"
             android:layout_width="32dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:gravity="center_horizontal"
-            android:text="12"
+            android:text="@string/default_min_value"
             android:textColor="@android:color/background_light"
             android:textIsSelectable="false"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -234,19 +239,36 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/dice"
+            android:id="@+id/dice_1"
             style="@android:style/Widget.DeviceDefault.ImageButton"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/ic_dice_5"
+            android:contentDescription="@string/dice_desc"
+            app:layout_constraintEnd_toStartOf="@+id/divider_right"
+            app:layout_constraintStart_toEndOf="@+id/cards"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/dice_2"
+            style="@android:style/Widget.DeviceDefault.ImageButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginBottom="2dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="2dp"
-            android:background="@drawable/ic_dice"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/ic_dice_5"
+            android:contentDescription="@string/dice_desc"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/victory_points_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.538" />
+            app:layout_constraintEnd_toStartOf="@+id/divider_right"
+            app:layout_constraintStart_toEndOf="@+id/cards" />
 
         <View
             android:id="@+id/divider_right"
@@ -254,16 +276,13 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="4dp"
-            android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:background="?android:attr/listDivider"
             android:foreground="@android:color/background_light"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/victory_points_view"
-            app:layout_constraintStart_toEndOf="@+id/dice"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -288,7 +307,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="10"
+            android:text="@string/default_min_value"
             android:textColor="@android:color/background_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -302,6 +321,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
+        android:contentDescription="@string/end_of_turn_desc"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_menu_directions" />
@@ -314,6 +334,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:background="@android:drawable/ic_menu_always_landscape_portrait"
+        android:contentDescription="@string/trading_desc"
         app:layout_constraintBottom_toTopOf="@+id/end_of_turn"
         app:layout_constraintStart_toStartOf="parent" />
 
