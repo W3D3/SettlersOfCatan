@@ -47,17 +47,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     HexView hexView;
     private Board board;
-
-    //protected ArrayList<FloatingActionButton> fabOptions;
     protected boolean fabOpen;
 
     //@SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setupHexView();
         //setContentView(R.layout.activity_main);
 
+        this.setupHexView();
         DataCallback.actActivity = this;
 
         //fab menu animation
@@ -69,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.fab = findViewById(R.id.fab_build_options);
 
         this.fabSettlement = findViewById(R.id.fab_settlement);
-        //this.fabOptions.add(this.fabSettlement);
         this.layoutSettlement = findViewById(R.id.layout_settlement);
         this.layoutSettlement.setVisibility(View.INVISIBLE);
 

@@ -314,38 +314,16 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <ImageButton
-        android:id="@+id/end_of_turn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:contentDescription="@string/end_of_turn_desc"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_directions" />
-
-    <ImageButton
-        android:id="@+id/trading"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@android:drawable/ic_menu_always_landscape_portrait"
-        android:contentDescription="@string/trading_desc"
-        app:layout_constraintBottom_toTopOf="@+id/end_of_turn"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:id="@+id/gridContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="48dp"
-        android:layout_marginBottom="56dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="@+id/appbar">
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
 
 
         <com.otaliastudios.zoom.ZoomLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -368,16 +346,6 @@
         </com.otaliastudios.zoom.ZoomLayout>
 
     </LinearLayout>
-    <TextView
-        android:id="@+id/debug_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Debug:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbar" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_build_options"
@@ -393,6 +361,30 @@
         app:backgroundTint="@color/colorAccent"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
+        android:id="@+id/trading"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:drawable/ic_menu_always_landscape_portrait"
+        android:contentDescription="@string/trading_desc"
+        app:layout_constraintBottom_toTopOf="@+id/end_of_turn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/end_of_turn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="@string/end_of_turn_desc"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_directions" />
 
     <LinearLayout
         android:id="@+id/layout_city"
@@ -518,6 +510,7 @@
             app:layout_constraintStart_toStartOf="@+id/fab_build_options"
             app:layout_constraintTop_toTopOf="@+id/fab_build_options"
             app:srcCompat="@android:drawable/bottom_bar" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

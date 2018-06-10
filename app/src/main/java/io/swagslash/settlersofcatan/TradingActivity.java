@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.util.HashSet;
 import java.util.Vector;
 
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.TradeOffer;
 
 public class TradingActivity extends AppCompatActivity {
@@ -25,7 +26,7 @@ public class TradingActivity extends AppCompatActivity {
     protected TextView oreOffereeValue, woodOffereeValue, bricksOffereeValue, grainOffereeValue, woolOffereeValue;
     private Vector<TextView> demandTextViews = new Vector<>();
 
-    private TradeOffer tradeOffer;
+    private TradeOffer tradeOffer = new TradeOffer();
     private HashSet<Integer> selectedPlayers = new HashSet<>();
 
     private int min;
@@ -95,39 +96,6 @@ public class TradingActivity extends AppCompatActivity {
         rv.setAdapter(rva);
     }
 
-    private TradeOffer createTradeOffer() {
-        tradeOffer = new TradeOffer();
-        int tmp;
-
-        boolean offerEmpty = true;
-        for (TextView tv : offerTextViews) {
-            tmp = Integer.parseInt(tv.getText().toString());
-            if (tmp > min) {
-                offerEmpty = false;
-            }
-            tradeOffer.addResource(getResources().getResourceEntryName(tv.getId()).split("_")[0], tmp, true);
-        }
-
-        if (offerEmpty) {
-            Toast.makeText(getApplicationContext(), "please offer something", Toast.LENGTH_SHORT).show();
-        }
-
-        boolean demandEmpty = true;
-        for (TextView tv : demandTextViews) {
-            tmp = Integer.parseInt(tv.getText().toString());
-            if (tmp > min) {
-                demandEmpty = false;
-            }
-            tradeOffer.addResource(getResources().getResourceEntryName(tv.getId()).split("_")[0], tmp, false);
-        }
-
-        if (demandEmpty) {
-            Toast.makeText(getApplicationContext(), "please demand something", Toast.LENGTH_SHORT).show();
-        }
-
-        return tradeOffer;
-    }
-
     @SuppressLint("DefaultLocale")
     public void onMinusPlusClick(View view) {
         String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
@@ -159,4 +127,40 @@ public class TradingActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private TradeOffer createTradeOffer() {
+        this.readValues(true);
+        this.readValues(false);
+        return tradeOffer;
+    }
+
+    private void readValues(boolean offerOrDemand) {
+        Vector<TextView> readTextViews;
+        Resource.ResourceType readResource;
+        int readValue;
+        String toastText;
+
+        if (offerOrDemand) {
+            readTextViews = offerTextViews;
+            toastText = "please offer something";
+        } else {
+            readTextViews = demandTextViews;
+            toastText = "please demand something";
+        }
+
+        boolean empty = true;
+        for (TextView tv : readTextViews) {
+            readResource = TradeOffer.convertStringToResource(getResources().getResourceEntryName(tv.getId()).split("_")[0]);
+            readValue = Integer.parseInt(tv.getText().toString());
+            if (readValue > min) {
+                empty = false;
+            }
+            this.tradeOffer.addResource(readResource, readValue, offerOrDemand);
+        }
+
+        if (empty) {
+            Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
