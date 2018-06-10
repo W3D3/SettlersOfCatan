@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class DisplayCardsActivity extends AppCompatActivity {
@@ -43,7 +44,7 @@ public class DisplayCardsActivity extends AppCompatActivity {
 
         // TODO: get player's cards
         String[] test = {"test0", "test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9"};
-        RecyclerView.Adapter rva = new CardListAdapter(test);
+        RecyclerView.Adapter rva = new CardListAdapter(Arrays.asList(test));
         rv.setAdapter(rva);
     }
 

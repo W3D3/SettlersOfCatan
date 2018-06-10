@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHolder> {
 
-    private String[] cards;
+    private List<String> cards;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         View v;
@@ -18,7 +20,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         }
     }
 
-    CardListAdapter(String[] input){
+    CardListAdapter(List<String> input) {
         cards = input;
     }
 
@@ -33,11 +35,11 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         TextView cardDesc = holder.v.findViewById(R.id.card_desc);
-        cardDesc.setText(cards[position]);
+        cardDesc.setText(cards.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return cards.length;
+        return cards.size();
     }
 }

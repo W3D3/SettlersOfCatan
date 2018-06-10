@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.TradeOffer;
@@ -75,8 +76,18 @@ public class TradingActivity extends AppCompatActivity {
         rv.setLayoutManager(rvl);
 
         // TODO: get players
-        String[] test = {"Player1", "Player2", "Player3", "Player4"};
-        RecyclerView.Adapter rva = new PlayerListAdapter(test);
+        List<Player> players = new ArrayList<>();
+
+        Player a = new Player(null, 0, 0, "A");
+        Player b = new Player(null, 0, 0, "B");
+        Player c = new Player(null, 0, 0, "C");
+        Player d = new Player(null, 0, 0, "D");
+        players.add(a);
+        players.add(b);
+        players.add(c);
+        players.add(d);
+
+        RecyclerView.Adapter rva = new PlayerListAdapter(players);
         rv.setAdapter(rva);
     }
 
