@@ -4,11 +4,11 @@ import io.swagslash.settlersofcatan.Player;
 
 public class Bank implements IBank {
 
-    Resource brick = new Resource(Resource.ResourceType.BRICK);
-    Resource wood = new Resource(Resource.ResourceType.WOOD);
-    Resource grain = new Resource(Resource.ResourceType.GRAIN);
-    Resource wool = new Resource(Resource.ResourceType.WOOL);
-    Resource ore = new Resource(Resource.ResourceType.ORE);
+    private Resource brick = new Resource(Resource.ResourceType.BRICK);
+    private Resource wood = new Resource(Resource.ResourceType.WOOD);
+    private Resource grain = new Resource(Resource.ResourceType.GRAIN);
+    private Resource wool = new Resource(Resource.ResourceType.WOOL);
+    private Resource ore = new Resource(Resource.ResourceType.ORE);
 
     @Override
     public boolean payForStreet(Player player) {
@@ -106,13 +106,8 @@ public class Bank implements IBank {
         int countWood = inventory.countResource(wood.getResourceType());
 
         // the player needs 1 brick and 1 wood
-        if ((countBrick >= 1) && (countWood >= 1)) {
-            // player can pay
-            return true;
-        } else {
-            // not enough resources to pay
-            return false;
-        }
+
+        return ((countBrick >= 1) && (countWood >= 1));
     }
 
 
@@ -127,13 +122,7 @@ public class Bank implements IBank {
         int countWool = inventory.countResource(wool.getResourceType());
 
         // the player needs 1 brick, 1 wood, 1 grain, 1 wool
-        if ((countBrick >= 1) && (countWood >= 1) && (countGrain >= 1) && (countWool >= 1)) {
-            // player can pay
-            return true;
-        } else {
-            // not enough resources to pay
-            return false;
-        }
+        return ((countBrick >= 1) && (countWood >= 1) && (countGrain >= 1) && (countWool >= 1));
     }
 
 
@@ -145,15 +134,8 @@ public class Bank implements IBank {
         int countGrain = inventory.countResource(grain.getResourceType());
         int countOre = inventory.countResource(ore.getResourceType());
 
-
         // the player needs 2 grains and 3 ores
-        if ((countGrain >= 2) && (countOre >= 3)) {
-            // player can pay
-            return true;
-        } else {
-            // not enough resources to pay
-            return false;
-        }
+        return ((countGrain >= 2) && (countOre >= 3));
     }
 
 
@@ -167,12 +149,6 @@ public class Bank implements IBank {
         int countOre = inventory.countResource(ore.getResourceType());
 
         // the player needs 1 wool, 1 grain and 1 ore
-        if ((countWool >= 1) && (countGrain >= 1) && (countOre >= 1)) {
-            // player can pay
-            return true;
-        } else {
-            // not enough resources to pay
-            return false;
-        }
+        return ((countWool >= 1) && (countGrain >= 1) && (countOre >= 1));
     }
 }
