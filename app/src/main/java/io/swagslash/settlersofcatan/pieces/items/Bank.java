@@ -38,7 +38,7 @@ public class Bank implements IBank {
         // get the hand of the player
         Inventory inventory = player.getInventory();
 
-        // count how many bricks, wood and grains the player has on his hand
+        // count how many bricks, wood, grains and wools the player has on his hand
         int countBrick = inventory.countResource(brick.getResourceType());
         int countWood = inventory.countResource(wood.getResourceType());
         int countGrain = inventory.countResource(grain.getResourceType());
@@ -112,6 +112,4 @@ public class Bank implements IBank {
             return false;
         }
     }
-
-    //TODO Dice - hex terrain - add resource to inventory
 }
