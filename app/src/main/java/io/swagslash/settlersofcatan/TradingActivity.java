@@ -144,6 +144,8 @@ public class TradingActivity extends AppCompatActivity {
                     val--;
                 }
                 break;
+            default:
+                break;
         }
         tv.setText(String.format("%02d", val));
         //Debug.stopMethodTracing();
