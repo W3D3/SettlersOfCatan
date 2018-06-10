@@ -1,6 +1,9 @@
 package io.swagslash.settlersofcatan.utility;
 
 import java.util.EnumMap;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
@@ -21,7 +24,7 @@ public class TradeOffer {
         try {
             tmp = Resource.ResourceType.valueOf(type.toUpperCase());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getAnonymousLogger().log(new LogRecord(Level.WARNING, e.getMessage()));
         }
         return tmp;
     }
