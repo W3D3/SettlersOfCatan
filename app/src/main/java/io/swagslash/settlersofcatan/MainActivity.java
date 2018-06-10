@@ -30,7 +30,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.utility.Dice;
 import io.swagslash.settlersofcatan.utility.DiceSix;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, DataCallback.IDataCallback{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DataCallback.IDataCallback {
 
     private static final int FABMENUDISTANCE = 160;
 
@@ -64,12 +64,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
 
-        /*
         this.setupHexView();
         DataCallback.actActivity = this;
-        */
 
         //fab menu animation
         this.fabOpen = false;
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.cards.setOnClickListener(this);
 
         //sensor init
-        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager != null) {
             sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             shakeDetector = new ShakeDetector();
@@ -222,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mdisp.getSize(mdispSize);
 
         System.out.println(android.os.Build.VERSION.SDK_INT);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || true){
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || true) {
             hexView.setZoomLayout(zl);
             hexView.prepare();
             zl.addView(hexView);
@@ -237,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
 
-        if(SettlerApp.getManager().getNetwork().isRunningAsHost)
+        if (SettlerApp.getManager().getNetwork().isRunningAsHost)
             SettlerApp.getManager().getNetwork().stopNetworkService(false);
         else
             SettlerApp.getManager().getNetwork().unregisterClient(false);
@@ -250,10 +248,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SettlerApp.board = LoganSquare.parse((String) o, Board.class);
             System.out.println((String) o);
             if (SettlerApp.getManager().isHost()) {
-                System.out.println( "################### I AM HOST " + SettlerApp.playerName);
+                System.out.println("################### I AM HOST " + SettlerApp.playerName);
                 SettlerApp.getManager().sendToAll(SettlerApp.board);
             }
-            System.out.println( "################## DATA RECEIVED " + SettlerApp.playerName);
+            System.out.println("################## DATA RECEIVED " + SettlerApp.playerName);
             hexView.setBoard(SettlerApp.board);
             hexView.prepare();
             hexView.redraw();
