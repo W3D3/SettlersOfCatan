@@ -34,10 +34,10 @@ public class VertexTest {
   @Test
   public void TestVertex1(){
     ArrayList<String> namelist= new ArrayList<String>();
-  namelist.add("Player 1");
-  namelist.add("Player 2");
-  namelist.add("Player 3");
-  Board b = new Board(namelist,true,10);
+    namelist.add("Player 1");
+    namelist.add("Player 2");
+    namelist.add("Player 3");
+    Board b = new Board(namelist, true, 10);
     Player p = b.getPlayerById(2);
     p.getInventory().getResourceHand();
     Vertex v = new Vertex(b, new HexPoint(4,4));
