@@ -63,7 +63,7 @@ public class HexPointTests {
     @Test
     public void scaleTest() {
         int scale = 4;
-        Pair<Integer, Integer> offset = new Pair <>(1, 1);
+        Pair<Integer, Integer> offset = new Pair<>(1, 1);
 
         a.setX(a.getX() * scale + offset.first);
         a.setY(a.getY() * scale + offset.second);

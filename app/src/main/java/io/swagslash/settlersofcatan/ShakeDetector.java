@@ -13,7 +13,7 @@ public class ShakeDetector implements SensorEventListener {
 
     private ShakeListener listener;
 
-    public void setShakeListener(ShakeListener l){
+    public void setShakeListener(ShakeListener l) {
         listener = l;
     }
 

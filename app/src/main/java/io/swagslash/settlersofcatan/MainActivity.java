@@ -26,11 +26,8 @@ import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.Random;
-import java.util.Set;
-import java.io.IOException;
 
 import io.swagslash.settlersofcatan.controller.GameController;
-import io.swagslash.settlersofcatan.controller.PhaseController;
 import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
@@ -40,7 +37,6 @@ import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
-
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
@@ -137,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //resource show
         this.woodCount = findViewById(R.id.wood_count);
         this.woolCount = findViewById(R.id.wool_count);
-        this.bricksCount = findViewById(R.id.bricks_count);
+        this.bricksCount = findViewById(R.id.brick_count);
         this.grainCount = findViewById(R.id.grain_count);
         this.oreCount = findViewById(R.id.ore_count);
 
@@ -224,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 break;
-            case R.id.dice:
+            case R.id.dice_1:
                 if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant roll dice.");
                     return;
