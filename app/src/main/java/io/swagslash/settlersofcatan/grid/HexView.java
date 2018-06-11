@@ -36,9 +36,8 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
- * Created by thomas on 10.04.2018.
+ * HexView is a View that draws a Standard Catan Grid on a Canvas
  */
-
 public class HexView extends View {
 
     Board board;
@@ -65,6 +64,7 @@ public class HexView extends View {
     private GestureDetector gestureDetector;
     private ScaleGestureDetector scaleDetector;
     private Paint vertexClickPaint;
+    private Paint textPaint;
 
     public HexView(Context context) {
         super(context);
@@ -100,6 +100,13 @@ public class HexView extends View {
         roadPaint.setColor(Color.GRAY);
         roadPaint.setStyle(Paint.Style.STROKE);
         roadPaint.setStrokeWidth(8);
+
+        textPaint = new Paint();
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(48);
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextAlign(Paint.Align.CENTER);
 
     }
 
@@ -147,7 +154,7 @@ public class HexView extends View {
         for (Hex hex : hexes) {
             hex.calculatePath(offset, scale);
         }
-        //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES
+        //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES?
         // OR GET IT FROM PARENT?
         setMinimumHeight(maxY);
         setMinimumWidth(maxX);
@@ -188,7 +195,6 @@ public class HexView extends View {
         clip.set(0, 0, c.getWidth(), c.getHeight());
 
         //Background white
-
         Paint bg = new Paint();
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water_texture);
         BitmapShader fillBMPshader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
@@ -196,7 +202,6 @@ public class HexView extends View {
 
 
         bg.setStyle(Paint.Style.FILL);
-        //this.fillPaint.setColor(Color.parseColor("#138fdc"));
         c.drawPaint(bg);
 
         strokePaint.setStrokeWidth(3);
@@ -217,28 +222,7 @@ public class HexView extends View {
             Region r = new Region();
             r.setPath(path, clip);
             hex.setRegion(r);
-
         }
-
-//        for (Hex h : board.getHexagons()) {
-//            for (Edge e : h.getEdges()) {
-//                HexPoint from = e.getCoordinates().first;
-//                HexPoint to = e.getCoordinates().first;
-//                HexPoint drawFrom = from.scale(offset, scale);
-//                HexPoint drawTo = to.scale(offset, scale);
-//                switch (e.getUnitType()) {
-//                    case ROAD:
-//                        roadPaint.setColor(e.getOwner().getColor());
-//                        c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, roadPaint);
-//                        break;
-//                    case NONE:
-//                        //c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, edgePaint);
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
-//        }
 
 
         PhaseController phaseController = board.getPhaseController();
@@ -282,6 +266,21 @@ public class HexView extends View {
                 default:
                     break;
             }
+        }
+
+        // DRAW NUMBER TOKENS OVER THEM
+
+        for (Hex hex : hexes) {
+
+            final HexPoint coordinates = hex.getCenter().scale(offset, scale);
+            if(hex.getNumberToken() != null) {
+                if (hex.getNumberToken().getNumber() > 0) {
+                    c.drawText(hex.getNumberToken().toString(), (float)coordinates.x, (float)coordinates.y, textPaint);
+                    invalidate();
+                }
+
+            }
+
         }
 
 
