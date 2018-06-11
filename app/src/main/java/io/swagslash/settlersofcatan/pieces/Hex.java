@@ -24,6 +24,7 @@ public class Hex {
     private Boolean hasRobber;
     private List<Vertex> vertices;
     private List<Edge> edges;
+    private HexPoint center;
 
     private Path path;
     private Region region;
@@ -92,6 +93,7 @@ public class Hex {
             }
             direction++;
         }
+        center = HexGridLayout.hexToPixel(gridLayout, hexLocation);
     }
 
     public AxialHexLocation getHexLocation() {
@@ -199,5 +201,13 @@ public class Hex {
 
     public enum TerrainType {
         FOREST, FIELD, HILL, MOUNTAIN, DESERT, PASTURE
+    }
+
+    public HexPoint getCenter() {
+        return center;
+    }
+
+    public void setCenter(HexPoint center) {
+        this.center = center;
     }
 }

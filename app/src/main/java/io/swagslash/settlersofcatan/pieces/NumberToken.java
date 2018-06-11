@@ -68,4 +68,9 @@ public class NumberToken {
     public void setPossibilities(int possibilities) {
         this.possibilities = possibilities;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(number);
+    }
 }
