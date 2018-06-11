@@ -199,6 +199,9 @@ public class Robber extends Activity {
                 }
             });
         }
+        builder.setTitle("Räuber");
+        builder.setMessage("Wählen Sie den zu raubenden Spieler aus");
+        builder.create();
 
         return this.selectedPlayer;
     }

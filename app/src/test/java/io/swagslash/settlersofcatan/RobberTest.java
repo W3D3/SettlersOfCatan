@@ -48,7 +48,7 @@ public class RobberTest {
     }
 
     @Test
-    public void TestselectedPlayer() {
+    public void TestSelectedPlayer() {
         Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
         Player p = new Player(null, 3, Color.GREEN, "Player 4");
         rob.selectPlayer(p);

@@ -20,13 +20,14 @@ public class ResourceDiscardTest {
      */
 
     @Test
-    public void TestOnCreat() {
+    public void TestOnCreate() {
         try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
             assertThat(viewById, notNullValue());
         } catch (Exception e) {
+            Assert.fail();
         }
     }
 
@@ -41,12 +42,13 @@ public class ResourceDiscardTest {
             //When no exception Test bestanden
             assertTrue(true);
         } catch (Exception e) {
+            Assert.fail();
         }
     }
 
     @Test
-    public void TestconfirmDiscard() {
-        try {
+    public void TestConfirmDiscard(){
+        try{
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
@@ -55,6 +57,7 @@ public class ResourceDiscardTest {
             //When no exception Test bestanden
             assertTrue(true);
         } catch (Exception e) {
+            Assert.fail();
         }
     }
 
