@@ -10,7 +10,6 @@ public class ShakeDetector implements SensorEventListener {
     private static final float SHAKE_THRESHOLD = 1.65F;
     private static final int SHAKE_TIMEOUT = 2400;
     private long previousShake;
-    private long currentShake;
 
     private ShakeListener listener;
 
@@ -27,7 +26,7 @@ public class ShakeDetector implements SensorEventListener {
         float g = (float) Math.sqrt(x * x + y * y + z * z);
 
         if (g > SHAKE_THRESHOLD) {
-            currentShake = System.currentTimeMillis();
+            long currentShake = System.currentTimeMillis();
             if (previousShake + SHAKE_TIMEOUT < currentShake) {
                 listener.onShake();
             }
@@ -37,6 +36,7 @@ public class ShakeDetector implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-        // nothing
+        throw new UnsupportedOperationException();
+        // do nothing
     }
 }

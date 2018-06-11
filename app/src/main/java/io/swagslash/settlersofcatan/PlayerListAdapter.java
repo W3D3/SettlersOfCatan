@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.ViewHolder> {
 
-    private String[] players;
+    private List<Player> players;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         View v;
@@ -18,7 +20,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Vi
         }
     }
 
-    PlayerListAdapter(String[] input){
+    PlayerListAdapter(List<Player> input) {
         players = input;
     }
 
@@ -36,11 +38,11 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         TextView playerName = holder.v.findViewById(R.id.player_name);
-        playerName.setText(players[position]);
+        playerName.setText(players.get(position).getPlayerName());
     }
 
     @Override
     public int getItemCount() {
-        return players.length;
+        return players.size();
     }
 }

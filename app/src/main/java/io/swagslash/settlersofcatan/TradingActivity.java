@@ -9,23 +9,19 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Vector;
+import java.util.List;
 
-import io.swagslash.settlersofcatan.pieces.utility.TradeOffer;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
+import io.swagslash.settlersofcatan.utility.TradeOffer;
 
 public class TradingActivity extends AppCompatActivity {
 
-    private RecyclerView rv;
-    private RecyclerView.Adapter rva;
-    private RecyclerView.LayoutManager rvl;
+    private ArrayList<TextView> offerTextViews = new ArrayList<>();
+    private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
-    protected TextView oreOffererValue, woodOffererValue, bricksOffererValue, grainOffererValue, woolOffererValue;
-    private Vector<TextView> offerTextViews = new Vector<>();
-    protected TextView oreOffereeValue, woodOffereeValue, bricksOffereeValue, grainOffereeValue, woolOffereeValue;
-    private Vector<TextView> demandTextViews = new Vector<>();
-
-    private TradeOffer tradeOffer;
+    private TradeOffer tradeOffer = new TradeOffer();
     private HashSet<Integer> selectedPlayers = new HashSet<>();
 
     private int min;
@@ -44,29 +40,19 @@ public class TradingActivity extends AppCompatActivity {
         this.min = 0;
         this.max = 99;
 
-        this.oreOffererValue = findViewById(R.id.ore_offerer_value);
-        this.offerTextViews.add(oreOffererValue);
-        this.woodOffererValue = findViewById(R.id.wood_offerer_value);
-        this.offerTextViews.add(woodOffererValue);
-        this.bricksOffererValue = findViewById(R.id.brick_offerer_value);
-        this.offerTextViews.add(bricksOffererValue);
-        this.grainOffererValue = findViewById(R.id.grain_offerer_value);
-        this.offerTextViews.add(grainOffererValue);
-        this.woolOffererValue = findViewById(R.id.wool_offerer_value);
-        this.offerTextViews.add(woolOffererValue);
+        this.offerTextViews.add((TextView) findViewById(R.id.ore_offerer_value));
+        this.offerTextViews.add((TextView) findViewById(R.id.wood_offerer_value));
+        this.offerTextViews.add((TextView) findViewById(R.id.brick_offerer_value));
+        this.offerTextViews.add((TextView) findViewById(R.id.grain_offerer_value));
+        this.offerTextViews.add((TextView) findViewById(R.id.wool_offerer_value));
 
-        this.oreOffereeValue = findViewById(R.id.ore_offeree_value);
-        this.demandTextViews.add(oreOffereeValue);
-        this.woodOffereeValue = findViewById(R.id.wood_offeree_value);
-        this.demandTextViews.add(woodOffereeValue);
-        this.bricksOffereeValue = findViewById(R.id.brick_offeree_value);
-        this.demandTextViews.add(bricksOffereeValue);
-        this.grainOffereeValue = findViewById(R.id.grain_offeree_value);
-        this.demandTextViews.add(grainOffereeValue);
-        this.woolOffereeValue = findViewById(R.id.wool_offeree_value);
-        this.demandTextViews.add(woolOffereeValue);
+        this.demandTextViews.add((TextView) findViewById(R.id.ore_offeree_value));
+        this.demandTextViews.add((TextView) findViewById(R.id.wood_offeree_value));
+        this.demandTextViews.add((TextView) findViewById(R.id.brick_offeree_value));
+        this.demandTextViews.add((TextView) findViewById(R.id.grain_offeree_value));
+        this.demandTextViews.add((TextView) findViewById(R.id.wool_offeree_value));
 
-        rv = findViewById(R.id.player_trading_list);
+        RecyclerView rv = findViewById(R.id.player_trading_list);
         rv.addOnItemTouchListener(new RecyclerItemClickListener(this, rv, new ClickListener() {
             @Override
             public void onClick(View v, int pos) {
@@ -86,46 +72,23 @@ public class TradingActivity extends AppCompatActivity {
         }));
         rv.setHasFixedSize(true);
 
-        rvl = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager rvl = new LinearLayoutManager(this);
         rv.setLayoutManager(rvl);
 
         // TODO: get players
-        String[] test = {"Player1", "Player2", "Player3", "Player4"};
-        rva = new PlayerListAdapter(test);
+        List<Player> players = new ArrayList<>();
+
+        Player a = new Player(null, 0, 0, "A");
+        Player b = new Player(null, 0, 0, "B");
+        Player c = new Player(null, 0, 0, "C");
+        Player d = new Player(null, 0, 0, "D");
+        players.add(a);
+        players.add(b);
+        players.add(c);
+        players.add(d);
+
+        RecyclerView.Adapter rva = new PlayerListAdapter(players);
         rv.setAdapter(rva);
-    }
-
-    private TradeOffer createTradeOffer() {
-        tradeOffer = new TradeOffer();
-        int tmp;
-
-        boolean offerEmpty = true;
-        for (TextView tv : offerTextViews) {
-            tmp = Integer.parseInt(tv.getText().toString());
-            if (tmp > min) {
-                offerEmpty = false;
-            }
-            tradeOffer.addResource(getResources().getResourceEntryName(tv.getId()).split("_")[0], tmp, true);
-        }
-
-        if (offerEmpty) {
-            Toast.makeText(getApplicationContext(), "please offer something", Toast.LENGTH_SHORT).show();
-        }
-
-        boolean demandEmpty = true;
-        for (TextView tv : demandTextViews) {
-            tmp = Integer.parseInt(tv.getText().toString());
-            if (tmp > min) {
-                demandEmpty = false;
-            }
-            tradeOffer.addResource(getResources().getResourceEntryName(tv.getId()).split("_")[0], tmp, false);
-        }
-
-        if (demandEmpty) {
-            Toast.makeText(getApplicationContext(), "please demand something", Toast.LENGTH_SHORT).show();
-        }
-
-        return tradeOffer;
     }
 
     @SuppressLint("DefaultLocale")
@@ -159,4 +122,40 @@ public class TradingActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private TradeOffer createTradeOffer() {
+        this.readValues(true);
+        this.readValues(false);
+        return tradeOffer;
+    }
+
+    private void readValues(boolean offerOrDemand) {
+        ArrayList<TextView> readTextViews;
+        Resource.ResourceType readResource;
+        int readValue;
+        String toastText;
+
+        if (offerOrDemand) {
+            readTextViews = offerTextViews;
+            toastText = "please offer something";
+        } else {
+            readTextViews = demandTextViews;
+            toastText = "please demand something";
+        }
+
+        boolean empty = true;
+        for (TextView tv : readTextViews) {
+            readResource = TradeOffer.convertStringToResource(getResources().getResourceEntryName(tv.getId()).split("_")[0]);
+            readValue = Integer.parseInt(tv.getText().toString());
+            if (readValue > min) {
+                empty = false;
+            }
+            this.tradeOffer.addResource(readResource, readValue, offerOrDemand);
+        }
+
+        if (empty) {
+            Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
