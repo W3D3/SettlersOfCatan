@@ -61,182 +61,236 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
 
-        <View
-            android:id="@+id/divider_left"
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:background="?android:attr/listDivider"
-            android:foreground="@android:color/background_light"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/brick_view"
-            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="309dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@color/colorBlack">
 
-        <ImageView
-            android:id="@+id/ore_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:contentDescription="@string/resource_desc"
-            app:layout_constraintBottom_toTopOf="@+id/ore_count"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@android:drawable/btn_dialog" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/ore_count"
-            android:layout_width="32dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:clickable="false"
-            android:gravity="center_horizontal"
-            android:text="@string/default_min_value"
-            android:textColor="@android:color/background_light"
-            android:textIsSelectable="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ore_view" />
+                <ImageView
+                    android:id="@+id/brick_view"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="1dp"
+                    android:contentDescription="@string/resource_desc"
+                    app:layout_constraintBottom_toTopOf="@+id/ore_count"
+                    app:layout_constraintStart_toEndOf="@+id/grain_view"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:srcCompat="@drawable/brick" />
 
-        <ImageView
-            android:id="@+id/grain_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:contentDescription="@string/resource_desc"
-            app:layout_constraintBottom_toTopOf="@+id/ore_count"
-            app:layout_constraintStart_toEndOf="@+id/ore_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@android:drawable/btn_dialog" />
+                <TextView
+                    android:id="@+id/brick_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/default_min_value"
+                    android:textColor="@android:color/background_light"
+                    android:textIsSelectable="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/grain_count"
+                    app:layout_constraintTop_toBottomOf="@+id/ore_view"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:text="8"
+                    tools:textColor="@android:color/background_light" />
 
-        <TextView
-            android:id="@+id/grain_count"
-            android:layout_width="32dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center_horizontal"
-            android:text="@string/default_min_value"
-            android:textColor="@android:color/background_light"
-            android:textIsSelectable="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ore_count"
-            app:layout_constraintTop_toBottomOf="@+id/ore_view"
-            app:layout_constraintVertical_bias="0.0" />
+            </LinearLayout>
 
-        <ImageView
-            android:id="@+id/wood_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:contentDescription="@string/resource_desc"
-            app:layout_constraintBottom_toTopOf="@+id/ore_count"
-            app:layout_constraintStart_toEndOf="@+id/grain_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@android:drawable/btn_dialog" />
 
-        <TextView
-            android:id="@+id/wood_count"
-            android:layout_width="32dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center_horizontal"
-            android:text="@string/default_min_value"
-            android:textColor="@android:color/background_light"
-            android:textIsSelectable="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/grain_count"
-            app:layout_constraintTop_toBottomOf="@+id/ore_view"
-            app:layout_constraintVertical_bias="0.0"
-            tools:textColor="@android:color/background_light" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/wool_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:contentDescription="@string/resource_desc"
-            app:layout_constraintBottom_toTopOf="@+id/ore_count"
-            app:layout_constraintStart_toEndOf="@+id/wood_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@android:drawable/btn_dialog" />
+                <ImageView
+                    android:id="@+id/wool_view"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="1dp"
+                    android:contentDescription="@string/resource_desc"
+                    app:layout_constraintBottom_toTopOf="@+id/ore_count"
+                    app:layout_constraintStart_toEndOf="@+id/grain_view"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:srcCompat="@drawable/wool" />
 
-        <TextView
-            android:id="@+id/wool_count"
-            android:layout_width="32dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center_horizontal"
-            android:text="@string/default_min_value"
-            android:textColor="@android:color/background_light"
-            android:textIsSelectable="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/wood_count"
-            app:layout_constraintTop_toBottomOf="@+id/ore_view"
-            app:layout_constraintVertical_bias="0.0" />
+                <TextView
+                    android:id="@+id/wool_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/default_min_value"
+                    android:textColor="@android:color/background_light"
+                    android:textIsSelectable="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/grain_count"
+                    app:layout_constraintTop_toBottomOf="@+id/ore_view"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:text="8"
+                    tools:textColor="@android:color/background_light" />
 
-        <ImageView
-            android:id="@+id/brick_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:contentDescription="@string/resource_desc"
-            app:layout_constraintBottom_toTopOf="@+id/ore_count"
-            app:layout_constraintStart_toEndOf="@+id/wool_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:srcCompat="@android:drawable/btn_dialog" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/brick_count"
-            android:layout_width="32dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center_horizontal"
-            android:text="@string/default_min_value"
-            android:textColor="@android:color/background_light"
-            android:textIsSelectable="false"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/wool_count"
-            app:layout_constraintTop_toBottomOf="@+id/ore_view"
-            app:layout_constraintVertical_bias="0.0" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/cards"
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="2dp"
-            android:text="@string/cards"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/divider_left"
-            app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    android:id="@+id/wood_view"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="1dp"
+                    android:contentDescription="@string/resource_desc"
+                    app:layout_constraintBottom_toTopOf="@+id/ore_count"
+                    app:layout_constraintStart_toEndOf="@+id/grain_view"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:srcCompat="@drawable/wood" />
+
+                <TextView
+                    android:id="@+id/wood_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/default_min_value"
+                    android:textColor="@android:color/background_light"
+                    android:textIsSelectable="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/grain_count"
+                    app:layout_constraintTop_toBottomOf="@+id/ore_view"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:text="8"
+                    tools:textColor="@android:color/background_light" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ore_view"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="1dp"
+                    android:contentDescription="@string/resource_desc"
+                    app:layout_constraintBottom_toTopOf="@+id/ore_count"
+                    app:layout_constraintStart_toEndOf="@+id/grain_view"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:srcCompat="@drawable/ore" />
+
+                <TextView
+                    android:id="@+id/ore_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="4dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/default_min_value"
+                    android:textColor="@android:color/background_light"
+                    android:textIsSelectable="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/grain_count"
+                    app:layout_constraintTop_toBottomOf="@+id/ore_view"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:text="8"
+                    tools:textColor="@android:color/background_light" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/grain_view"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="1dp"
+                    android:contentDescription="@string/resource_desc"
+                    app:layout_constraintBottom_toTopOf="@+id/ore_count"
+                    app:layout_constraintStart_toEndOf="@+id/grain_view"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:srcCompat="@drawable/grain" />
+
+                <TextView
+                    android:id="@+id/grain_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/default_min_value"
+                    android:textColor="@android:color/background_light"
+                    android:textIsSelectable="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/grain_count"
+                    app:layout_constraintTop_toBottomOf="@+id/ore_view"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:text="8"
+                    tools:textColor="@android:color/background_light" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider_left"
+                android:layout_width="1px"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="0.1"
+                android:background="?android:attr/listDivider"
+                android:foreground="@android:color/background_light"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/cards"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:text="@string/cards"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/divider_left"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/dice_1"
@@ -310,7 +364,8 @@
             android:text="@string/default_min_value"
             android:textColor="@android:color/background_light"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="10" />
 
     </android.support.constraint.ConstraintLayout>
 
