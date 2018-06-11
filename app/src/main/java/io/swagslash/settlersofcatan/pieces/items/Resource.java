@@ -51,4 +51,9 @@ public class Resource {
     public ResourceType getResourceType() {
         return resourceType;
     }
+
+    @Override
+    public String toString() {
+        return getResourceType().toString();
+    }
 }

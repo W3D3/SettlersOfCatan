@@ -22,7 +22,7 @@ public class HexPoint {
     @Override
     public boolean equals(Object obj) {
         HexPoint p = (HexPoint) obj;
-        return areEqualDouble(p.x, this.x, 5) && areEqualDouble(p.y, this.y, 5);
+        return areEqualDouble(p.x, this.x, 2) && areEqualDouble(p.y, this.y, 2);
     }
 
     @Override

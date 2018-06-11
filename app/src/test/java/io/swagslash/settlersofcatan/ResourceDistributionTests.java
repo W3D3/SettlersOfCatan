@@ -36,8 +36,7 @@ public class ResourceDistributionTests {
 
         List<Hex> adjacentHexes = new ArrayList<>();
         for (Hex hex : b.getHexagons()) {
-            for(int i = 0; i < 6; i++)
-            {
+            for(int i = 0; i < 6; i++) {
                 if (hex.getVertices().get(i).getCoordinates().equals(selectedVertex.getCoordinates())) {
                     adjacentHexes.add(hex);
                     System.out.println(hex.toString());
@@ -54,6 +53,30 @@ public class ResourceDistributionTests {
 
         assertEquals(pos1, pos2);
         assertEquals(selectedVertex.getCoordinates(), pos1);
+
+    }
+
+    @Test
+    public void checkSimpleDistribution1() throws Exception {
+
+        List<String> players = new ArrayList<>();
+        players.add("P1");
+        players.add("P2");
+        Board b = new Board(players, true, 10);
+        b.setupBoard();
+
+        System.out.println(b.getPlayerById(0));
+
+        // this gives us the first hexagon we created, so that's (2/2) in the DOWN_RIGHT direction
+        Vertex selectedVertex = b.getVertexByPosition(b.getHexagons().get(0).getVertexPositions(VertexDirection.DOWN_RIGHT));
+        selectedVertex.buildSettlement(b.getPlayerById(0)); // First player builds settlement
+        Vertex selectedVertex1 = b.getVertexByPosition(b.getHexagons().get(0).getVertexPositions(VertexDirection.DOWN_LEFT));
+        selectedVertex1.buildSettlement(b.getPlayerById(0)); // First player builds settlement
+
+        Hex hex = b.getHexagons().get(0);
+        hex.distributeResources(hex.getNumberToken().getNumber());
+
+        assertEquals(b.getPlayerById(0).getInventory().countResource(hex.getResourceProduced().getResourceType()), Integer.valueOf(2));
 
     }
 }

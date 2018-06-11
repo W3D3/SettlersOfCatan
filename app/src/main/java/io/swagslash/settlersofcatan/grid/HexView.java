@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.R;
@@ -363,13 +364,15 @@ public class HexView extends View {
     }
 
     private Vertex getVertexFromCoordinates(int x, int y) {
-        final ArrayList<Vertex> vertices = new ArrayList<>(SettlerApp.board.getVerticesList());
-        for (int i = 0; i < vertices.size(); i++) {
-            Region r = vertices.get(i).getRegion();
+        Collection<Vertex> vertices = SettlerApp.board.getVerticesList();
+
+        for (Vertex vertex : vertices) {
+            Region r = vertex.getRegion();
             if (r.contains(x, y)) {
-                return vertices.get(i);
+                return vertex;
             }
         }
+
         return null;
     }
 
@@ -399,6 +402,9 @@ public class HexView extends View {
         Vertex vertex = getVertexFromCoordinates(coordinates.first, coordinates.second);
         if (vertex == null) return false;
         boolean buildSuccess = false;
+
+        Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ clicked",
+                Toast.LENGTH_SHORT).show();
 
         switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 
@@ -433,6 +439,9 @@ public class HexView extends View {
         Edge edge = getEdgeFromCoordinates(coordinates.first, coordinates.second);
         if (edge == null) return false;
         boolean buildSuccess = false;
+
+        Toast.makeText(getContext().getApplicationContext(), edge.toString() + " ~ clicked",
+                Toast.LENGTH_SHORT).show();
 
         switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 

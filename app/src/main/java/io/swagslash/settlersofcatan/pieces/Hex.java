@@ -3,6 +3,7 @@ package io.swagslash.settlersofcatan.pieces;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
+import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
@@ -22,8 +24,8 @@ public class Hex {
     private TerrainType terrainType;
     private AxialHexLocation hexLocation;
     private Boolean hasRobber;
-    private List<Vertex> vertices;
-    private List<Edge> edges;
+    private List<HexPoint> verticesPosition;
+    private List<HexPointPair> edgePosition;
     private HexPoint center;
 
     private Path path;
@@ -35,20 +37,40 @@ public class Hex {
         this.terrainType = terrainType;
         this.board = board;
         this.hexLocation = location;
-        this.vertices = new ArrayList<>();
+        this.verticesPosition = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            this.vertices.add(null);
+            this.verticesPosition.add(null);
         }
-        this.edges = new ArrayList<>();
+        this.edgePosition = new ArrayList<>();
         this.hasRobber = false;
     }
 
     public List<Vertex> getVertices() {
+        List<Vertex> vertices = new ArrayList<>();
+        for (HexPoint hexPoint : verticesPosition) {
+            vertices.add(board.getVertices().get(hexPoint));
+        }
         return vertices;
     }
 
-    public HexPoint getVertexPositions(Integer position) {
-        return this.vertices.get(position).getCoordinates();
+    public List<HexPoint> getVerticesPosition() {
+        return verticesPosition;
+    }
+
+    public void setVerticesPosition(List<HexPoint> verticesPosition) {
+        this.verticesPosition = verticesPosition;
+    }
+
+    public List<HexPointPair> getEdgePosition() {
+        return edgePosition;
+    }
+
+    public void setEdgePosition(List<HexPointPair> edgePosition) {
+        this.edgePosition = edgePosition;
+    }
+
+    public HexPoint getVertexPosition(Integer position) {
+        return this.verticesPosition.get(position);
     }
 
     public Path getPath() {
@@ -68,12 +90,13 @@ public class Hex {
     }
 
     public List<Edge> getEdges() {
-        return edges;
+        List<Vertex> vertices = new ArrayList<>();
+        for (HexPoint hexPoint : verticesPosition) {
+            vertices.add(board.getVertices().get(hexPoint));
+        }
+        return vertices;
     }
 
-    public void setEdges(List<Edge> edges) {
-        this.edges = edges;
-    }
 
 //    public Set<Vertex> getVerticesSet() {
 //        return new HashSet<Vertex>(vertices.values());
@@ -123,7 +146,9 @@ public class Hex {
 
         for (int i = 0; i < 6; i++) {
             //TODO each vertex gets resources
-            vertices.get(i).distributeResources(this.getResourceProduced());
+            if (vertices.get(i).distributeResources(this.getResourceProduced())) {
+                Log.d("DISTRIBUTION", "DISTRÌBUTED AT LEAST 1 " + getResourceProduced() + " to " + this.toString() + " on Vertex " + vertices.get(i));
+            }
         }
         return true;
     }

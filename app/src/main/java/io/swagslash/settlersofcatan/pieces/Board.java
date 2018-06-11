@@ -119,23 +119,43 @@ public class Board {
             boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
             Hex hex = new Hex(this, terrainsShuffled.pop(), location);
             if (needsNumberToken) hex.setNumberToken(numberTokens.pop());
-            hex.calculateVerticesAndEdges(gridLayout);
-            hexagons.add(hex);
-            for (Vertex v : hex.getVertices()) {
-                if (!vertices.containsValue(v)) {
-                    this.vertices.put(v.getCoordinates(), v);
-                }
-            }
-            for (Edge e : hex.getEdges()) {
-                e.connectToVertices();
-                if (!edges.containsValue(e)) {
-                    this.edges.put(e.getCoordinates(), e);
-                }
-            }
+
+
+//            hex.calculateVerticesAndEdges(gridLayout);
+//            hexagons.add(hex);
+//            for (Vertex v : hex.getVertices()) {
+//                if (!vertices.containsValue(v)) {
+//                    this.vertices.put(v.getCoordinates(), v);
+//                }
+//            }
+//            for (Edge e : hex.getEdges()) {
+//                e.connectToVertices();
+//                if (!edges.containsValue(e)) {
+//                    this.edges.put(e.getCoordinates(), e);
+//                }
+//            }
 
         }
 
         //vertices.get(0).buildSettlement(this.getPlayerById(0));
+    }
+
+    private void calculateVerticesAndEdges(Hex hex) {
+        ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(gridLayout, hex.getHexLocation());
+        Integer direction = 0;
+        for (HexPoint point : hexPoints) {
+            Vertex v = new Vertex(this, point);
+            hex.getVerticesPosition().add(direction, point);
+
+            if (direction > 0) {
+                this.edges.add(new Edge(this.board, point, hexPoints.get(direction - 1)));
+                if (direction == 5) {
+                    this.edges.add(new Edge(this.board, point, hexPoints.get(0)));
+                }
+            }
+            direction++;
+        }
+        center = HexGridLayout.hexToPixel(gridLayout, hexLocation);
     }
 
     private void generatePlayers(List<String> playerNames) {

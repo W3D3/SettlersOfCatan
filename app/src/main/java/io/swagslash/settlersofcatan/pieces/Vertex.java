@@ -83,18 +83,25 @@ public class Vertex {
      *
      * @param resourceProduced resource to be distributed
      */
-    public void distributeResources(Resource resourceProduced) {
-        if (owner == null) return;
+    public boolean distributeResources(Resource resourceProduced) {
+        if (owner == null) {
+            if (this.unitType != VertexUnit.NONE)
+                throw new IllegalStateException("BUILDING NEEDS OWNER!");
+            Log.d("VERTEXD", this.toString());
+            return false;
+        }
         switch (this.unitType) {
             case NONE:
-                break;
+                return false;
             case SETTLEMENT:
                 giveResourceToOwner(1, resourceProduced);
-                break;
+                Log.d("DISTRIBUTE", resourceProduced.getResourceType().name());
+                return true;
             case CITY:
                 giveResourceToOwner(2, resourceProduced);
-                break;
+                return true;
         }
+        throw new IllegalStateException("Should never reach this point (distributing resouces failed!)");
     }
 
     /**
@@ -179,7 +186,10 @@ public class Vertex {
 
     @Override
     public String toString() {
-        return "Vertex [" + this.getCoordinates().toString() + "]";
+        String string = "";
+        string += "Vertex [" + this.getCoordinates().toString() + "]";
+        if (getOwner() != null) string += "/ owned by " + this.getOwner();
+        return string;
     }
 
     public void addEdge(Edge e) {
