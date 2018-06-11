@@ -11,9 +11,6 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Region;
 import android.graphics.Shader;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -277,8 +274,11 @@ public class HexView extends View {
 
             final HexPoint coordinates = hex.getCenter().scale(offset, scale);
             if(hex.getNumberToken() != null) {
-                if(hex.getNumberToken().getNumber() > 0)
+                if (hex.getNumberToken().getNumber() > 0) {
                     c.drawText(hex.getNumberToken().toString(), (float)coordinates.x, (float)coordinates.y, textPaint);
+                    invalidate();
+                }
+
             }
 
         }
