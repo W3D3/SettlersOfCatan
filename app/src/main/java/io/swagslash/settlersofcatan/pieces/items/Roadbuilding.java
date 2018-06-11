@@ -9,7 +9,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
  * Created by thoma on 11.06.2018.
  */
 
-public class Roadbuilding extends DeploymentCard {
+public class Roadbuilding extends DevelopmentCard {
 
 
     public Roadbuilding() {
@@ -23,7 +23,7 @@ public class Roadbuilding extends DeploymentCard {
 
 
     /*
-    Let Player player get to new Roads
+    Let Player player get to new Roads, has to be implemented
      */
     public Board ActivateCard(Board b, Player player) {
 

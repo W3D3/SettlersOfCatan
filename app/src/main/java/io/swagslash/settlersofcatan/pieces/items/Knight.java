@@ -11,7 +11,7 @@ import io.swagslash.settlersofcatan.pieces.Hex;
  * Created by thoma on 10.06.2018.
  */
 
-public class Knight extends DeploymentCard {
+public class Knight extends DevelopmentCard {
 
     public Knight() {
         this.cardText = "Wenn Sie diese Karte ausspielen versetzen Sie den Räuber und ziehen bei einen der betroffenen Spieler ein Karte";
@@ -19,7 +19,7 @@ public class Knight extends DeploymentCard {
 
 
     /*
-    Activate Knight
+    Activate Knight, Rob a new Field + Player
      */
 
     public Board ActivateCard(Board b, Player player, Hex currentField) {

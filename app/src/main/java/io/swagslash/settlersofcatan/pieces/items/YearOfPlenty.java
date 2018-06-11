@@ -8,10 +8,12 @@ import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.Board;
 
 /**
- * Created by thoma on 11.06.2018.
+ * Created by thoma on 11.06.2018
+ *
+ * This DevelopmentCard allows you to get 2 free Resources what you want
  */
 
-public class YearOfPlenty extends DeploymentCard {
+public class YearOfPlenty extends DevelopmentCard {
     Resource.ResourceType resourceType;
 
     public YearOfPlenty() {
@@ -26,6 +28,9 @@ public class YearOfPlenty extends DeploymentCard {
         return b;
     }
 
+    /*
+    Card Activation and Choose 2 Resources per Dialogs. These Resources are added to Players Hand
+     */
     @Override
     public Board ActivateCard(Board b, Context context, Player player) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -125,11 +130,14 @@ public class YearOfPlenty extends DeploymentCard {
         count = player.getInventory().getResourceHand().get(this.getResourceType());
         player.getInventory().getResourceHand().put(this.getResourceType(), count);
 
+
         player.getInventory().removeDeploymentCardHand(this);
         return b;
     }
 
-
+    /*
+    Getter and Setter for the On-Click Method to get Access to the resourceType Variable
+     */
     public Resource.ResourceType getResourceType() {
         return resourceType;
     }

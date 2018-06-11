@@ -11,7 +11,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
  * Created by thoma on 09.06.2018.
  */
 
-public abstract class DeploymentCard {
+public abstract class DevelopmentCard {
 
     String cardText;
 
@@ -30,7 +30,7 @@ public abstract class DeploymentCard {
      */
 
     public static Player buyDeploymentCard(Player p) {
-        DeploymentCard drawnCard = null;
+        DevelopmentCard drawnCard = null;
         if (p.getInventory().getResourceHand().get(Resource.ResourceType.ORE) >= 1 &&
                 p.getInventory().getResourceHand().get(Resource.ResourceType.WOOL) >= 1 &&
                 p.getInventory().getResourceHand().get(Resource.ResourceType.GRAIN) >= 1) {
@@ -61,7 +61,6 @@ public abstract class DeploymentCard {
             } else {
                 //Monopoly
                 drawnCard = new Monopoly();
-
             }
         }
 
@@ -77,6 +76,10 @@ public abstract class DeploymentCard {
 
     public abstract Board ActivateCard(Board b, Context context, Player player);
 
+
+    /*
+    Getter and Setter for the Text on the Card. Text is get to Card when initialised
+     */
     public String getCardText() {
         return cardText;
     }

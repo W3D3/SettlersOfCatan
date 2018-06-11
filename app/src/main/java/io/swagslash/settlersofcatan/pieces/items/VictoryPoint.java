@@ -7,9 +7,16 @@ import io.swagslash.settlersofcatan.pieces.Board;
 
 /**
  * Created by thoma on 11.06.2018.
+ *
+ * This Class has no Activation, when you Buy it, you become an VictoryPoint added
  */
 
-public class VictoryPoint extends DeploymentCard {
+public class VictoryPoint extends DevelopmentCard {
+
+    public VictoryPoint() {
+        this.cardText = "1 Siegpunkt";
+    }
+
     @Override
     public Board ActivateCard(Board b, Context context) {
         return null;

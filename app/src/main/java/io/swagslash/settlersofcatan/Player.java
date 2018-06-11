@@ -107,9 +107,12 @@ public class Player {
     decreaseVictoryPoints is used to remove one VictoryPoint in the Case of losing the "Longest Rood"
     or the "biggest knight Power
      */
-
     public void decreaseVictoryPoint() {
         this.victoryPoints--;
+    }
+
+    public int getVictoryPoints() {
+        return victoryPoints;
     }
 
     @Override

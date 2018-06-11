@@ -11,7 +11,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
  * Created by thoma on 10.06.2018.
  */
 
-public class Monopoly extends DeploymentCard {
+public class Monopoly extends DevelopmentCard {
 
     Resource.ResourceType resourceType;
 
