@@ -31,7 +31,7 @@ public class RobberTest {
            Assert.assertTrue(true);
        }
        catch (Exception e){
-
+           Assert.assertFalse(true);
        }
 
 
@@ -45,7 +45,7 @@ public class RobberTest {
             Assert.assertTrue(true);
         }
         catch (Exception e){
-
+            Assert.assertFalse(true);
         }
     }
 
@@ -115,7 +115,7 @@ public class RobberTest {
             Assert.assertTrue(true);
         }
         catch(Exception e){
-
+            Assert.assertFalse(true);
         }
     }
 }

@@ -10,13 +10,16 @@ import java.util.Map;
 public class Inventory {
 
     Map<Resource.ResourceType, Integer> resourceHand;
+    Map<DeploymentCard, Integer> deploymentCardHand;
 
     public Inventory() {
         this.resourceHand = new HashMap<>();
+        this.deploymentCardHand = new HashMap<>();
 
         for (Resource.ResourceType resourceType : Resource.ResourceType.values()) {
             this.resourceHand.put(resourceType, 0);
         }
+
 
     }
 
@@ -38,5 +41,23 @@ public class Inventory {
 
     public Map<Resource.ResourceType, Integer> getResourceHand() {
         return resourceHand;
+    }
+
+    public Map<DeploymentCard, Integer> getDeploymentCardHand() {
+        return deploymentCardHand;
+    }
+
+    public void setDeploymentCardHand(Map<DeploymentCard, Integer> deploymentCardHand) {
+        this.deploymentCardHand = deploymentCardHand;
+    }
+
+    public void addDeploymentCardHand(DeploymentCard deploymentCard) {
+        Integer count = this.deploymentCardHand.get(deploymentCard);
+        this.deploymentCardHand.put(deploymentCard, count++);
+    }
+
+    public void removeDeploymentCardHand(DeploymentCard deploymentCard) {
+        Integer count = this.deploymentCardHand.get(deploymentCard);
+        this.deploymentCardHand.put(deploymentCard, count--);
     }
 }
