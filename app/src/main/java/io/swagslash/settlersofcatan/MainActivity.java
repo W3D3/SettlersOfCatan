@@ -25,8 +25,6 @@ import com.esotericsoftware.kryonet.Connection;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
-import java.util.Random;
-
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
@@ -217,7 +215,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_SETTLEMENT);
                     hexView.showFreeSettlements();
+                } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    hexView.showFreeSettlements();
                 }
+
                 break;
             case R.id.fab_city:
                 if(!itsMyTurn()) {
@@ -229,6 +231,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build street.");
                     return;
+                }
+
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_ROAD);
+                    hexView.showFreeSettlements();
+                } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_ROAD) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    hexView.showFreeSettlements();
                 }
                 break;
 //            case R.id.dice_1:
