@@ -2,7 +2,6 @@ package io.swagslash.settlersofcatan;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,7 +16,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
     private ClickListener cl;
     private GestureDetector gd;
 
-    public RecyclerItemClickListener(Context c, final RecyclerView rv, final ClickListener cl){
+    RecyclerItemClickListener(Context c, final RecyclerView rv, final ClickListener cl) {
         this.cl = cl;
         this.gd = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -47,11 +46,13 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     @Override
     public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
+        throw new UnsupportedOperationException();
+        // do nothing
     }
 
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
+        throw new UnsupportedOperationException();
+        // do nothing
     }
 }

@@ -1,8 +1,10 @@
 package io.swagslash.settlersofcatan;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +27,7 @@ import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.Random;
 import java.util.Set;
+import java.io.IOException;
 
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.PhaseController;
@@ -37,19 +40,40 @@ import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
+
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
+import io.swagslash.settlersofcatan.utility.Dice;
+import io.swagslash.settlersofcatan.utility.DiceSix;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
 
-    private final int FAB_MENU_DISTANCE = 145;
+    private static final int FABMENUDISTANCE = 160;
 
     protected Button cards;
-    protected ImageButton dice, endOfTurn, trading;
-    protected FloatingActionButton fab, fabSettlement, fabCity, fabStreet;
-    protected LinearLayout layoutSettlement, layoutCity, layoutStreet;
-    protected Animation openMenu, closeMenu;
+    protected ImageButton diceOne;
+    protected ImageButton diceTwo;
+    protected ImageButton endOfTurn;
+    protected ImageButton trading;
+    protected FloatingActionButton fab;
+    protected FloatingActionButton fabSettlement;
+    protected FloatingActionButton fabCity;
+    protected FloatingActionButton fabStreet;
+    protected LinearLayout layoutSettlement;
+    protected LinearLayout layoutCity;
+    protected LinearLayout layoutStreet;
+    protected Animation openMenu;
+    protected Animation closeMenu;
+    protected boolean fabOpen;
+
+    //sensor
+    protected SensorManager sensorManager;
+    protected Sensor sensor;
+    protected ShakeDetector shakeDetector;
+    protected ShakeListener shakeListener;
+    protected Object shakeValue;
+
     protected TextView oreCount, woodCount, woolCount, bricksCount, grainCount;
 
     HexView hexView;
@@ -57,10 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AbstractNetworkManager network;
     Player player;
 
-    //protected ArrayList<FloatingActionButton> fabOptions;
-    protected boolean fabOpen;
-
-    @SuppressLint("WrongViewCast")
+    //@SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,22 +105,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.fab = findViewById(R.id.fab_build_options);
 
         this.fabSettlement = findViewById(R.id.fab_settlement);
-        //this.fabOptions.add(this.fabSettlement);
         this.layoutSettlement = findViewById(R.id.layout_settlement);
         this.layoutSettlement.setVisibility(View.INVISIBLE);
 
         this.fabCity = findViewById(R.id.fab_city);
-        //this.fabOptions.add(this.fabCity);
         this.layoutCity = findViewById(R.id.layout_city);
         this.layoutCity.setVisibility(View.INVISIBLE);
 
         this.fabStreet = findViewById(R.id.fab_street);
-        //this.fabOptions.add(this.fabStreet);
         this.layoutStreet = findViewById(R.id.layout_street);
         this.layoutStreet.setVisibility(View.INVISIBLE);
 
         //image_btns
-        this.dice = findViewById(R.id.dice);
+        this.diceOne = findViewById(R.id.dice_1);
+        this.diceTwo = findViewById(R.id.dice_2);
         this.endOfTurn = findViewById(R.id.end_of_turn);
         this.trading = findViewById(R.id.trading);
 
@@ -111,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.fabSettlement.setOnClickListener(this);
         this.fabCity.setOnClickListener(this);
         this.fabStreet.setOnClickListener(this);
-        this.dice.setOnClickListener(this);
         this.endOfTurn.setOnClickListener(this);
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
@@ -135,23 +153,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             initialTurn();
         }
+        //sensor init
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            shakeDetector = new ShakeDetector();
+            shakeListener = new ShakeListener() {
+                @Override
+                public void onShake() {
+                    Dice d6 = new DiceSix();
+
+                    int roll1 = d6.roll();
+                    int roll2 = d6.roll();
+                    shakeValue = roll1 + roll2;
+
+                    diceOne.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll1, "drawable", getPackageName()));
+                    diceTwo.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll2, "drawable", getPackageName()));
+
+                    Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
+                    t.show();
+                }
+            };
+            shakeDetector.setShakeListener(shakeListener);
+            sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        sensorManager.unregisterListener(shakeDetector);
+        super.onPause();
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        TextView tv = findViewById(R.id.debug_view);
         switch (i) {
             case R.id.fab_build_options:
                 if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant open build options.");
                     return;
                 }
-                tv.append("clicked!");
                 this.toogleFabMenu();
                 break;
             case R.id.fab_settlement:
-                tv.append("settlement clicked!");
                 if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build settlement.");
                     return;
@@ -166,14 +217,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("PLAYER", "NOT MY TURN, cant build city.");
                     return;
                 }
-                tv.append("city clicked!");
                 break;
             case R.id.fab_street:
                 if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build street.");
                     return;
                 }
-                tv.append("street clicked!");
                 break;
             case R.id.dice:
                 if(!itsMyTurn()) {
@@ -182,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
                     return;
-                tv.append("dice clicked!");
                 Random random = new Random();
                 Integer max = 6;
                 Integer min = 1;
@@ -217,19 +265,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.cards:
-                tv.append("cards clicked!");
                 Intent in = new Intent(this, DisplayCardsActivity.class);
                 startActivity(in);
                 break;
             case R.id.trading:
-                tv.append("trading clicked!");
                 Intent in2 = new Intent(this, TradingActivity.class);
                 startActivity(in2);
                 break;
             default:
                 break;
         }
-        //tv.setText(""); //TODO remove when debuggin
     }
 
     private void toogleFabMenu() {
@@ -241,20 +286,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.layoutStreet.startAnimation(closeMenu);
             this.layoutStreet.animate().translationY(0);
         } else {
-            /*
-            byte offset = 1;
-            for(FloatingActionButton f : this.fabOptions){
-                f.startAnimation(openMenu);
-                f.animate().translationY(-1*(offset++*FAB_MENU_DISTANCE));
-            }
-            */
             byte offset = 1;
             this.layoutSettlement.startAnimation(openMenu);
-            this.layoutSettlement.animate().translationY(-1 * (offset++ * FAB_MENU_DISTANCE));
+            this.layoutSettlement.animate().translationY(-1 * (offset++ * FABMENUDISTANCE));
             this.layoutCity.startAnimation(openMenu);
-            this.layoutCity.animate().translationY(-1 * (offset++ * FAB_MENU_DISTANCE));
+            this.layoutCity.animate().translationY(-1 * (offset++ * FABMENUDISTANCE));
             this.layoutStreet.startAnimation(openMenu);
-            this.layoutStreet.animate().translationY(-1 * (offset * FAB_MENU_DISTANCE));
+            this.layoutStreet.animate().translationY(-1 * (offset * FABMENUDISTANCE));
         }
         this.fabOpen = !this.fabOpen;
     }
@@ -274,8 +312,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
 
-        final ZoomLayout zl = (ZoomLayout) findViewById(R.id.zoomContainer);
-        final LinearLayout container = (LinearLayout) findViewById(R.id.gridContainer);
+        final ZoomLayout zl = findViewById(R.id.zoomContainer);
+        final LinearLayout container = findViewById(R.id.gridContainer);
         //Button btn = (Button) findViewById(R.id.button);
         zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
         Display mdisp = getWindowManager().getDefaultDisplay();
@@ -283,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mdisp.getSize(mdispSize);
 
         System.out.println(android.os.Build.VERSION.SDK_INT);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || true){
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || true) {
             hexView.setZoomLayout(zl);
             hexView.prepare();
             zl.addView(hexView);

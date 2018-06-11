@@ -100,7 +100,7 @@ public class Edge {
      * Determine if the player can build on this edge
      *
      * @param player the player to check for
-     * @return true iff the player has a road to an unoccupied vertex
+     * @return true if the player has a road to an unoccupied vertex
      * or the player has an adjacent vertexUnit
      */
     public boolean canBuildRoad(Player player) {
