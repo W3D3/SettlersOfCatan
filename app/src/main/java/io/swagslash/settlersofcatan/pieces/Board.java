@@ -120,21 +120,24 @@ public class Board {
             Hex hex = new Hex(this, terrainsShuffled.pop(), location);
             if (needsNumberToken) hex.setNumberToken(numberTokens.pop());
 
+            calculateVerticesAndEdges(hex);
+            for (HexPoint point : hex.getVerticesPosition()) {
+                Vertex v = new Vertex(this, point);
+                if (!vertices.containsValue(v)) {
+                    this.vertices.put(v.getCoordinates(), v);
+                }
+            }
 
-//            hex.calculateVerticesAndEdges(gridLayout);
-//            hexagons.add(hex);
-//            for (Vertex v : hex.getVertices()) {
-//                if (!vertices.containsValue(v)) {
-//                    this.vertices.put(v.getCoordinates(), v);
-//                }
-//            }
-//            for (Edge e : hex.getEdges()) {
-//                e.connectToVertices();
-//                if (!edges.containsValue(e)) {
-//                    this.edges.put(e.getCoordinates(), e);
-//                }
-//            }
+            for (HexPointPair hexPointPair : hex.getEdgePosition()) {
+                Edge edge = new Edge(this, hexPointPair.first, hexPointPair.second);
+                edge.connectToVertices();
+                if (!edges.containsValue(edge)) {
+                    this.edges.put(edge.getCoordinates(), edge);
+                }
+            }
 
+
+            hexagons.add(hex);
         }
 
         //vertices.get(0).buildSettlement(this.getPlayerById(0));
@@ -143,19 +146,24 @@ public class Board {
     private void calculateVerticesAndEdges(Hex hex) {
         ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(gridLayout, hex.getHexLocation());
         Integer direction = 0;
+        hex.getVerticesPosition().clear();
+        hex.getEdgePosition().clear();
+
         for (HexPoint point : hexPoints) {
-            Vertex v = new Vertex(this, point);
+
             hex.getVerticesPosition().add(direction, point);
 
             if (direction > 0) {
-                this.edges.add(new Edge(this.board, point, hexPoints.get(direction - 1)));
+                hex.getEdgePosition().add(new HexPointPair(point, hexPoints.get(direction - 1)));
+
                 if (direction == 5) {
-                    this.edges.add(new Edge(this.board, point, hexPoints.get(0)));
+                    // Connect with 0 position
+                    hex.getEdgePosition().add(new HexPointPair(point, hexPoints.get(0)));
                 }
             }
             direction++;
         }
-        center = HexGridLayout.hexToPixel(gridLayout, hexLocation);
+        hex.setCenter(HexGridLayout.hexToPixel(gridLayout, hex.getHexLocation()));
     }
 
     private void generatePlayers(List<String> playerNames) {

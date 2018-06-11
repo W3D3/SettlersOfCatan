@@ -2,7 +2,6 @@ package io.swagslash.settlersofcatan.pieces;
 
 import android.graphics.Path;
 import android.graphics.Region;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +39,7 @@ public class Vertex {
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) return false;
         return coordinates.equals(((Vertex) obj).getCoordinates());
     }
 
@@ -87,7 +87,7 @@ public class Vertex {
         if (owner == null) {
             if (this.unitType != VertexUnit.NONE)
                 throw new IllegalStateException("BUILDING NEEDS OWNER!");
-            Log.d("VERTEXD", this.toString());
+//            Log.d("VERTEXD", this.toString());
             return false;
         }
         switch (this.unitType) {
@@ -95,7 +95,7 @@ public class Vertex {
                 return false;
             case SETTLEMENT:
                 giveResourceToOwner(1, resourceProduced);
-                Log.d("DISTRIBUTE", resourceProduced.getResourceType().name());
+//                Log.d("DISTRIBUTE", resourceProduced.getResourceType().name());
                 return true;
             case CITY:
                 giveResourceToOwner(2, resourceProduced);

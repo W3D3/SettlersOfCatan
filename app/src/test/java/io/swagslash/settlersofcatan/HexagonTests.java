@@ -101,7 +101,7 @@ public class HexagonTests {
     }
 
     @Test
-    public void edgesHaveVertexNeighbors() throws Exception {
+    public void vertexHaveEdgeNeighbors() throws Exception {
 
         List<String> players = new ArrayList<>();
         players.add("P1");

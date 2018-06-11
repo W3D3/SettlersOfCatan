@@ -3,14 +3,12 @@ package io.swagslash.settlersofcatan.pieces;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Region;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
-import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
 import io.swagslash.settlersofcatan.utility.Pair;
@@ -38,9 +36,6 @@ public class Hex {
         this.board = board;
         this.hexLocation = location;
         this.verticesPosition = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            this.verticesPosition.add(null);
-        }
         this.edgePosition = new ArrayList<>();
         this.hasRobber = false;
     }
@@ -48,7 +43,7 @@ public class Hex {
     public List<Vertex> getVertices() {
         List<Vertex> vertices = new ArrayList<>();
         for (HexPoint hexPoint : verticesPosition) {
-            vertices.add(board.getVertices().get(hexPoint));
+            vertices.add(board.getVertexByPosition(hexPoint));
         }
         return vertices;
     }
@@ -90,33 +85,11 @@ public class Hex {
     }
 
     public List<Edge> getEdges() {
-        List<Vertex> vertices = new ArrayList<>();
-        for (HexPoint hexPoint : verticesPosition) {
-            vertices.add(board.getVertices().get(hexPoint));
+        List<Edge> edges = new ArrayList<>();
+        for (HexPointPair hexPointPairs : edgePosition) {
+            edges.add(board.getEdgeByPosition((hexPointPairs)));
         }
-        return vertices;
-    }
-
-
-//    public Set<Vertex> getVerticesSet() {
-//        return new HashSet<Vertex>(vertices.values());
-//    }
-
-    public void calculateVerticesAndEdges(HexGridLayout gridLayout) {
-        ArrayList<HexPoint> hexPoints = HexGridLayout.polygonCorners(gridLayout, this.getHexLocation());
-        Integer direction = 0;
-        for (HexPoint point : hexPoints) {
-            Vertex v = new Vertex(this.board, point);
-            this.vertices.set(direction, v);
-            if (direction > 0) {
-                this.edges.add(new Edge(this.board, point, hexPoints.get(direction - 1)));
-                if (direction == 5) {
-                    this.edges.add(new Edge(this.board, point, hexPoints.get(0)));
-                }
-            }
-            direction++;
-        }
-        center = HexGridLayout.hexToPixel(gridLayout, hexLocation);
+        return edges;
     }
 
     public AxialHexLocation getHexLocation() {
@@ -146,8 +119,8 @@ public class Hex {
 
         for (int i = 0; i < 6; i++) {
             //TODO each vertex gets resources
-            if (vertices.get(i).distributeResources(this.getResourceProduced())) {
-                Log.d("DISTRIBUTION", "DISTRÌBUTED AT LEAST 1 " + getResourceProduced() + " to " + this.toString() + " on Vertex " + vertices.get(i));
+            if (getVertices().get(i).distributeResources(this.getResourceProduced())) {
+//                Log.d("DISTRIBUTION", "DISTRÌBUTED AT LEAST 1 " + getResourceProduced() + " to " + this.toString() + " on Vertex " + getVertices().get(i));
             }
         }
         return true;
@@ -164,7 +137,7 @@ public class Hex {
         HexPoint first = null;
         HexPoint point;
         for (int i = 0; i < 6; i++) {
-            point = this.vertices.get(i).getCoordinates();
+            point = getVertexPosition(i);
             // first point, only move
             if (i == 0) {
                 path.moveTo((float) point.x * scale + offsets.first, (float) point.y * scale + offsets.second);

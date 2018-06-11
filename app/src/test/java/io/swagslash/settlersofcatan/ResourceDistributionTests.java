@@ -31,7 +31,7 @@ public class ResourceDistributionTests {
         System.out.println(b.getPlayerById(0));
 
         // this gives us the first hexagon we created, so that's (2/2) in the DOWN_RIGHT direction
-        Vertex selectedVertex = b.getVertexByPosition(b.getHexagons().get(0).getVertexPositions(VertexDirection.DOWN_RIGHT));
+        Vertex selectedVertex = b.getVertexByPosition(b.getHexagons().get(0).getVertexPosition(VertexDirection.DOWN_RIGHT));
         selectedVertex.buildSettlement(b.getPlayerById(0)); // First player builds settlement
 
         List<Hex> adjacentHexes = new ArrayList<>();
@@ -48,8 +48,8 @@ public class ResourceDistributionTests {
         assertEquals(new AxialHexLocation(2, -1), adjacentHexes.get(1).getHexLocation());
         assertEquals(adjacentHexes.size(), 2);
 
-        HexPoint pos1 = adjacentHexes.get(0).getVertexPositions(VertexDirection.DOWN_RIGHT); //Get the vertex pointing down
-        HexPoint pos2 = adjacentHexes.get(1).getVertexPositions(VertexDirection.TOP); //Get the vertex pointing up left
+        HexPoint pos1 = adjacentHexes.get(0).getVertexPosition(VertexDirection.DOWN_RIGHT); //Get the vertex pointing down
+        HexPoint pos2 = adjacentHexes.get(1).getVertexPosition(VertexDirection.TOP); //Get the vertex pointing up left
 
         assertEquals(pos1, pos2);
         assertEquals(selectedVertex.getCoordinates(), pos1);
@@ -68,9 +68,9 @@ public class ResourceDistributionTests {
         System.out.println(b.getPlayerById(0));
 
         // this gives us the first hexagon we created, so that's (2/2) in the DOWN_RIGHT direction
-        Vertex selectedVertex = b.getVertexByPosition(b.getHexagons().get(0).getVertexPositions(VertexDirection.DOWN_RIGHT));
+        Vertex selectedVertex = b.getVertexByPosition(b.getHexagons().get(0).getVertexPosition(VertexDirection.DOWN_RIGHT));
         selectedVertex.buildSettlement(b.getPlayerById(0)); // First player builds settlement
-        Vertex selectedVertex1 = b.getVertexByPosition(b.getHexagons().get(0).getVertexPositions(VertexDirection.DOWN_LEFT));
+        Vertex selectedVertex1 = b.getVertexByPosition(b.getHexagons().get(0).getVertexPosition(VertexDirection.DOWN_LEFT));
         selectedVertex1.buildSettlement(b.getPlayerById(0)); // First player builds settlement
 
         Hex hex = b.getHexagons().get(0);

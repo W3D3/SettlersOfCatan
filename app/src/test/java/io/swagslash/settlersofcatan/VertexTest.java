@@ -8,7 +8,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import io.swagslash.settlersofcatan.pieces.Board;
-import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -62,9 +61,6 @@ public class VertexTest {
         Assert.assertEquals(v.getCoordinates().hashCode(), v.hashCode());
     }
 
-    /*
-    Unit Test of Vertex Class
-     */
     @Test
     public void TestVertexEquals() {
         ArrayList<String> namelist = new ArrayList<String>();
@@ -72,19 +68,19 @@ public class VertexTest {
         namelist.add("P2");
         namelist.add("P3");
         Board b = new Board(namelist, true, 10);
+        b.setupBoard();
         Player p = b.getPlayerById(0);
 
+        Vertex chosenV = b.getHexagons().get(0).getVertices().get(0);
+        //build a settlement in a random vertex
+        chosenV.buildSettlement(p);
+        boolean found = false;
 
         for (Vertex vertex : b.getVerticesList()) {
-            boolean found = false;
-            for (Hex hex : b.getHexagons()) {
-                for (Vertex v : hex.getVertices()) {
-                    if (v.equals(vertex)) found = true;
-                }
-            }
-            if (!found) Assert.fail();
-
+            if (vertex.getOwner() != null)
+                if (vertex.getOwner().equals(chosenV.getOwner())) found = true;
         }
+        if (!found) Assert.fail();
 
     }
 }
