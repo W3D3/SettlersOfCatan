@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             shakeListener = new ShakeListener() {
                 @Override
                 public void onShake() {
+                    if(board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION) return;
                     Dice d6 = new DiceSix();
 
                     int roll1 = d6.roll();
@@ -168,6 +169,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
                     t.show();
+                    DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), roll1, roll2);
+                    GameController.getInstance().handleDiceRolls(roll1,roll2);
+                    SettlerApp.getManager().sendToAll(roll);
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateResources();
+                        }
+                    });
                 }
             };
             shakeDetector.setShakeListener(shakeListener);
@@ -220,31 +231,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return;
                 }
                 break;
-            case R.id.dice_1:
-                if(!itsMyTurn()) {
-                    Log.d("PLAYER", "NOT MY TURN, cant roll dice.");
-                    return;
-                }
-                if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
-                    return;
-                Random random = new Random();
-                Integer max = 6;
-                Integer min = 1;
-                int dice1 = random.nextInt((max - min) + 1) + min;
-                int dice2 = random.nextInt((max - min) + 1) + min;
-                DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), dice1, dice2);
-                GameController.getInstance().handleDiceRolls(dice1,dice2);
-                SettlerApp.getManager().sendToAll(roll);
-                int sum = dice1 + dice2;
-                Log.d("DICE", "ROLLED " + dice1 + " / " + dice2 + " SUM: " + sum);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateResources();
-                    }
-                });
-                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
-                break;
+//            case R.id.dice_1:
+//                if(!itsMyTurn()) {
+//                    Log.d("PLAYER", "NOT MY TURN, cant roll dice.");
+//                    return;
+//                }
+//                if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
+//                    return;
+//                Random random = new Random();
+//                Integer max = 6;
+//                Integer min = 1;
+//                int dice1 = random.nextInt((max - min) + 1) + min;
+//                int dice2 = random.nextInt((max - min) + 1) + min;
+//                DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), dice1, dice2);
+//                GameController.getInstance().handleDiceRolls(dice1,dice2);
+//                SettlerApp.getManager().sendToAll(roll);
+//                int sum = dice1 + dice2;
+//                Log.d("DICE", "ROLLED " + dice1 + " / " + dice2 + " SUM: " + sum);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        updateResources();
+//                    }
+//                });
+//                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+//                break;
             case R.id.end_of_turn:
                 if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT HIS TURN!");

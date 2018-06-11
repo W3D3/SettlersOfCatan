@@ -128,7 +128,7 @@ public class BrowserActivity extends AppCompatActivity implements MyLobbyService
             client.setKeepAliveTCP(1000);
             new Thread(client).start();
             try {
-                client.connect(150000, ip, Network.TCP, Network.UDP);
+                client.connect(1500000, ip, Network.TCP, Network.UDP);
                 connectionEstablished = true;
             } catch (IOException e) {
                 e.printStackTrace();
