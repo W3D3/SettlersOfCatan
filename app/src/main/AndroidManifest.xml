@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.swagslash.settlersofcatan">
 
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -16,33 +20,51 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".network.wifi.gui.StartActivity">
+        <activity
+            android:name=".network.wifi.gui.StartActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".network.wifi.gui.HostLobbyActivity" />
-        <activity android:name=".GridActivity" >
+        <activity
+            android:name=".network.wifi.gui.HostLobbyActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".GridActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" >
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".network.wifi.gui.BrowserActivity" />
-        <activity android:name=".RobPlayerActivity"></activity>
-        <activity android:name=".network.wifi.gui.ClientLobbyActivity"></activity>
+        <activity
+            android:name=".network.wifi.gui.BrowserActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".RobPlayerActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".network.wifi.gui.ClientLobbyActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".DisplayCardsActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -52,6 +74,7 @@
         </activity>
         <activity
             android:name=".TradingActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
@@ -60,5 +83,4 @@
                 android:value=".MainActivity" />
         </activity>
     </application>
-
 </manifest>

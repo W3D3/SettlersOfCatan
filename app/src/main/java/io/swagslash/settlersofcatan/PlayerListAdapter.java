@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.ViewHolder> {
 
-    private String[] players;
+    private List<Player> players;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         View v;
@@ -18,7 +20,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Vi
         }
     }
 
-    PlayerListAdapter(String[] input){
+    PlayerListAdapter(List<Player> input) {
         players = input;
     }
 
@@ -26,18 +28,21 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Vi
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View container = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.view_trading_player, parent, false);
-
+        /*
+        int w = parent.getMeasuredWidth() / 2;
+        container.setMinimumWidth(w);
+        */
         return new ViewHolder(container);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         TextView playerName = holder.v.findViewById(R.id.player_name);
-        playerName.setText(players[position]);
+        playerName.setText(players.get(position).getPlayerName());
     }
 
     @Override
     public int getItemCount() {
-        return players.length;
+        return players.size();
     }
 }
