@@ -26,8 +26,8 @@ public class ResourceDiscardTest {
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
             assertThat(viewById,notNullValue());
-            }
-        catch(Exception e){
+            } catch (Exception e) {
+            Assert.assertFalse(true);
         }
     }
 
@@ -41,8 +41,8 @@ public class ResourceDiscardTest {
 
             //When no exception Test bestanden
             assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
+            Assert.assertFalse(true);
         }
     }
 
@@ -56,8 +56,8 @@ public class ResourceDiscardTest {
 
             //When no exception Test bestanden
             assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
+            Assert.assertFalse(true);
         }
     }
 
@@ -70,8 +70,8 @@ public class ResourceDiscardTest {
             r.randomDiscard();
             //When no exception Test bestanden
             assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
+            Assert.assertFalse(true);
         }
     }
 
@@ -84,8 +84,8 @@ public class ResourceDiscardTest {
             r.countdown25to0();
             //When no exception Test bestanden
             assertTrue(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
+            Assert.assertFalse(true);
         }
     }
 
@@ -100,8 +100,8 @@ public class ResourceDiscardTest {
             int sumResourceAfterRandomDiscard = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
            Assert.assertNotEquals(sumResource,sumResourceAfterRandomDiscard);
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
+            Assert.assertFalse(true);
         }
     }
 
