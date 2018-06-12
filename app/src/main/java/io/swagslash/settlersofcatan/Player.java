@@ -25,6 +25,7 @@ public class Player {
     private String playerName;
     private int longestTradeRoute;
     private Inventory inventory;
+    private int victoryPoints = 0;
 
     public Player(Board board, int playerNumber, int color, String playerName) {
         this.board = board;
@@ -93,6 +94,25 @@ public class Player {
 
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
+    }
+
+    /*
+    addVictoryPoints is used to increase the victory Points of this Player
+     */
+    public void addVictorPoint() {
+        this.victoryPoints++;
+    }
+
+    /*
+    decreaseVictoryPoints is used to remove one VictoryPoint in the Case of losing the "Longest Rood"
+    or the "biggest knight Power
+     */
+    public void decreaseVictoryPoint() {
+        this.victoryPoints--;
+    }
+
+    public int getVictoryPoints() {
+        return victoryPoints;
     }
 
     @Override
