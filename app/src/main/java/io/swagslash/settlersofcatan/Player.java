@@ -139,7 +139,7 @@ public class Player {
         RED(0xFFFF0000),
         BLUE(0xFF0000FF),
         YELLOW(0xFFFFFF00),
-        WHITE(0x5c1868);
+        WHITE(0xFFCCCCCC);
 
         int val;
 
