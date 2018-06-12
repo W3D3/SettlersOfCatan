@@ -22,11 +22,13 @@ import android.widget.Toast;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.GameController;
+import io.swagslash.settlersofcatan.controller.PhaseController;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
@@ -35,9 +37,8 @@ import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.utility.Pair;
 
 /**
- * Created by thomas on 10.04.2018.
+ * HexView is a View that draws a Standard Catan Grid on a Canvas
  */
-
 public class HexView extends View {
 
     Board board;
@@ -59,10 +60,12 @@ public class HexView extends View {
     // Vertex Paint
     Paint circlePaint;
     Paint edgePaint;
+    Paint roadPaint;
     Region clip;
     private GestureDetector gestureDetector;
     private ScaleGestureDetector scaleDetector;
     private Paint vertexClickPaint;
+    private Paint textPaint;
 
     public HexView(Context context) {
         super(context);
@@ -93,6 +96,18 @@ public class HexView extends View {
         edgePaint.setColor(Color.BLUE);
         edgePaint.setStyle(Paint.Style.STROKE);
         edgePaint.setStrokeWidth(4);
+
+        roadPaint = new Paint();
+        roadPaint.setColor(Color.GRAY);
+        roadPaint.setStyle(Paint.Style.STROKE);
+        roadPaint.setStrokeWidth(8);
+
+        textPaint = new Paint();
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(48);
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextAlign(Paint.Align.CENTER);
 
     }
 
@@ -140,7 +155,7 @@ public class HexView extends View {
         for (Hex hex : hexes) {
             hex.calculatePath(offset, scale);
         }
-        //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES
+        //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES?
         // OR GET IT FROM PARENT?
         setMinimumHeight(maxY);
         setMinimumWidth(maxX);
@@ -154,17 +169,23 @@ public class HexView extends View {
         }
 
         generateVerticePaths();
-
+        generateEdgePaths();
 
         //ready to draw
         setWillNotDraw(false);
         invalidate();
     }
 
-    private void generateVerticePaths() {
+    public void generateVerticePaths() {
         for (Vertex v : board.getVerticesList()) {
             HexPoint drawPoint = v.getCoordinates().scale(offset, scale);
             v.calculatePath(offset, scale);
+        }
+    }
+
+    public void generateEdgePaths() {
+        for (Edge e : board.getEdgesList()) {
+            e.calculatePath(offset, scale);
         }
     }
 
@@ -175,14 +196,13 @@ public class HexView extends View {
         clip.set(0, 0, c.getWidth(), c.getHeight());
 
         //Background white
-
         Paint bg = new Paint();
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.water_texture);
         BitmapShader fillBMPshader = new BitmapShader(bitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         bg.setShader(fillBMPshader);
 
+
         bg.setStyle(Paint.Style.FILL);
-        //this.fillPaint.setColor(Color.parseColor("#138fdc"));
         c.drawPaint(bg);
 
         strokePaint.setStrokeWidth(3);
@@ -203,30 +223,10 @@ public class HexView extends View {
             Region r = new Region();
             r.setPath(path, clip);
             hex.setRegion(r);
-
         }
 
-        for (Hex h : board.getHexagons()) {
-            for (Edge e : h.getEdges()) {
-                HexPoint from = e.getCoordinates().first;
-                HexPoint to = e.getCoordinates().first;
-                HexPoint drawFrom = from.scale(offset, scale);
-                HexPoint drawTo = to.scale(offset, scale);
-                switch (e.getUnitType()) {
-                    case ROAD:
-                        edgePaint.setColor(e.getOwner().getColor());
-                        c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, edgePaint);
-                        break;
-                    case NONE:
-                        //c.drawLine((float) drawFrom.x, (float) drawFrom.y, (float) drawTo.x, (float) drawTo.y, edgePaint);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
 
-        //TODO draw vertices
+        PhaseController phaseController = board.getPhaseController();
 
         for (Vertex vertex : board.getVerticesList()) {
             Region region = new Region();
@@ -234,7 +234,7 @@ public class HexView extends View {
             vertex.setRegion(region);
             switch (vertex.getUnitType()) {
                 case NONE:
-                    if (SettlerApp.board.getPhase() == Board.Phase.SETUP_SETTLEMENT) {
+                    if (phaseController.isAllowedToBuildOnVertex(vertex)) {
                         c.drawPath(vertex.getPath(), vertexClickPaint);
                     }
                     break;
@@ -246,6 +246,40 @@ public class HexView extends View {
                     circlePaint.setColor(vertex.getOwner().getColor());
                     c.drawPath(vertex.getPath(), circlePaint);
                     break;
+            }
+
+        }
+
+        for (Edge edge : board.getEdgesList()) {
+            Region region = new Region();
+            region.setPath(edge.getPath(), clip);
+            edge.setRegion(region);
+            switch (edge.getUnitType()) {
+                case ROAD:
+                    roadPaint.setColor(edge.getOwner().getColor());
+                    c.drawPath(edge.getPath(), roadPaint);
+                    break;
+                case NONE:
+                    if(phaseController.isAllowedToBuildOnEdge(edge)) {
+                        c.drawPath(edge.getPath(), vertexClickPaint);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // DRAW NUMBER TOKENS OVER THEM
+
+        for (Hex hex : hexes) {
+
+            final HexPoint coordinates = hex.getCenter().scale(offset, scale);
+            if(hex.getNumberToken() != null) {
+                if (hex.getNumberToken().getNumber() > 0) {
+                    c.drawText(hex.getNumberToken().toString(), (float)coordinates.x, (float)coordinates.y, textPaint);
+                    invalidate();
+                }
+
             }
 
         }
@@ -267,13 +301,14 @@ public class HexView extends View {
                 @Override
                 public boolean onDown(MotionEvent event) {
                     // triggers first for both single tap and long press
-                    //redraw();
+                    redraw();
                     return true;
                 }
 
                 @Override
                 public boolean onSingleTapConfirmed(MotionEvent e) {
-                    handleVertexClick(e);
+                    if(handleVertexClick(e)) return true;
+                    if(handleEdgeClick(e)) return true;
                     showHexDetailFromMotionEvent(e, "Single Tap");
 
                     return true;
@@ -329,11 +364,24 @@ public class HexView extends View {
     }
 
     private Vertex getVertexFromCoordinates(int x, int y) {
-        final ArrayList<Vertex> vertices = (ArrayList<Vertex>) SettlerApp.board.getVerticesList();
-        for (int i = 0; i < vertices.size(); i++) {
-            Region r = vertices.get(i).getRegion();
+        Collection<Vertex> vertices = SettlerApp.board.getVerticesList();
+
+        for (Vertex vertex : vertices) {
+            Region r = vertex.getRegion();
             if (r.contains(x, y)) {
-                return vertices.get(i);
+                return vertex;
+            }
+        }
+
+        return null;
+    }
+
+    private Edge getEdgeFromCoordinates(int x, int y) {
+        final ArrayList<Edge> edges = new ArrayList<>(SettlerApp.board.getEdgesList());
+        for (int i = 0; i < edges.size(); i++) {
+            Region r = edges.get(i).getRegion();
+            if (r.contains(x, y)) {
+                return edges.get(i);
             }
         }
         return null;
@@ -349,39 +397,77 @@ public class HexView extends View {
                 Toast.LENGTH_SHORT).show();
     }
 
-    private void handleVertexClick(MotionEvent event) {
+    private boolean handleVertexClick(MotionEvent event) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
         Vertex vertex = getVertexFromCoordinates(coordinates.first, coordinates.second);
-        if (vertex == null) return;
+        if (vertex == null) return false;
+        boolean buildSuccess = false;
 
-        System.out.println(vertex.toString());
-        Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ ",
+        Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ clicked",
                 Toast.LENGTH_SHORT).show();
-        switch (SettlerApp.board.getPhase()) {
+
+        switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 
             case SETUP_SETTLEMENT:
-                GameController.buildSettlement(vertex);
-                SettlerApp.board.setPhase(Board.Phase.IDLE);
+                if(GameController.getInstance().buildSettlement(vertex, SettlerApp.getPlayer())) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    buildSuccess = true;
+                }
+                generateVerticePaths();
+                redraw();
+
+                break;
+            case FREE_SETTLEMENT:
+                if(GameController.getInstance().buildFreeSettlement(vertex, SettlerApp.getPlayer())) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_ROAD);
+                    buildSuccess = true;
+                }
+
                 generateVerticePaths();
                 redraw();
                 break;
-            case SETUP_ROAD:
-                break;
             case SETUP_CITY:
                 break;
-            case PRODUCTION:
-                break;
-            case PLAYER_TURN:
-                break;
-            case MOVING_ROBBER:
-                break;
-            case TRADE_PROPOSED:
-                break;
-            case TRADE_RESPONDED:
-                break;
-            case FINISHED_GAME:
+            default:
                 break;
         }
+        return buildSuccess;
+    }
+
+    private boolean handleEdgeClick(MotionEvent event) {
+        Pair<Integer, Integer> coordinates = getCoordinates(event);
+        Edge edge = getEdgeFromCoordinates(coordinates.first, coordinates.second);
+        if (edge == null) return false;
+        boolean buildSuccess = false;
+
+        Toast.makeText(getContext().getApplicationContext(), edge.toString() + " ~ clicked",
+                Toast.LENGTH_SHORT).show();
+
+        switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
+
+            case SETUP_ROAD:
+
+
+                if(GameController.getInstance().buildRoad(edge, SettlerApp.getPlayer())) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    buildSuccess = true;
+                }
+                generateEdgePaths();
+                redraw();
+
+                break;
+            case FREE_ROAD:
+
+                if(GameController.getInstance().buildFreeRoad(edge, SettlerApp.getPlayer())) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    buildSuccess = true;
+                }
+                generateEdgePaths();
+                redraw();
+
+                break;
+        }
+        return buildSuccess;
     }
 
     public void redraw() {

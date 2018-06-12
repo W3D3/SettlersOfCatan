@@ -55,7 +55,7 @@ public class InventoryTests {
 
 
     @Test
-    public void removeResourceTest()throws Exception {
+    public void removeResourceTest() throws Exception {
         b.getPlayerById(0).getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.HILL));
         b.getPlayerById(0).getInventory().addResource(Resource.getResourceForTerrain(Hex.TerrainType.HILL));
 
@@ -67,7 +67,7 @@ public class InventoryTests {
         assertEquals(1, countBrick);
 
         // rest should stay the same
-        for (Resource.ResourceType type: Resource.ResourceType.values()){
+        for (Resource.ResourceType type : Resource.ResourceType.values()) {
             if (type != Resource.ResourceType.BRICK) {
                 assertEquals(0, (int) b.getPlayerById(0).getInventory().countResource(type));
             }

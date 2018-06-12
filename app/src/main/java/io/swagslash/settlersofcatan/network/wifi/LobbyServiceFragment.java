@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.peak.salut.SalutDevice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     private MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener mListener;
-    private List<SalutDevice> lobbies = new ArrayList<>();
+    private List<NetworkDevice> lobbies = new ArrayList<>();
 
     private MyLobbyServiceRecyclerViewAdapter adapter;
 
@@ -96,15 +95,15 @@ public class LobbyServiceFragment extends Fragment implements MyLobbyServiceRecy
     }
 
     @Override
-    public void onClick(SalutDevice device) {
+    public void onClick(NetworkDevice host) {
 
     }
 
-    public void setLobbies(List<SalutDevice> lobbies) {
+    public void setLobbies(List<NetworkDevice> lobbies) {
         adapter.setLobbies(lobbies);
     }
 
-    public void addLobby(SalutDevice lobby) {
+    public void addLobby(NetworkDevice lobby) {
         adapter.addLobby(lobby);
     }
 }

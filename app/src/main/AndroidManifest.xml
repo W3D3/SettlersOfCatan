@@ -31,7 +31,7 @@
         </activity>
         <activity
             android:name=".network.wifi.gui.HostLobbyActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".GridActivity"
             android:screenOrientation="portrait">
@@ -52,16 +52,13 @@
         </activity>
         <activity
             android:name=".network.wifi.gui.BrowserActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".RobPlayerActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".network.wifi.gui.ClientLobbyActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".DisplayCardsActivity"
             android:screenOrientation="portrait"

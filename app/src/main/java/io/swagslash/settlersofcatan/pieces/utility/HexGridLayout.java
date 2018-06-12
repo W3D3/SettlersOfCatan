@@ -8,15 +8,19 @@ import java.util.ArrayList;
 
 public class HexGridLayout
 {
+
+    public HexGridLayout() {
+    }
+
     public HexGridLayout(HexGridOrientation hexGridOrientation, HexPoint size, HexPoint origin)
     {
         this.hexGridOrientation = hexGridOrientation;
         this.size = size;
         this.origin = origin;
     }
-    public final HexGridOrientation hexGridOrientation;
-    public final HexPoint size;
-    public final HexPoint origin;
+    public  HexGridOrientation hexGridOrientation;
+    public  HexPoint size;
+    public  HexPoint origin;
     static public HexGridOrientation pointy = new HexGridOrientation(
             Math.sqrt(3.0),
             Math.sqrt(3.0) / 2.0,

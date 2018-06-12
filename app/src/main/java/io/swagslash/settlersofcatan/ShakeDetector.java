@@ -13,7 +13,7 @@ public class ShakeDetector implements SensorEventListener {
 
     private ShakeListener listener;
 
-    public void setShakeListener(ShakeListener l){
+    public void setShakeListener(ShakeListener l) {
         listener = l;
     }
 
@@ -36,7 +36,7 @@ public class ShakeDetector implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-        throw new UnsupportedOperationException();
+//        throw new UnsupportedOperationException();
         // do nothing
     }
 }

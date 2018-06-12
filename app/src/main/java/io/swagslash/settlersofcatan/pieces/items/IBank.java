@@ -10,6 +10,7 @@ public interface IBank {
     /**
      * Removes the resources that are needed for a street
      * from the player's inventory if possible
+     *
      * @param player the player that pays
      * @return true if the resources have been payed
      */
@@ -18,6 +19,7 @@ public interface IBank {
     /**
      * Removes the resources that are needed for a settlement
      * from the player's inventory if possible
+     *
      * @param player the player that pays
      * @return true if the resources have been payed
      */
@@ -26,6 +28,7 @@ public interface IBank {
     /**
      * Removes the resources that are needed for a city
      * from the player's inventory if possible
+     *
      * @param player the player that pays
      * @return true if the resources have been payed
      */
@@ -34,6 +37,7 @@ public interface IBank {
     /**
      * Removes the resources that are needed for a development card
      * from the player's inventory if possible
+     *
      * @param player the player that pays
      * @return true if the resources have been payed
      */

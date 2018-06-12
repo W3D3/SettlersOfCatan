@@ -4,13 +4,16 @@ package io.swagslash.settlersofcatan.pieces.utility;
  * Created by Christoph Wedenig (christoph@wedenig.org) on 18.05.18.
  */
 public class HexPointPair {
-    public final HexPoint first;
-    public final HexPoint second;
+    public HexPoint first;
+    public HexPoint second;
+
+    public HexPointPair() {
+    }
 
     /**
      * Constructor for a Pair.
      *
-     * @param first the first object in the Pair
+     * @param first  the first object in the Pair
      * @param second the second object in the pair
      */
     public HexPointPair(HexPoint first, HexPoint second) {
@@ -23,7 +26,7 @@ public class HexPointPair {
      *
      * @param o the {@link HexPoint} to which this one is to be checked for equality
      * @return true if the underlying objects of the Pair are both considered
-     *         equal
+     * equal
      */
     @Override
     public boolean equals(Object o) {
@@ -48,5 +51,21 @@ public class HexPointPair {
     @Override
     public String toString() {
         return "HexPointPair {" + String.valueOf(first) + " " + String.valueOf(second) + "}";
+    }
+
+    public HexPoint getFirst() {
+        return first;
+    }
+
+    public void setFirst(HexPoint first) {
+        this.first = first;
+    }
+
+    public HexPoint getSecond() {
+        return second;
+    }
+
+    public void setSecond(HexPoint second) {
+        this.second = second;
     }
 }

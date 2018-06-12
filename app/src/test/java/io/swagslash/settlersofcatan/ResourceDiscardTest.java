@@ -3,36 +3,39 @@ package io.swagslash.settlersofcatan;
 import android.view.View;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by thoma on 29.05.2018.
+ * Unit Tests of the Resource Discard Class
  */
-
+@RunWith(RobolectricTestRunner.class)
 public class ResourceDiscardTest {
 
-      /*
-    Unit Tests of the Resource Discard Class
-     */
-
     @Test
-    public void TestOnCreat(){
-        try{
+    public void TestOnCreate() {
+        try {
             //execute code that you expect not to throw Exceptions.
-            ResourceDiscardActivity r = new ResourceDiscardActivity();
-            View viewById = r.findViewById(R.layout.activity_resource_discard);
-            assertThat(viewById,notNullValue());
-            } catch (Exception e) {
+            //ResourceDiscardActivity r = new ResourceDiscardActivity();
+            ResourceDiscardActivity activity = Robolectric.setupActivity(ResourceDiscardActivity.class);
+            View viewById = activity.findViewById(R.id.textViewTitel);
+            assertThat(viewById, notNullValue());
+        } catch (Exception e) {
+            Assert.fail();
         }
     }
 
     @Test
-    public void Test2(){
-        try{
+    @Ignore
+    public void Test2() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
@@ -41,11 +44,13 @@ public class ResourceDiscardTest {
             //When no exception Test bestanden
             assertTrue(true);
         } catch (Exception e) {
+            Assert.fail();
         }
     }
 
     @Test
-    public void TestconfirmDiscard(){
+    @Ignore
+    public void TestConfirmDiscard(){
         try{
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
@@ -55,12 +60,14 @@ public class ResourceDiscardTest {
             //When no exception Test bestanden
             assertTrue(true);
         } catch (Exception e) {
+            Assert.fail();
         }
     }
 
     @Test
-    public void TestRandomDiscard(){
-        try{
+    @Ignore
+    public void TestRandomDiscard() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
@@ -72,8 +79,9 @@ public class ResourceDiscardTest {
     }
 
     @Test
-    public void TestCountdown(){
-        try{
+    @Ignore
+    public void TestCountdown() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
@@ -81,20 +89,20 @@ public class ResourceDiscardTest {
             //When no exception Test bestanden
             assertTrue(true);
         } catch (Exception e) {
-
         }
     }
 
     @Test
-    public void TestResource(){
-        try{
+    @Ignore
+    public void TestResource() {
+        try {
             //execute code that you expect not to throw Exceptions.
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
-            int sumResource = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
+            int sumResource = r.erz + r.wolle + r.getreide + r.holz + r.lehm;
             r.randomDiscard();
-            int sumResourceAfterRandomDiscard = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
-           Assert.assertNotEquals(sumResource,sumResourceAfterRandomDiscard);
+            int sumResourceAfterRandomDiscard = r.erz + r.wolle + r.getreide + r.holz + r.lehm;
+            Assert.assertNotEquals(sumResource, sumResourceAfterRandomDiscard);
 
         } catch (Exception e) {
         }

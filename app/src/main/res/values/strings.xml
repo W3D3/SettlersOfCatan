@@ -5,30 +5,30 @@
     <string name="build_city">Build City</string>
     <string name="build_street">Build Street</string>
     <string name="victory_points">VP:</string>
-        <!-- Resources -->
-        <string name="resource_ore">Ore</string>
-        <string name="resource_wood">Wood</string>
-        <string name="resource_brick">Brick</string>
-        <string name="resource_grain">Grain</string>
-        <string name="resource_wool">Wool</string>
-        <string name="resource_desc">picture of a resource</string>
-        <string name="dice_desc">picture of rolled dice</string>
-        <string name="end_of_turn_desc">end your turn</string>
-        <string name="trading_desc">trade with other players</string>
-        <!-- Trading -->
-        <string name="offer_header">Your Offer</string>
-        <string name="demand_header">Your Demand</string>
-        <string name="trading_submit">Send Offer</string>
-        <string name="ic_minus">decrease value by 1</string>
-        <string name="ic_plus">increase value by 1</string>
-        <!-- Cards -->
-        <string name="cards_header">Your Cards</string>
-        <string name="cards_submit">Use Cards</string>
-        <!-- default vals -->
-        <string name="default_min_value">00</string>
-        <string name="default_max_value">99</string>
-        <integer name="default_min_value">0</integer>
-        <integer name="default_max_value">12</integer>
+    <!-- Resources -->
+    <string name="resource_ore">Ore</string>
+    <string name="resource_wood">Wood</string>
+    <string name="resource_brick">Brick</string>
+    <string name="resource_grain">Grain</string>
+    <string name="resource_wool">Wool</string>
+    <string name="resource_desc">picture of a resource</string>
+    <string name="dice_desc">picture of rolled dice</string>
+    <string name="end_of_turn_desc">end your turn</string>
+    <string name="trading_desc">trade with other players</string>
+    <!-- Trading -->
+    <string name="offer_header">Your Offer</string>
+    <string name="demand_header">Your Demand</string>
+    <string name="trading_submit">Send Offer</string>
+    <string name="ic_minus">decrease value by 1</string>
+    <string name="ic_plus">increase value by 1</string>
+    <!-- Cards -->
+    <string name="cards_header">Your Cards</string>
+    <string name="cards_submit">Use Cards</string>
+    <!-- default vals -->
+    <string name="default_min_value">00</string>
+    <string name="default_max_value">99</string>
+    <integer name="default_min_value">0</integer>
+    <integer name="default_max_value">12</integer>
 
     <string name="cards">Cards</string>
     <string name="title_activity_settings">Settings</string>
@@ -105,4 +105,10 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_trading">TradingActivity</string>
+    <string name="error_noname">Please enter name!</string>
+    <string name="hint_enter_name">Please enter name!</string>
+    <string name="label_app_name">Settlers of Catan</string>
+    <string name="btn_play">Play Game</string>
+    <string name="btn_discover">Discover Lobbies</string>
+    <string name="btn_create_lobby">Create Lobby</string>
 </resources>

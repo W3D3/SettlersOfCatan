@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.peak.salut.SalutDevice;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +27,7 @@ public class LobbyMemberFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
 
-    private List<SalutDevice> lobbyMember = new ArrayList<>();
+    private List<NetworkDevice> lobbyMember = new ArrayList<>();
 
     private MyLobbyMemberRecyclerViewAdapter adapter;
 
@@ -86,10 +84,10 @@ public class LobbyMemberFragment extends Fragment {
         super.onAttach(context);
 
     }
-    public void setMember(List<SalutDevice> member) {
+    public void setMember(List<NetworkDevice> member) {
         adapter.setMember(member);
     }
-    public void addMember(SalutDevice member){
+    public void addMember(NetworkDevice member){
         adapter.addMember(member);
     }
 

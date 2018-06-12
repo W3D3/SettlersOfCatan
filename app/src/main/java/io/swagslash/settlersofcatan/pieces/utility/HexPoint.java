@@ -27,6 +27,7 @@ public class HexPoint {
 
     @Override
     public int hashCode() {
+        //TODO implement actual hashcode
         return 1;
         //DecimalFormat df = new DecimalFormat("#.##");
         //return (df.format(this.x) +  df.format(this.y)).hashCode();

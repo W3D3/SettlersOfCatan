@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.peak.salut.SalutDevice;
-
 import java.util.List;
 
 import io.swagslash.settlersofcatan.R;
@@ -18,9 +16,9 @@ import io.swagslash.settlersofcatan.R;
  */
 public class MyLobbyMemberRecyclerViewAdapter extends RecyclerView.Adapter<MyLobbyMemberRecyclerViewAdapter.ViewHolder> {
 
-    private final List<SalutDevice> mValues;
+    private final List<NetworkDevice> mValues;
 
-    public MyLobbyMemberRecyclerViewAdapter(List<SalutDevice> items) {
+    public MyLobbyMemberRecyclerViewAdapter(List<NetworkDevice> items) {
         mValues = items;
     }
 
@@ -33,7 +31,7 @@ public class MyLobbyMemberRecyclerViewAdapter extends RecyclerView.Adapter<MyLob
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mIdView.setText(mValues.get(position).readableName);
+        holder.mIdView.setText(mValues.get(position).getDeviceName());
         holder.mItem = mValues.get(position);
         //holder.mContentView.setText(mValues.get(position).deviceName);
     }
@@ -47,7 +45,7 @@ public class MyLobbyMemberRecyclerViewAdapter extends RecyclerView.Adapter<MyLob
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public SalutDevice mItem;
+        public NetworkDevice mItem;
 
         public ViewHolder(View view) {
             super(view);
@@ -62,12 +60,12 @@ public class MyLobbyMemberRecyclerViewAdapter extends RecyclerView.Adapter<MyLob
         }
     }
 
-    public void setMember(List<SalutDevice> member) {
+    public void setMember(List<NetworkDevice> member) {
         mValues.clear();
         mValues.addAll(member);
         this.notifyDataSetChanged();
     }
-    public void addMember(SalutDevice member){
+    public void addMember(NetworkDevice member){
         mValues.add(member);
         notifyDataSetChanged();
     }

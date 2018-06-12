@@ -21,7 +21,7 @@ import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
  * Robber who gets activate when someone schuffles a '7'
  */
 
-public class Robber extends Activity{
+public class Robber extends Activity {
 
     Player selectedPlayer;
     private Hex currentField;
@@ -73,7 +73,7 @@ public class Robber extends Activity{
 
     }
 
-    public void robPlayer(Hex choosenField, Player robber){
+    public void robPlayer(Hex choosenField, Player robber) {
         Player playerToRob = null;
 
         //Unlock old Vertices
@@ -89,54 +89,47 @@ public class Robber extends Activity{
         drawRobber(newRobberLocation);
 
         //Lookup Players next to this current field
-        HashMap<Player,Boolean> currentFieldNeighbourhood = lookUpPlayerNextToRobPlace(currentField);
-        ArrayList<Player>  robablePlayerList = new ArrayList<Player>();
-        for (Player pdummy: currentFieldNeighbourhood.keySet()
-             ) {
+        HashMap<Player, Boolean> currentFieldNeighbourhood = lookUpPlayerNextToRobPlace(currentField);
+        ArrayList<Player> robablePlayerList = new ArrayList<Player>();
+        for (Player pdummy : currentFieldNeighbourhood.keySet()
+                ) {
             robablePlayerList.add(pdummy);
         }
 
 
-
         //choose Player to Rob, depends on how much Player are next to the field
-        if(currentFieldNeighbourhood.size() == 0){
-           //Nobobody to Rob
+        if (currentFieldNeighbourhood.size() == 0) {
+            //Nobobody to Rob
             Log.i("Robber Information", "No Player next to Robed Field");
-        }
-        else if(currentFieldNeighbourhood.size() == 1){
+        } else if (currentFieldNeighbourhood.size() == 1) {
 
             Log.i("Robber Information", "One Player next to Robed Field");
-            playerToRob = choosePlayer(robablePlayerList.get(0),null,null,null);
-        }
-        else if(currentFieldNeighbourhood.size() == 2){
+            playerToRob = choosePlayer(robablePlayerList.get(0), null, null, null);
+        } else if (currentFieldNeighbourhood.size() == 2) {
 
             Log.i("Robber Information", "Two Player next to Robed Field");
-            playerToRob = choosePlayer(robablePlayerList.get(0),robablePlayerList.get(1),null,null);
-        }
-        else if(currentFieldNeighbourhood.size() == 3){
+            playerToRob = choosePlayer(robablePlayerList.get(0), robablePlayerList.get(1), null, null);
+        } else if (currentFieldNeighbourhood.size() == 3) {
 
             Log.i("Robber Information", "Three Player next to Robed Field");
-            playerToRob = choosePlayer(robablePlayerList.get(0),robablePlayerList.get(1),robablePlayerList.get(2),null);
-        }
-        else if(currentFieldNeighbourhood.size() == 4){
+            playerToRob = choosePlayer(robablePlayerList.get(0), robablePlayerList.get(1), robablePlayerList.get(2), null);
+        } else if (currentFieldNeighbourhood.size() == 4) {
 
             Log.i("Robber Information", "Four Player next to Robed Field");
-            playerToRob = choosePlayer(robablePlayerList.get(0),robablePlayerList.get(1),robablePlayerList.get(2),robablePlayerList.get(3));
+            playerToRob = choosePlayer(robablePlayerList.get(0), robablePlayerList.get(1), robablePlayerList.get(2), robablePlayerList.get(3));
         }
-
-
 
 
         //Rob that Player
-        rob(robber ,playerToRob);
+        rob(robber, playerToRob);
 
     }
 
     /*
     Explore the neighbourhood of the currentfield, where the Robber stand
      */
-    public HashMap<Player,Boolean> lookUpPlayerNextToRobPlace(Hex currentField){
-        HashMap<Player,Boolean> currentFieldNeighbourhood= new HashMap<Player, Boolean>();
+    public HashMap<Player, Boolean> lookUpPlayerNextToRobPlace(Hex currentField) {
+        HashMap<Player, Boolean> currentFieldNeighbourhood = new HashMap<Player, Boolean>();
 
         for (Vertex vertex : currentField.getVertices()) {
             if (vertex.getOwner() != null) {
@@ -154,22 +147,21 @@ public class Robber extends Activity{
      If Player pi is not next to the fiel, set pi = null
      */
 
-    public Player choosePlayer(Player p1, Player p2, Player p3, Player p4)
-    {
+    public Player choosePlayer(Player p1, Player p2, Player p3, Player p4) {
         //need final variables for inner class
 
-        final Player p11= p1;
-        final Player p22= p2;
-        final Player p33= p3;
-        final Player p44= p4;
+        final Player p11 = p1;
+        final Player p22 = p2;
+        final Player p33 = p3;
+        final Player p44 = p4;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
         //Look which Player have an Edge on the Field
 
-        if(p1!=null) {
-             builder.setNeutralButton(p1.getPlayerName(), new DialogInterface.OnClickListener() {
+        if (p1 != null) {
+            builder.setNeutralButton(p1.getPlayerName(), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     selectPlayer(p11);
@@ -178,7 +170,7 @@ public class Robber extends Activity{
             });
         }
 
-        if(p2!=null) {
+        if (p2 != null) {
             builder.setNeutralButton(p2.getPlayerName(), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -188,8 +180,8 @@ public class Robber extends Activity{
             });
         }
 
-        if(p3!=null) {
-           builder.setNeutralButton(p3.getPlayerName(), new DialogInterface.OnClickListener() {
+        if (p3 != null) {
+            builder.setNeutralButton(p3.getPlayerName(), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     selectPlayer(p33);
@@ -198,7 +190,7 @@ public class Robber extends Activity{
             });
         }
 
-        if(p4!=null) {
+        if (p4 != null) {
             builder.setNeutralButton(p4.getPlayerName(), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -211,13 +203,13 @@ public class Robber extends Activity{
         builder.setMessage("Wählen Sie den zu raubenden Spieler aus");
         builder.create();
 
-       return this.selectedPlayer;
+        return this.selectedPlayer;
     }
 
     /*
     Supported Method to choose Player in the dialog
      */
-    public void selectPlayer(Player p){
+    public void selectPlayer(Player p) {
 
         selectedPlayer = p;
     }
@@ -225,11 +217,11 @@ public class Robber extends Activity{
     /*
     Draw the robber, bin mir net sicher obs so richtig ist
      */
-    public void drawRobber(AxialHexLocation location){
+    public void drawRobber(AxialHexLocation location) {
 
         Canvas c = new Canvas();
         Paint p = new Paint();
-        c.drawCircle(location.q, location.r,4,p);
+        c.drawCircle(location.q, location.r, 4, p);
     }
 
 

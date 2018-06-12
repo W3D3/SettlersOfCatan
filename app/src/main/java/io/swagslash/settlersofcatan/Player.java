@@ -27,6 +27,9 @@ public class Player {
     private Inventory inventory;
     private int victoryPoints = 0;
 
+    public Player() {
+    }
+
     public Player(Board board, int playerNumber, int color, String playerName) {
         this.board = board;
         this.playerNumber = playerNumber;
@@ -147,5 +150,10 @@ public class Player {
         public int getVal() {
             return val;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(id: " + this.playerNumber + ") " + playerName;
     }
 }

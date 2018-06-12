@@ -8,7 +8,9 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
@@ -16,21 +18,30 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bluelinelabs.logansquare.LoganSquare;
+import com.esotericsoftware.kryonet.Connection;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
-import java.io.IOException;
-
+import io.swagslash.settlersofcatan.controller.GameController;
+import io.swagslash.settlersofcatan.controller.TurnController;
+import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
+import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
+import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.TurnAction;
+import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
-import io.swagslash.settlersofcatan.network.wifi.DataCallback;
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.items.Inventory;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Dice;
 import io.swagslash.settlersofcatan.utility.DiceSix;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, DataCallback.IDataCallback {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, INetworkCallback {
 
     private static final int FABMENUDISTANCE = 160;
 
@@ -57,17 +68,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected ShakeListener shakeListener;
     protected Object shakeValue;
 
+    protected TextView oreCount, woodCount, woolCount, bricksCount, grainCount;
+
     HexView hexView;
     private Board board;
+    private AbstractNetworkManager network;
+    Player player;
 
     //@SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setupHexView();
+        network = SettlerApp.getManager();
+        network.switchIn(this);
         //setContentView(R.layout.activity_main);
 
-        this.setupHexView();
-        DataCallback.actActivity = this;
+
+        TabLayout tabs = findViewById(R.id.tabs);
+        for (View view : tabs.getTouchables()) {
+            view.setClickable(false);
+        }
 
         //fab menu animation
         this.fabOpen = false;
@@ -107,6 +128,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.trading.setOnClickListener(this);
         this.cards.setOnClickListener(this);
 
+        //resource show
+        this.woodCount = findViewById(R.id.wood_count);
+        this.woolCount = findViewById(R.id.wool_count);
+        this.bricksCount = findViewById(R.id.brick_count);
+        this.grainCount = findViewById(R.id.grain_count);
+        this.oreCount = findViewById(R.id.ore_count);
+
+
+        this.player = SettlerApp.getPlayer();
+        updateResources();
+
+        if(network.isHost()) {
+            Log.d("NETWORK", "Starting game." );
+            // FIXME this only works in oncreate because P1 is host,
+            // when selecting a random player to start, give them either enough time to open the activity
+            // or wait for a ping of all your clients
+
+            initialTurn();
+        }
         //sensor init
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager != null) {
@@ -115,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             shakeListener = new ShakeListener() {
                 @Override
                 public void onShake() {
+                    if(board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION) return;
                     Dice d6 = new DiceSix();
 
                     int roll1 = d6.roll();
@@ -126,6 +167,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
                     t.show();
+                    DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), roll1, roll2);
+                    GameController.getInstance().handleDiceRolls(roll1,roll2);
+                    SettlerApp.getManager().sendToAll(roll);
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateResources();
+                        }
+                    });
                 }
             };
             shakeDetector.setShakeListener(shakeListener);
@@ -150,17 +201,85 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int i = v.getId();
         switch (i) {
             case R.id.fab_build_options:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant open build options.");
+                    return;
+                }
                 this.toogleFabMenu();
                 break;
             case R.id.fab_settlement:
-                SettlerApp.board.setPhase(Board.Phase.SETUP_SETTLEMENT);
-                hexView.showFreeSettlements();
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant build settlement.");
+                    return;
+                }
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_SETTLEMENT);
+                    hexView.showFreeSettlements();
+                } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    hexView.showFreeSettlements();
+                }
+
                 break;
             case R.id.fab_city:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant build city.");
+                    return;
+                }
                 break;
             case R.id.fab_street:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT MY TURN, cant build street.");
+                    return;
+                }
+
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_ROAD);
+                    hexView.showFreeSettlements();
+                } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_ROAD) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    hexView.showFreeSettlements();
+                }
                 break;
+//            case R.id.dice_1:
+//                if(!itsMyTurn()) {
+//                    Log.d("PLAYER", "NOT MY TURN, cant roll dice.");
+//                    return;
+//                }
+//                if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
+//                    return;
+//                Random random = new Random();
+//                Integer max = 6;
+//                Integer min = 1;
+//                int dice1 = random.nextInt((max - min) + 1) + min;
+//                int dice2 = random.nextInt((max - min) + 1) + min;
+//                DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), dice1, dice2);
+//                GameController.getInstance().handleDiceRolls(dice1,dice2);
+//                SettlerApp.getManager().sendToAll(roll);
+//                int sum = dice1 + dice2;
+//                Log.d("DICE", "ROLLED " + dice1 + " / " + dice2 + " SUM: " + sum);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        updateResources();
+//                    }
+//                });
+//                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+//                break;
             case R.id.end_of_turn:
+                if(!itsMyTurn()) {
+                    Log.d("PLAYER", "NOT HIS TURN!");
+                    Log.d("PLAYER", "Current Player:" + player.toString());
+                    Log.d("PLAYER", "Turn of Player:" + TurnController.getInstance().getCurrentPlayer());
+                    return;
+                }
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    // end my own turn and tell all others my turn is over
+                    advanceTurn();
+                    SettlerApp.getManager().sendToAll(new TurnAction(SettlerApp.getPlayer()));
+                } else {
+                    Log.d("PLAYER", "WRONG PHASE FOR END OF TURN! Player is not done yet " + board.getPhaseController().getCurrentPhase());
+                }
                 break;
             case R.id.cards:
                 Intent in = new Intent(this, DisplayCardsActivity.class);
@@ -168,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.trading:
                 Intent in2 = new Intent(this, TradingActivity.class);
-                //Debug.startMethodTracing("trading_" + new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss").format(new Date()));
                 startActivity(in2);
                 break;
             default:
@@ -234,34 +352,145 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (SettlerApp.getManager().getNetwork().isRunningAsHost)
-            SettlerApp.getManager().getNetwork().stopNetworkService(false);
-        else
-            SettlerApp.getManager().getNetwork().unregisterClient(false);
     }
 
-    @Override
-    public void onDataReceived(Object o) {
 
-        try {
-            SettlerApp.board = LoganSquare.parse((String) o, Board.class);
-            System.out.println((String) o);
-            if (SettlerApp.getManager().isHost()) {
-                System.out.println("################### I AM HOST " + SettlerApp.playerName);
-                SettlerApp.getManager().sendToAll(SettlerApp.board);
-            }
-            System.out.println("################## DATA RECEIVED " + SettlerApp.playerName);
-            hexView.setBoard(SettlerApp.board);
-            hexView.prepare();
-            hexView.redraw();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onBackPressed() {
-        //TODO: maybe dialog option to exit?
+        return; //TODO maybe dialog option to exit?
+    }
+
+    @Override
+    public void received(Connection connection, Object object) {
+
+        if (object instanceof GameAction) {
+
+            if(((GameAction)object).getActor().equals(player)) {
+                //discard package, own information
+                Log.d("RECEIVED",  "DISCARDED " + ((GameAction)object).toString() );
+                return;
+            } else  {
+                Log.d("RECEIVED",  "Received " + ((GameAction)object).toString() );
+            }
+
+            if (object instanceof EdgeBuildAction) {
+                // Another player has build on a edge, show it!
+                EdgeBuildAction action = (EdgeBuildAction) object;
+                action.getAffectedEdge().buildRoad(action.getActor());
+                hexView.generateEdgePaths();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hexView.redraw();
+                    }
+                });
+            } else if (object instanceof VertexBuildAction) {
+                // Another player has build on a vertex, show it!
+                VertexBuildAction action = (VertexBuildAction) object;
+                if (action.getType() == VertexBuildAction.ActionType.BUILD_SETTLEMENT) {
+                    action.getAffectedVertex().buildSettlement(action.getActor());
+                } else if (action.getType() == VertexBuildAction.ActionType.BUILD_CITY) {
+                    action.getAffectedVertex().buildCity(action.getActor());
+                }
+                hexView.generateVerticePaths();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hexView.redraw();
+                    }
+                });
+
+            } else if (object instanceof TurnAction) {
+                // Another player ended his turn
+
+                final TurnAction turn = (TurnAction) object;
+                Log.d("PLAYER", turn.getActor() + "  ended his turn.");
+
+                advanceTurn();
+
+            } else if (object instanceof DiceRollAction) {
+                // Another player rolled the dice
+                DiceRollAction roll = (DiceRollAction) object;
+                GameController.getInstance().handleDiceRolls(roll.getDic1(), roll.getDic2());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateResources();
+                    }
+                });
+            }
+        }
+    }
+
+    private boolean itsMyTurn() {
+        return player.equals(TurnController.getInstance().getCurrentPlayer());
+    }
+
+    private void advanceTurn() {
+        //Log.d("PLAYER", "Player ended his turn. (" +  TurnController.getInstance().getCurrentPlayer() + ")");
+        TurnController.getInstance().advancePlayer();
+        Log.d("PLAYER", "STARTING TURN of Player (" +  TurnController.getInstance().getCurrentPlayer() + ")");
+
+        // SET TABS
+        final TabLayout tabs = findViewById(R.id.tabs);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tabs.getTabAt(TurnController.getInstance().getCurrentPlayer().getPlayerNumber()).select();
+            }
+        });
+
+        // CHECK IF IS OUR TURN
+        if(itsMyTurn()) {
+            if (TurnController.getInstance().isFreeSetupTurn()) {
+                initialTurn();
+            } else {
+                normalTurn();
+            }
+        }
+    }
+
+    private void initialTurn() {
+        SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_SETTLEMENT);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hexView.generateVerticePaths();
+                hexView.generateEdgePaths();
+                hexView.redraw();
+            }
+        });
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "INITIAL TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void normalTurn() {
+        SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PRODUCTION);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "YOUR TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void updateResources() {
+        Inventory inv = SettlerApp.getPlayer().getInventory();
+
+        this.oreCount.setText(inv.countResource(Resource.ResourceType.ORE).toString());
+        this.bricksCount.setText(inv.countResource(Resource.ResourceType.BRICK).toString());
+        this.woodCount.setText(inv.countResource(Resource.ResourceType.WOOD).toString());
+        this.woolCount.setText(inv.countResource(Resource.ResourceType.WOOL).toString());
+        this.grainCount.setText(inv.countResource(Resource.ResourceType.GRAIN).toString());
     }
 }

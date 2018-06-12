@@ -1,10 +1,7 @@
 package io.swagslash.settlersofcatan;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.RadioButton;
+import android.support.v7.app.AppCompatActivity;
 
 public class RobPlayerActivity extends AppCompatActivity {
 
@@ -52,8 +49,6 @@ public class RobPlayerActivity extends AppCompatActivity {
         );
         */
     }
-
-
 
 
 }
