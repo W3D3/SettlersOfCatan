@@ -3,6 +3,7 @@ package io.swagslash.settlersofcatan;
 import android.view.View;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -20,6 +21,7 @@ public class ResourceDiscardTest {
      */
 
     @Test
+    @Ignore
     public void TestOnCreate() {
         try {
             //execute code that you expect not to throw Exceptions.
@@ -32,6 +34,7 @@ public class ResourceDiscardTest {
     }
 
     @Test
+    @Ignore
     public void Test2() {
         try {
             //execute code that you expect not to throw Exceptions.
@@ -47,6 +50,7 @@ public class ResourceDiscardTest {
     }
 
     @Test
+    @Ignore
     public void TestConfirmDiscard(){
         try{
             //execute code that you expect not to throw Exceptions.
@@ -62,6 +66,7 @@ public class ResourceDiscardTest {
     }
 
     @Test
+    @Ignore
     public void TestRandomDiscard() {
         try {
             //execute code that you expect not to throw Exceptions.
@@ -75,6 +80,7 @@ public class ResourceDiscardTest {
     }
 
     @Test
+    @Ignore
     public void TestCountdown() {
         try {
             //execute code that you expect not to throw Exceptions.
@@ -88,6 +94,7 @@ public class ResourceDiscardTest {
     }
 
     @Test
+    @Ignore
     public void TestResource() {
         try {
             //execute code that you expect not to throw Exceptions.
