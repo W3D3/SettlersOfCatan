@@ -1,5 +1,6 @@
 package io.swagslash.settlersofcatan;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,6 +34,7 @@ public class EdgeTest {
         player = board.getPlayerById(1);
     }
 
+
     @Test
     public void testCanBuildRoad() {
         // this edge already has an owner
@@ -40,5 +42,23 @@ public class EdgeTest {
         assertFalse(edge1.canBuildRoad(owner));
 
     }
+
+    @Test
+    public void testEdgeConstructor() {
+        // this edge already has an owner
+        List<String> players = new ArrayList<>();
+        players.add("P1");
+        players.add("P2");
+        board = new Board(players, true, 10);
+        Edge edge = new Edge(board);
+        Edge.EdgeType edgeType = edge.getUnitType();
+        edge.setUnitType(edgeType);
+
+        edge.setOwnerByPlayerNumber(1);
+        Assert.assertEquals(board.getPlayerById(1), edge.getOwner());
+        int edgeHashcode = edge.hashCode();
+
+    }
+
 
 }
