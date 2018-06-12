@@ -5,28 +5,27 @@ import android.view.View;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by thoma on 29.05.2018.
+ * Unit Tests of the Resource Discard Class
  */
-
+@RunWith(RobolectricTestRunner.class)
 public class ResourceDiscardTest {
 
-      /*
-    Unit Tests of the Resource Discard Class
-     */
-
     @Test
-    @Ignore
     public void TestOnCreate() {
         try {
             //execute code that you expect not to throw Exceptions.
-            ResourceDiscardActivity r = new ResourceDiscardActivity();
-            View viewById = r.findViewById(R.layout.activity_resource_discard);
+            //ResourceDiscardActivity r = new ResourceDiscardActivity();
+            ResourceDiscardActivity activity = Robolectric.setupActivity(ResourceDiscardActivity.class);
+            View viewById = activity.findViewById(R.id.textViewTitel);
             assertThat(viewById, notNullValue());
         } catch (Exception e) {
             Assert.fail();
