@@ -96,9 +96,12 @@ public class ResourceDiscardTest {
             ResourceDiscardActivity r = new ResourceDiscardActivity();
             View viewById = r.findViewById(R.layout.activity_resource_discard);
             int sumResource = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
-            r.randomDiscard();
-            int sumResourceAfterRandomDiscard = r.erz+r.wolle+r.getreide+r.holz+r.lehm;
-           Assert.assertNotEquals(sumResource,sumResourceAfterRandomDiscard);
+            int sumResourceAfterRandomDiscard;
+            for (int i = 0; i < 20; i++) {
+                r.randomDiscard();
+                sumResourceAfterRandomDiscard = r.erz + r.wolle + r.getreide + r.holz + r.lehm;
+                Assert.assertNotEquals(sumResource, sumResourceAfterRandomDiscard);
+            }
 
         }
         catch(Exception e){
