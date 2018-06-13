@@ -44,7 +44,7 @@ public class EdgeTest {
     }
 
     @Test
-    public void testEdgeConstructor() {
+    public void testEdge() {
         // this edge already has an owner
         List<String> players = new ArrayList<>();
         players.add("P1");
