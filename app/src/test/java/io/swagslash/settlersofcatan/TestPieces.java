@@ -52,13 +52,7 @@ public class TestPieces {
          */
     }
 
-    @Test
-    public void TestEdgeDirection() {
-        EdgeDirection e;
-       /*
-       Also private Construktor
-        */
-    }
+
 
     @Test
     public void TestHexpoint() {
