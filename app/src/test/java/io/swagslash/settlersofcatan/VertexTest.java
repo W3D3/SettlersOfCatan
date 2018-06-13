@@ -64,7 +64,7 @@ public class VertexTest {
   }
 
     @Test
-    public void TestVertex3() {
+    public void TestVertexmethods() {
         Vertex v1 = new Vertex();
         Vertex v2 = new Vertex(null, 12);
         v2.setUnitType(Vertex.VertexUnit.NONE);
