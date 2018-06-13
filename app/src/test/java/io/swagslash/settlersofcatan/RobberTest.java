@@ -59,12 +59,9 @@ public class RobberTest {
     @Test
     public void TestRobDraw() {
         Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
-        try {
-            rob.drawRobber(new AxialHexLocation(2, 2));
-            Assert.assertTrue(true);
-        } catch (Exception e) {
-
-        }
+      
+                    
+      
     }
 
     @Test
