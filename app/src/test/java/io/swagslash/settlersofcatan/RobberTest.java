@@ -119,20 +119,15 @@ public class RobberTest {
     @Test
     public void TestRob() {
 
-        try {
+       
             Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
-
 
             Player p2 = new Player(null, 1, Color.RED, "Player 2");
             Player raueber = new Player(null, 2, Color.WHITE, "Player 3");
             Hex newLocation = new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 2));
 
             rob.robPlayer(newLocation, raueber);
-
-            Assert.assertTrue(true);
-        } catch (Exception e) {
-
-        }
+      
     }
 
     @Test
