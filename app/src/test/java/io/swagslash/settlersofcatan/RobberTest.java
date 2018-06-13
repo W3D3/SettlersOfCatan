@@ -55,13 +55,6 @@ public class RobberTest {
 
     }
 
-    @Test
-    public void TestRobDraw() {
-        Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
-      
-                    
-      
-    }
 
     @Test
     public void TestselectedPlayer() {
