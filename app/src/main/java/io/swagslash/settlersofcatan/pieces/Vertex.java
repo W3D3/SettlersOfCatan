@@ -72,6 +72,12 @@ public class Vertex {
         this.owner = owner;
     }
 
+    /**
+     * Gives the specified Resource to the owner @link{Player} of this Vertex
+     *
+     * @param amount   The amount of the resource to give
+     * @param resource The @link{Resource} to distribute
+     */
     private void giveResourceToOwner(int amount, Resource resource) {
         for (int i = 0; i < amount; i++) {
             owner.getInventory().addResource(resource);
@@ -222,7 +228,7 @@ public class Vertex {
     }
 
     public boolean isOwnedByAnotherPlayer(Player player) {
-        return !player.equals(owner);
+        return owner != null && !player.equals(owner);
     }
 
     public boolean isConnectedToRoadOwnedBy(Player player) {

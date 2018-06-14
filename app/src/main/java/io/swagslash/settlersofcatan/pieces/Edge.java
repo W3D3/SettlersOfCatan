@@ -108,7 +108,6 @@ public class Edge {
             return false;
         }
 
-
         // check for edgeUnits between each vertex
         Vertex curVertex = null;
         for (int i = 0; i < 2; i++) {
