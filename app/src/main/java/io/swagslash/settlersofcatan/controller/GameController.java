@@ -7,6 +7,7 @@ import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
+import io.swagslash.settlersofcatan.pieces.IRobber;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.items.Bank;
 import io.swagslash.settlersofcatan.pieces.items.IBank;
@@ -101,5 +102,19 @@ public class GameController {
             return board.getCardStack().pop();
         }
         return null;
+    }
+
+    public boolean rob(Player player) {
+        IRobber.rob(SettlerApp.getPlayer(), player);
+
+        return true;
+    }
+
+    public boolean canRob(Hex hex) {
+        for (Hex hexagon : board.getHexagons()) {
+            if (hexagon.hasRobber() && hexagon.equals(hex))
+                return false;
+        }
+        return true;
     }
 }

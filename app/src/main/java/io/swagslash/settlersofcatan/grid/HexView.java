@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.GridActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.GameController;
@@ -67,8 +68,14 @@ public class HexView extends View {
     private Paint vertexClickPaint;
     private Paint textPaint;
 
+    GridActivity activity;
+
     public HexView(Context context) {
         super(context);
+
+        if (context instanceof GridActivity) {
+            activity = (GridActivity) context;
+        }
 
         hexes = new ArrayList<>();
         regionList = new ArrayList<>();
@@ -152,28 +159,32 @@ public class HexView extends View {
         offset = new Pair<>(Math.min(maxX, maxY) / 2, Math.min(maxX, maxY) / 2);
         clip = new Region();
 
-        for (Hex hex : hexes) {
-            hex.calculatePath(offset, scale);
-        }
         //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES?
         // OR GET IT FROM PARENT?
         setMinimumHeight(maxY);
         setMinimumWidth(maxX);
 
-        // GENERATE PATHS und so
-        for (Hex hex : hexes) {
-            Path path = hex.getPath();
-            Region r = new Region();
-            r.setPath(path, clip);
-            hex.setRegion(r);
-        }
-
+        generateHexPaths();
         generateVerticePaths();
         generateEdgePaths();
 
         //ready to draw
         setWillNotDraw(false);
         invalidate();
+    }
+
+    public void generateHexPaths() {
+        // GENERATE PATHS und so
+        for (Hex hex : hexes) {
+            hex.calculatePath(offset, scale);
+            Path path = hex.getPath();
+            Region r = new Region();
+            r.setPath(path, clip);
+            hex.setRegion(r);
+            if (hex.hasRobber()) {
+                hex.getRobber().calculatePath(offset, scale);
+            }
+        }
     }
 
     public void generateVerticePaths() {
@@ -275,8 +286,11 @@ public class HexView extends View {
 
             final HexPoint coordinates = hex.getCenter().scale(offset, scale);
             if(hex.getNumberToken() != null) {
-                if (hex.getNumberToken().getNumber() > 0) {
+                if (hex.getNumberToken().getNumber() > 0 && !hex.hasRobber()) {
                     c.drawText(hex.getNumberToken().toString(), (float)coordinates.x, (float)coordinates.y, textPaint);
+                    invalidate();
+                } else if (hex.hasRobber()) {
+                    c.drawPath(hex.getRobber().getPath(), textPaint);
                     invalidate();
                 }
 
@@ -392,10 +406,24 @@ public class HexView extends View {
         Hex hex = getHexFromCoordinates(coordinates.first, coordinates.second);
         if (hex == null) return;
 
+        switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
+            case MOVING_ROBBER:
+                if (GameController.getInstance().canRob(hex)) {
+
+                    generateHexPaths();
+                    activity.choosePlayer(board.getPlayers());
+
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                }
+                break;
+        }
+
+
         System.out.println(hex.toString());
         Toast.makeText(getContext().getApplicationContext(), hex.toString() + " ~ " + msg,
                 Toast.LENGTH_SHORT).show();
     }
+
 
     private boolean handleVertexClick(MotionEvent event) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
