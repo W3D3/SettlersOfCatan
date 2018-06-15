@@ -42,11 +42,11 @@ public class RobberTest {
         Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
 
       
-            Player p = rob.choosePlayer(new Player(null, 0, Color.BLUE, "Player 1"),
+           /* Player p = rob.choosePlayer(new Player(null, 0, Color.BLUE, "Player 1"),
                     new Player(null, 1, Color.RED, "Player 2"),
                     new Player(null, 2, Color.WHITE, "Player 3"),
                     new Player(null, 3, Color.GREEN, "Player 4"));
-      
+        */
 
 
        }
@@ -115,7 +115,7 @@ public class RobberTest {
             Player raueber = new Player(null, 2, Color.WHITE, "Player 3");
             Hex newLocation = new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 2));
 
-            rob.robPlayer(newLocation, raueber);
+           // rob.robPlayer(newLocation, raueber);
       
     }
 
