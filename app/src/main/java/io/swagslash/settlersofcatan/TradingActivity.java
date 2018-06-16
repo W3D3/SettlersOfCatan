@@ -21,7 +21,7 @@ public class TradingActivity extends AppCompatActivity {
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
-    private TradeOffer tradeOffer = new TradeOffer();
+    private TradeOffer tradeOffer;
     private HashSet<Integer> selectedPlayers = new HashSet<>();
 
     private int min;
@@ -54,6 +54,11 @@ public class TradingActivity extends AppCompatActivity {
 
         RecyclerView rv = findViewById(R.id.player_trading_list);
         rv.addOnItemTouchListener(new RecyclerItemClickListener(this, rv, new ClickListener() {
+            /**
+             * adds currently unselected player to all selected players
+             * or
+             * removes currently selected player from all selected players
+             */
             @Override
             public void onClick(View v, int pos) {
                 if (selectedPlayers.contains(pos)) {
@@ -91,6 +96,9 @@ public class TradingActivity extends AppCompatActivity {
         rv.setAdapter(rva);
     }
 
+    /**
+     * registers a click on minus or plus and in- or decreases the values of the corresponding textview
+     */
     @SuppressLint("DefaultLocale")
     public void onMinusPlusClick(View view) {
         String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
@@ -110,10 +118,15 @@ public class TradingActivity extends AppCompatActivity {
             default:
                 break;
         }
-        tv.setText(String.format("%02d", val));
+        tv.setText(String.format(MainActivity.FORMAT, val));
         //Debug.stopMethodTracing();
     }
 
+    /**
+     * click method for submit, sends offer to selected players
+     *
+     * @param view clicked view (submit btn)
+     */
     public void onSubmit(View view) {
         if (!selectedPlayers.isEmpty()) {
             //TODO: send offer to players
@@ -123,12 +136,22 @@ public class TradingActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * helper method to create a trade offer
+     *
+     * @return the the created trade offer
+     */
     private TradeOffer createTradeOffer() {
+        this.tradeOffer = new TradeOffer();
         this.readValues(true);
         this.readValues(false);
         return tradeOffer;
     }
 
+    /**
+     * reads all values for offer or demand
+     * @param offerOrDemand offer=true,demand=false
+     */
     private void readValues(boolean offerOrDemand) {
         ArrayList<TextView> readTextViews;
         Resource.ResourceType readResource;

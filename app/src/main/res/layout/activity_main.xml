@@ -24,30 +24,6 @@
             android:saveEnabled="false"
             app:tabIndicatorColor="@color/colorAccent">
 
-            <android.support.design.widget.TabItem
-                android:id="@+id/p1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="P1" />
-
-            <android.support.design.widget.TabItem
-                android:id="@+id/p2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="P2" />
-
-            <android.support.design.widget.TabItem
-                android:id="@+id/p3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="P3" />
-
-            <android.support.design.widget.TabItem
-                android:id="@+id/p4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="P4" />
-
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -62,10 +38,14 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:layout_width="309dp"
-            android:layout_height="match_parent"
+            android:id="@+id/linearLayout2"
+            android:layout_width="224dp"
+            android:layout_height="0dp"
+            android:background="@color/colorBlack"
             android:orientation="horizontal"
-            android:background="@color/colorBlack">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -101,7 +81,6 @@
                     app:layout_constraintStart_toEndOf="@+id/grain_count"
                     app:layout_constraintTop_toBottomOf="@+id/ore_view"
                     app:layout_constraintVertical_bias="0.0"
-                    tools:text="8"
                     tools:textColor="@android:color/background_light" />
 
             </LinearLayout>
@@ -141,7 +120,6 @@
                     app:layout_constraintStart_toEndOf="@+id/grain_count"
                     app:layout_constraintTop_toBottomOf="@+id/ore_view"
                     app:layout_constraintVertical_bias="0.0"
-                    tools:text="8"
                     tools:textColor="@android:color/background_light" />
 
             </LinearLayout>
@@ -180,7 +158,6 @@
                     app:layout_constraintStart_toEndOf="@+id/grain_count"
                     app:layout_constraintTop_toBottomOf="@+id/ore_view"
                     app:layout_constraintVertical_bias="0.0"
-                    tools:text="8"
                     tools:textColor="@android:color/background_light" />
 
             </LinearLayout>
@@ -219,13 +196,12 @@
                     app:layout_constraintStart_toEndOf="@+id/grain_count"
                     app:layout_constraintTop_toBottomOf="@+id/ore_view"
                     app:layout_constraintVertical_bias="0.0"
-                    tools:text="8"
                     tools:textColor="@android:color/background_light" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="44dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
@@ -246,10 +222,10 @@
 
                 <TextView
                     android:id="@+id/grain_count"
-                    android:layout_width="match_parent"
+                    android:layout_width="40dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_gravity="end"
+                    android:baselineAligned="false"
                     android:gravity="center_horizontal"
                     android:text="@string/default_min_value"
                     android:textColor="@android:color/background_light"
@@ -258,71 +234,50 @@
                     app:layout_constraintStart_toEndOf="@+id/grain_count"
                     app:layout_constraintTop_toBottomOf="@+id/ore_view"
                     app:layout_constraintVertical_bias="0.0"
-                    tools:text="8"
                     tools:textColor="@android:color/background_light" />
 
             </LinearLayout>
 
-            <View
-                android:id="@+id/divider_left"
-                android:layout_width="1px"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="8dp"
-                android:layout_weight="0.1"
-                android:background="?android:attr/listDivider"
-                android:foreground="@android:color/background_light"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/cards"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="1dp"
-                android:layout_weight="1"
-                android:text="@string/cards"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/divider_left"
-                app:layout_constraintTop_toTopOf="parent" />
-
         </LinearLayout>
+
+        <View
+            android:id="@+id/divider_left"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:background="?android:attr/listDivider"
+            android:foreground="@android:color/background_light"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageButton
             android:id="@+id/dice_1"
             style="@android:style/Widget.DeviceDefault.ImageButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:background="@drawable/ic_dice_5"
             android:contentDescription="@string/dice_desc"
-            app:layout_constraintEnd_toStartOf="@+id/divider_right"
-            app:layout_constraintStart_toEndOf="@+id/cards"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/divider_left"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/dice_2"
             style="@android:style/Widget.DeviceDefault.ImageButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
             android:background="@drawable/ic_dice_5"
             android:contentDescription="@string/dice_desc"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/divider_right"
-            app:layout_constraintStart_toEndOf="@+id/cards" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/divider_right"
@@ -477,6 +432,7 @@
             android:clickable="true"
             android:cropToPadding="true"
             android:focusable="true"
+            android:focusableInTouchMode="false"
             app:backgroundTint="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/fab_build_options"
             app:layout_constraintEnd_toEndOf="@+id/fab_build_options"
@@ -516,6 +472,7 @@
             android:clickable="true"
             android:cropToPadding="true"
             android:focusable="true"
+            android:focusableInTouchMode="false"
             app:backgroundTint="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/fab_build_options"
             app:layout_constraintEnd_toEndOf="@+id/fab_build_options"
@@ -558,13 +515,57 @@
             android:adjustViewBounds="false"
             android:clickable="true"
             android:focusable="true"
-            android:focusableInTouchMode="true"
+            android:focusableInTouchMode="false"
             app:backgroundTint="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/fab_build_options"
             app:layout_constraintEnd_toEndOf="@+id/fab_build_options"
             app:layout_constraintStart_toStartOf="@+id/fab_build_options"
             app:layout_constraintTop_toTopOf="@+id/fab_build_options"
             app:srcCompat="@android:drawable/bottom_bar" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_cards"
+        android:layout_width="wrap_content"
+        android:layout_height="61dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_build_options"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/text_cards"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#c7c7c7"
+            android:padding="4dp"
+            android:text="@string/show_cards"
+            android:textStyle="bold" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_cards"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="false"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
+            app:backgroundTint="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="@+id/fab_build_options"
+            app:layout_constraintEnd_toEndOf="@+id/fab_build_options"
+            app:layout_constraintStart_toStartOf="@+id/fab_build_options"
+            app:layout_constraintTop_toTopOf="@+id/fab_build_options"
+            app:srcCompat="@android:drawable/ic_input_get" />
 
     </LinearLayout>
 

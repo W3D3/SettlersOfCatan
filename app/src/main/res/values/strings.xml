@@ -4,6 +4,7 @@
     <string name="build_settlement">Build Settlement</string>
     <string name="build_city">Build City</string>
     <string name="build_street">Build Street</string>
+    <string name="show_cards">Show Cards</string>
     <string name="victory_points">VP:</string>
     <!-- Resources -->
     <string name="resource_ore">Ore</string>
