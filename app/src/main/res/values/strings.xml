@@ -4,6 +4,7 @@
     <string name="build_settlement">Build Settlement</string>
     <string name="build_city">Build City</string>
     <string name="build_street">Build Street</string>
+    <string name="show_cards">Show Cards</string>
     <string name="victory_points">VP:</string>
     <!-- Resources -->
     <string name="resource_ore">Ore</string>
@@ -16,11 +17,13 @@
     <string name="end_of_turn_desc">end your turn</string>
     <string name="trading_desc">trade with other players</string>
     <!-- Trading -->
-    <string name="offer_header">Your Offer</string>
-    <string name="demand_header">Your Demand</string>
+    <string name="offer_header">You offer</string>
+    <string name="demand_header">You demand</string>
     <string name="trading_submit">Send Offer</string>
     <string name="ic_minus">decrease value by 1</string>
     <string name="ic_plus">increase value by 1</string>
+    <string name="accept_trade">Accept</string>
+    <string name="decline_trade">Decline</string>
     <!-- Cards -->
     <string name="cards_header">Your Cards</string>
     <string name="cards_submit">Use Cards</string>

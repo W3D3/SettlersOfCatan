@@ -1,6 +1,7 @@
 package io.swagslash.settlersofcatan;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,10 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
-import io.swagslash.settlersofcatan.pieces.items.Resource;
+import io.swagslash.settlersofcatan.utility.TradeHelper;
 import io.swagslash.settlersofcatan.utility.TradeOffer;
 
 public class TradingActivity extends AppCompatActivity {
@@ -21,24 +21,19 @@ public class TradingActivity extends AppCompatActivity {
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
-    private TradeOffer tradeOffer = new TradeOffer();
-    private HashSet<Integer> selectedPlayers = new HashSet<>();
+    private TradeOffer tradeOffer;
+    private Player offerer;
+    private List<Player> allOtherPlayers = new ArrayList<>();
+    private List<Player> selectedPlayers = new ArrayList<>();
 
-    private int min;
-    private int max;
+    private int min = 0;
+    private int max = 99;
+    private boolean sendOrCreate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trading);
-
-        // why this doesn't work beats me
-        /*
-        this.min = R.integer.default_min_value;
-        this.max = R.integer.default_max_value;
-        */
-        this.min = 0;
-        this.max = 99;
 
         this.offerTextViews.add((TextView) findViewById(R.id.ore_offerer_value));
         this.offerTextViews.add((TextView) findViewById(R.id.wood_offerer_value));
@@ -52,45 +47,58 @@ public class TradingActivity extends AppCompatActivity {
         this.demandTextViews.add((TextView) findViewById(R.id.grain_offeree_value));
         this.demandTextViews.add((TextView) findViewById(R.id.wool_offeree_value));
 
-        RecyclerView rv = findViewById(R.id.player_trading_list);
-        rv.addOnItemTouchListener(new RecyclerItemClickListener(this, rv, new ClickListener() {
-            @Override
-            public void onClick(View v, int pos) {
-                if (selectedPlayers.contains(pos)) {
-                    selectedPlayers.remove(pos);
-                    v.setBackgroundResource(android.R.drawable.editbox_dropdown_light_frame);
-                } else {
-                    selectedPlayers.add(pos);
-                    v.setBackgroundResource(android.R.drawable.editbox_dropdown_dark_frame);
+        Intent i = getIntent();
+        if (i.hasExtra(MainActivity.TRADINGINTENT)) {
+            // someone send an offer to trade
+            this.tradeOffer = (TradeOffer) i.getSerializableExtra(MainActivity.TRADINGINTENT);
+            // read values reversed (offer to demand and reverse)
+            sendOrCreate = true;
+        } else {
+            // you are creating an offer to trade
+            RecyclerView rv = findViewById(R.id.player_trading_list);
+            rv.addOnItemTouchListener(new RecyclerItemClickListener(this, rv, new ClickListener() {
+                /**
+                 * adds currently unselected player to all selected players
+                 * or
+                 * removes currently selected player from all selected players
+                 */
+                @Override
+                public void onClick(View v, int pos) {
+                    TextView tv = v.findViewById(R.id.player_name);
+                    Player tmp = SettlerApp.board.getPlayerByName(tv.getText().toString());
+                    if (selectedPlayers.contains(tmp)) {
+                        selectedPlayers.remove(tmp);
+                        v.setBackgroundResource(android.R.drawable.editbox_dropdown_light_frame);
+                    } else {
+                        selectedPlayers.add(tmp);
+                        v.setBackgroundResource(android.R.drawable.editbox_dropdown_dark_frame);
+                    }
                 }
-            }
 
-            @Override
-            public void onLongClick(View v, int pos) {
-                // do nothing
-            }
-        }));
-        rv.setHasFixedSize(true);
+                @Override
+                public void onLongClick(View v, int pos) {
+                    // do nothing
+                }
+            }));
+            rv.setHasFixedSize(true);
 
-        RecyclerView.LayoutManager rvl = new LinearLayoutManager(this);
-        rv.setLayoutManager(rvl);
+            RecyclerView.LayoutManager rvl = new LinearLayoutManager(this);
+            rv.setLayoutManager(rvl);
 
-        // TODO: get players
-        List<Player> players = new ArrayList<>();
+            // get all other players
+            offerer = SettlerApp.getPlayer();
+            allOtherPlayers = SettlerApp.board.getPlayers();
+            allOtherPlayers.remove(offerer);
 
-        Player a = new Player(null, 0, 0, "A");
-        Player b = new Player(null, 0, 0, "B");
-        Player c = new Player(null, 0, 0, "C");
-        Player d = new Player(null, 0, 0, "D");
-        players.add(a);
-        players.add(b);
-        players.add(c);
-        players.add(d);
-
-        RecyclerView.Adapter rva = new PlayerListAdapter(players);
-        rv.setAdapter(rva);
+            RecyclerView.Adapter rva = new PlayerListAdapter(allOtherPlayers);
+            rv.setAdapter(rva);
+            sendOrCreate = false;
+        }
     }
 
+    /**
+     * registers a click on minus or plus and in- or decreases the values of the corresponding textview
+     */
     @SuppressLint("DefaultLocale")
     public void onMinusPlusClick(View view) {
         String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
@@ -110,28 +118,46 @@ public class TradingActivity extends AppCompatActivity {
             default:
                 break;
         }
-        tv.setText(String.format("%02d", val));
-        //Debug.stopMethodTracing();
+        tv.setText(String.format(MainActivity.FORMAT, val));
     }
 
+    /**
+     * click method for submit, sends offer to selected players
+     *
+     * @param view clicked view (submit btn)
+     */
     public void onSubmit(View view) {
-        if (!selectedPlayers.isEmpty()) {
-            //TODO: send offer to players
-            Toast.makeText(getApplicationContext(), this.createTradeOffer().toString(), Toast.LENGTH_LONG).show();
+        if (sendOrCreate) {
+            // send TradeAccept ?
         } else {
-            Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
+            if (!selectedPlayers.isEmpty()) {
+                SettlerApp.getManager().sendToAll(this.createTradeOffer());
+            } else {
+                Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
+    /**
+     * helper method to create a trade offer
+     *
+     * @return the the created trade offer
+     */
     private TradeOffer createTradeOffer() {
+        this.tradeOffer = new TradeOffer(this.offerer);
+        this.tradeOffer.setPlayers(selectedPlayers);
         this.readValues(true);
         this.readValues(false);
         return tradeOffer;
     }
 
+    /**
+     * reads all values for offer or demand
+     *
+     * @param offerOrDemand offer=true,demand=false
+     */
     private void readValues(boolean offerOrDemand) {
         ArrayList<TextView> readTextViews;
-        Resource.ResourceType readResource;
         int readValue;
         String toastText;
 
@@ -145,12 +171,11 @@ public class TradingActivity extends AppCompatActivity {
 
         boolean empty = true;
         for (TextView tv : readTextViews) {
-            readResource = TradeOffer.convertStringToResource(getResources().getResourceEntryName(tv.getId()).split("_")[0]);
             readValue = Integer.parseInt(tv.getText().toString());
             if (readValue > min) {
                 empty = false;
             }
-            this.tradeOffer.addResource(readResource, readValue, offerOrDemand);
+            this.tradeOffer.addResource(TradeHelper.convertStringToResource(getResourceStringFromView(tv)), readValue, offerOrDemand);
         }
 
         if (empty) {
@@ -158,4 +183,12 @@ public class TradingActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Helper method to get the selected resource's string from the view's id
+     * @param v view to get resource from
+     * @return String to be converted to Resource.ResourceType
+     */
+    public String getResourceStringFromView(View v) {
+        return getResources().getResourceEntryName(v.getId()).split("_")[0];
+    }
 }
