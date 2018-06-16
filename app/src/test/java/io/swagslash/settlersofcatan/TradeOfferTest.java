@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
+import io.swagslash.settlersofcatan.utility.TradeHelper;
 import io.swagslash.settlersofcatan.utility.TradeOffer;
 
 public class TradeOfferTest {
@@ -13,7 +14,7 @@ public class TradeOfferTest {
 
     @Before
     public void init() {
-        this.to = new TradeOffer();
+        this.to = new TradeOffer(new Player(null, 0, 0, "A"));
     }
 
     @Test
@@ -46,15 +47,15 @@ public class TradeOfferTest {
 
     @Test
     public void checkConversion() {
-        Assert.assertEquals(TradeOffer.convertStringToResource("ore"), Resource.ResourceType.ORE);
-        Assert.assertEquals(TradeOffer.convertStringToResource("graiN"), Resource.ResourceType.GRAIN);
-        Assert.assertEquals(TradeOffer.convertStringToResource("brIck"), Resource.ResourceType.BRICK);
-        Assert.assertEquals(TradeOffer.convertStringToResource("wood"), Resource.ResourceType.WOOD);
-        Assert.assertEquals(TradeOffer.convertStringToResource("Wool"), Resource.ResourceType.WOOL);
-        Assert.assertEquals(TradeOffer.convertStringToResource("Nothing"), Resource.ResourceType.NOTHING);
+        Assert.assertEquals(TradeHelper.convertStringToResource("ore"), Resource.ResourceType.ORE);
+        Assert.assertEquals(TradeHelper.convertStringToResource("graiN"), Resource.ResourceType.GRAIN);
+        Assert.assertEquals(TradeHelper.convertStringToResource("brIck"), Resource.ResourceType.BRICK);
+        Assert.assertEquals(TradeHelper.convertStringToResource("wood"), Resource.ResourceType.WOOD);
+        Assert.assertEquals(TradeHelper.convertStringToResource("Wool"), Resource.ResourceType.WOOL);
+        Assert.assertEquals(TradeHelper.convertStringToResource("Nothing"), Resource.ResourceType.NOTHING);
 
-        Assert.assertEquals(TradeOffer.convertStringToResource("kiahsfd"), Resource.ResourceType.NOTHING);
-        Assert.assertEquals(TradeOffer.convertStringToResource("235"), Resource.ResourceType.NOTHING);
+        Assert.assertEquals(TradeHelper.convertStringToResource("kiahsfd"), Resource.ResourceType.NOTHING);
+        Assert.assertEquals(TradeHelper.convertStringToResource("235"), Resource.ResourceType.NOTHING);
     }
 
     @Test

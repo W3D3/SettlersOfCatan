@@ -2,6 +2,7 @@ package io.swagslash.settlersofcatan;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.hardware.Sensor;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -27,6 +29,7 @@ import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
@@ -43,13 +46,16 @@ import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Dice;
 import io.swagslash.settlersofcatan.utility.DiceSix;
+import io.swagslash.settlersofcatan.utility.TradeHelper;
 import io.swagslash.settlersofcatan.utility.TradeOffer;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener, INetworkCallback {
 
-    public static final String FORMAT = "%02d";
     // constants
     private static final int FABMENUDISTANCE = 160;
+    public static final String FORMAT = "%02d";
+    public static final String TRADINGINTENT = "trading";
+
     // views
     protected Button cards;
     protected ImageButton diceOne;
@@ -89,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("test", Resource.ResourceType.BRICK.name());
 
         this.setupHexView();
         network = SettlerApp.getManager();
@@ -279,31 +286,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent in = new Intent(this, DisplayCardsActivity.class);
                 startActivity(in);
                 break;
-//            case R.id.dice_1:
-//                if(!itsMyTurn()) {
-//                    Log.d("PLAYER", "NOT MY TURN, cant roll dice.");
-//                    return;
-//                }
-//                if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
-//                    return;
-//                Random random = new Random();
-//                Integer max = 6;
-//                Integer min = 1;
-//                int dice1 = random.nextInt((max - min) + 1) + min;
-//                int dice2 = random.nextInt((max - min) + 1) + min;
-//                DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), dice1, dice2);
-//                GameController.getInstance().handleDiceRolls(dice1,dice2);
-//                SettlerApp.getManager().sendToAll(roll);
-//                int sum = dice1 + dice2;
-//                Log.d("DICE", "ROLLED " + dice1 + " / " + dice2 + " SUM: " + sum);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        updateResources();
-//                    }
-//                });
-//                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
-//                break;
             case R.id.end_of_turn:
                 if (!itsMyTurn()) {
                     Log.d("PLAYER", "NOT HIS TURN!");
@@ -464,6 +446,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         updateDice();
                     }
                 });
+            } else if (object instanceof TradeOffer) {
+                final TradeOffer to = (TradeOffer) object;
+                List<Player> selectedPlayers = to.getPlayers();
+                if (selectedPlayers.contains(player)) {
+                    final AlertDialog.Builder b = new AlertDialog.Builder(getApplicationContext());
+                    b.setMessage(to.getOfferer().getPlayerName() + " wants to trade with you.");
+                    b.setPositiveButton(R.string.accept_trade, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // start activity_trading with send offer
+                            Intent in2 = new Intent(b.getContext(), TradingActivity.class);
+                            in2.putExtra(TRADINGINTENT, to);
+                            startActivity(in2);
+                        }
+                    });
+                    b.setNegativeButton(R.string.decline_trade, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // send TradeDecline ?
+                        }
+                    });
+                    b.create().show();
+                }
             }
         }
     }
@@ -535,16 +540,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateResources() {
         Inventory inv = SettlerApp.getPlayer().getInventory();
         for (TextView tv : resourceVals) {
-            Resource.ResourceType tmp = TradeOffer.convertStringToResource(getResources().getResourceEntryName(tv.getId()).split("_")[0]);
-            tv.setText(String.format(FORMAT, Integer.parseInt(inv.countResource(tmp).toString())));
+            tv.setText(String.format(FORMAT, inv.countResource(TradeHelper.convertStringToResource(getResourceStringFromView(tv)))));
         }
-        /*
-        this.oreCount.setText(inv.countResource(Resource.ResourceType.ORE).toString());
-        this.bricksCount.setText(inv.countResource(Resource.ResourceType.BRICK).toString());
-        this.woodCount.setText(inv.countResource(Resource.ResourceType.WOOD).toString());
-        this.woolCount.setText(inv.countResource(Resource.ResourceType.WOOL).toString());
-        this.grainCount.setText(inv.countResource(Resource.ResourceType.GRAIN).toString());
-        */
     }
 
     /**
@@ -563,5 +560,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (b) {
             view.performClick();
         }
+    }
+
+    /**
+     * Helper method to get the selected resource's string from the view's id
+     *
+     * @param v view to get resource from
+     * @return String to be converted to Resource.ResourceType
+     */
+    public String getResourceStringFromView(View v) {
+        return getResources().getResourceEntryName(v.getId()).split("_")[0];
     }
 }
