@@ -73,10 +73,9 @@ public class Monopoly extends DevelopmentCard {
             }
         });
         int sumMonopoly = 0;
-        for (Player p : b.getPlayers()
-                ) {
+        for (Player p : b.getPlayers()) {
             Integer countResourceMonopol = p.getInventory().getResourceHand().get(this.resourceType);
-            p.getInventory().resourceHand.put(this.resourceType, 0);
+            p.getInventory().getResourceHand().put(this.resourceType, 0);
             sumMonopoly = sumMonopoly + countResourceMonopol;
         }
         builder.setTitle("Monopol");
@@ -84,7 +83,7 @@ public class Monopoly extends DevelopmentCard {
         builder.create();
 
         //Alle Resourcenkarten den auspielenden Spieler geben
-        b.getPlayerById(player.getPlayerNumber()).getInventory().resourceHand.put(this.resourceType, sumMonopoly);
+        b.getPlayerById(player.getPlayerNumber()).getInventory().getResourceHand().put(this.resourceType, sumMonopoly);
         player.getInventory().removeDeploymentCardHand(this);
         return b;
     }
