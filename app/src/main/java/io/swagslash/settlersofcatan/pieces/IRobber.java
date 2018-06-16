@@ -12,16 +12,14 @@ public abstract class IRobber implements IDrawable {
     Hex currentHex;
 
     /**
-     * Gets the adjacent Players to a Hex, where currentPlayer is excluded
+     * Gets the adjacent Players to the current @link{Hex}, where currentPlayer is excluded
      *
      * @param currentPlayer The current player
-     * @param hex           The hex where the robber will be positioned
      * @return The list of robbable players
      */
-    public abstract List<Player> getRobbablePlayers(Player currentPlayer, Hex hex);
+    public abstract List<Player> getRobbablePlayers(Player currentPlayer);
 
     /**
-     * STATIC METHOD
      * Robs the player
      *
      * @param robber       The player to get the stolen resources
@@ -30,8 +28,6 @@ public abstract class IRobber implements IDrawable {
     public static void rob(Player robber, Player robbedPlayer) {
         return;
     }
-
-    ;
 
     public Hex getCurrentHex() {
         return currentHex;
