@@ -7,6 +7,7 @@ import android.graphics.Region;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.Robber;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -185,9 +186,8 @@ public class Hex {
         return robber;
     }
 
-    public void setRobber(IRobber robber) {
-        this.robber = robber;
-        robber.setCurrentHex(this);
+    public void setRobber() {
+        this.robber = new Robber(this);
     }
 
     public void removeRobber() {

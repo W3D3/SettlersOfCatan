@@ -29,10 +29,18 @@ public abstract class IRobber implements IDrawable {
         return;
     }
 
+    /**
+     * Gets the current Hex
+     *
+     * @return the hex that the robber is standing on
+     */
     public Hex getCurrentHex() {
         return currentHex;
     }
 
+    /**
+     * Sets the current hex that this Robber is standing on
+     */
     public void setCurrentHex(Hex currentHex) {
         this.currentHex = currentHex;
     }
