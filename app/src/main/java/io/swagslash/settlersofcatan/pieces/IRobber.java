@@ -27,7 +27,7 @@ public abstract class IRobber implements IDrawable {
      * @param currentPlayer The current player
      * @return The list of robbable players
      */
-    public abstract List<Player> getRobbablePlayers(Player currentPlayer, Hex hex);
+    public abstract List<Player> getRobbablePlayers(Player currentPlayer);
 
     /**
      * Gets the current Hex
