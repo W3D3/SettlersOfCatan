@@ -78,9 +78,9 @@ public class Robber extends IRobber {
     */
 
     @Override
-    public List<Player> getRobbablePlayers(Player currentPlayer, Hex hex) {
+    public List<Player> getRobbablePlayers(Player currentPlayer) {
         List<Player> robbablePlayer = new ArrayList<Player>();
-        for (Vertex vertex : currentField.getVertices()) {
+        for (Vertex vertex : this.currentField.getVertices()) {
             //Abfrage ob  Vertex besetzt ist (Spieler besitzt eine Siedlung bzw. eine Stadt)
             if (vertex.getOwner() != null) {
                 if (!robbablePlayer.contains(vertex.getOwner())) {
