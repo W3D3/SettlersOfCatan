@@ -1,6 +1,5 @@
 package io.swagslash.settlersofcatan.utility;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,17 +8,17 @@ import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
-public class TradeOffer extends GameAction implements Serializable {
+public class TradeOfferAction extends GameAction {
 
     private HashMap<Resource.ResourceType, Integer> offer = new HashMap<>();
     private HashMap<Resource.ResourceType, Integer> demand = new HashMap<>();
     private List<Player> selectedPlayers = new ArrayList<>();
 
-    public TradeOffer() {
+    public TradeOfferAction() {
 
     }
 
-    public TradeOffer(Player actor) {
+    public TradeOfferAction(Player actor) {
         super(actor);
         for (Resource.ResourceType tmp : Resource.ResourceType.values()) {
             offer.put(tmp, 0);
@@ -59,9 +58,17 @@ public class TradeOffer extends GameAction implements Serializable {
         this.selectedPlayers = selectedPlayers;
     }
 
+    public HashMap<Resource.ResourceType, Integer> getOffer() {
+        return offer;
+    }
+
+    public HashMap<Resource.ResourceType, Integer> getDemand() {
+        return demand;
+    }
+
     @Override
     public String toString() {
-        return "TradeOffer{" +
+        return "TradeOfferAction{" +
                 "offer=" + offer +
                 ", demand=" + demand +
                 ", selectedPlayers=" + selectedPlayers +

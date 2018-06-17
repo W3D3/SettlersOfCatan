@@ -6,15 +6,15 @@ import org.junit.Test;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.TradeHelper;
-import io.swagslash.settlersofcatan.utility.TradeOffer;
+import io.swagslash.settlersofcatan.utility.TradeOfferAction;
 
-public class TradeOfferTest {
+public class TradeOfferActionTest {
 
-    private TradeOffer to;
+    private TradeOfferAction to;
 
     @Before
     public void init() {
-        this.to = new TradeOffer(new Player(null, 0, 0, "A"));
+        this.to = new TradeOfferAction(new Player(null, 0, 0, "A"));
     }
 
     @Test

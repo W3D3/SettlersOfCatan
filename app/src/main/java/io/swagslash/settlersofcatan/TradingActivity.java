@@ -13,15 +13,18 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.TradeHelper;
-import io.swagslash.settlersofcatan.utility.TradeOffer;
+import io.swagslash.settlersofcatan.utility.TradeOfferAction;
+import io.swagslash.settlersofcatan.utility.TradeOfferIntent;
 
 public class TradingActivity extends AppCompatActivity {
 
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
-    private TradeOffer tradeOffer;
+    private TradeOfferAction tradeOfferAction;
+    private TradeOfferIntent tradeOfferIntent;
     private Player offerer;
     private List<Player> allOtherPlayers = new ArrayList<>();
     private List<Player> selectedPlayers = new ArrayList<>();
@@ -50,8 +53,8 @@ public class TradingActivity extends AppCompatActivity {
         Intent i = getIntent();
         if (i.hasExtra(MainActivity.TRADINGINTENT)) {
             // someone send an offer to trade
-            this.tradeOffer = (TradeOffer) i.getSerializableExtra(MainActivity.TRADINGINTENT);
-            // read values reversed (offer to demand and reverse)
+            this.tradeOfferIntent = (TradeOfferIntent) i.getSerializableExtra(MainActivity.TRADINGINTENT);
+            this.writeValues(tradeOfferIntent);
             sendOrCreate = true;
         } else {
             // you are creating an offer to trade
@@ -143,12 +146,24 @@ public class TradingActivity extends AppCompatActivity {
      *
      * @return the the created trade offer
      */
-    private TradeOffer createTradeOffer() {
-        this.tradeOffer = new TradeOffer(this.offerer);
-        this.tradeOffer.setPlayers(selectedPlayers);
+    private TradeOfferAction createTradeOffer() {
+        this.tradeOfferAction = new TradeOfferAction(this.offerer);
+        this.tradeOfferAction.setPlayers(selectedPlayers);
         this.readValues(true);
         this.readValues(false);
-        return tradeOffer;
+        return tradeOfferAction;
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void writeValues(TradeOfferIntent toi) {
+        for (TextView tv : this.offerTextViews) {
+            Resource.ResourceType resource = TradeHelper.convertStringToResource(getResourceStringFromView(tv));
+            tv.setText(String.format(MainActivity.FORMAT, toi.getResource(resource, false)));
+        }
+        for (TextView tv : this.demandTextViews) {
+            Resource.ResourceType resource = TradeHelper.convertStringToResource(getResourceStringFromView(tv));
+            tv.setText(String.format(MainActivity.FORMAT, toi.getResource(resource, true)));
+        }
     }
 
     /**
@@ -175,7 +190,7 @@ public class TradingActivity extends AppCompatActivity {
             if (readValue > min) {
                 empty = false;
             }
-            this.tradeOffer.addResource(TradeHelper.convertStringToResource(getResourceStringFromView(tv)), readValue, offerOrDemand);
+            this.tradeOfferAction.addResource(TradeHelper.convertStringToResource(getResourceStringFromView(tv)), readValue, offerOrDemand);
         }
 
         if (empty) {

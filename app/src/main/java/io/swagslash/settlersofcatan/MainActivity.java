@@ -47,7 +47,8 @@ import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Dice;
 import io.swagslash.settlersofcatan.utility.DiceSix;
 import io.swagslash.settlersofcatan.utility.TradeHelper;
-import io.swagslash.settlersofcatan.utility.TradeOffer;
+import io.swagslash.settlersofcatan.utility.TradeOfferAction;
+import io.swagslash.settlersofcatan.utility.TradeOfferIntent;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener, INetworkCallback {
 
@@ -446,8 +447,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         updateDice();
                     }
                 });
-            } else if (object instanceof TradeOffer) {
-                final TradeOffer to = (TradeOffer) object;
+            } else if (object instanceof TradeOfferAction) {
+                final TradeOfferAction to = (TradeOfferAction) object;
                 List<Player> selectedPlayers = to.getPlayers();
                 if (selectedPlayers.contains(player)) {
                     final AlertDialog.Builder b = new AlertDialog.Builder(this);
@@ -456,8 +457,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             // start activity_trading with send offer
+                            // create TradeOfferIntent, because TradeOfferAction (because of Player
+                            // and Board and Inventory etc. etc.) isn't serializable
                             Intent in2 = new Intent(b.getContext(), TradingActivity.class);
-                            in2.putExtra(TRADINGINTENT, to);
+                            in2.putExtra(TRADINGINTENT, createFromAction(to));
                             startActivity(in2);
                         }
                     });
@@ -575,5 +578,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     public String getResourceStringFromView(View v) {
         return getResources().getResourceEntryName(v.getId()).split("_")[0];
+    }
+
+    private TradeOfferIntent createFromAction(TradeOfferAction to) {
+        TradeOfferIntent toi = new TradeOfferIntent();
+        toi.setOfferer(to.getActor().getPlayerName());
+        toi.setOfferee(player.getPlayerName());
+        toi.setOffer(to.getOffer());
+        toi.setDemand(to.getDemand());
+        return toi;
     }
 }
