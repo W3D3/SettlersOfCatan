@@ -1,6 +1,8 @@
 package io.swagslash.settlersofcatan;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.hardware.Sensor;
@@ -24,6 +26,9 @@ import android.widget.Toast;
 import com.esotericsoftware.kryonet.Connection;
 import com.otaliastudios.zoom.ZoomEngine;
 import com.otaliastudios.zoom.ZoomLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
@@ -83,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         network = SettlerApp.getManager();
         network.switchIn(this);
         //setContentView(R.layout.activity_main);
-
 
         TabLayout tabs = findViewById(R.id.tabs);
         for (View view : tabs.getTouchables()) {
@@ -214,10 +218,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_SETTLEMENT);
-                    hexView.showFreeSettlements();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateVerticePaths();
+                            hexView.redraw();
+                        }
+                    });
                 } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
-                    hexView.showFreeSettlements();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateVerticePaths();
+                            hexView.redraw();
+                        }
+                    });
                 }
 
                 break;
@@ -235,37 +251,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_ROAD);
-                    hexView.showFreeSettlements();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateEdgePaths();
+                            hexView.redraw();
+                        }
+                    });
                 } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_ROAD) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
-                    hexView.showFreeSettlements();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateEdgePaths();
+                            hexView.redraw();
+                        }
+                    });
                 }
                 break;
-//            case R.id.dice_1:
-//                if(!itsMyTurn()) {
-//                    Log.d("PLAYER", "NOT MY TURN, cant roll dice.");
-//                    return;
-//                }
-//                if (SettlerApp.board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
-//                    return;
-//                Random random = new Random();
-//                Integer max = 6;
-//                Integer min = 1;
-//                int dice1 = random.nextInt((max - min) + 1) + min;
-//                int dice2 = random.nextInt((max - min) + 1) + min;
-//                DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), dice1, dice2);
-//                GameController.getInstance().handleDiceRolls(dice1,dice2);
-//                SettlerApp.getManager().sendToAll(roll);
-//                int sum = dice1 + dice2;
-//                Log.d("DICE", "ROLLED " + dice1 + " / " + dice2 + " SUM: " + sum);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        updateResources();
-//                    }
-//                });
-//                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
-//                break;
             case R.id.end_of_turn:
                 if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT HIS TURN!");
@@ -294,6 +297,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void choosePlayer(final List<Player> players) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Choose an animal");
+
+
+        List<String> playerNames = new ArrayList<>();
+        for (Player player : players) {
+            playerNames.add(player.getPlayerName());
+        }
+        String[] arr = playerNames.toArray(new String[playerNames.size()]);
+
+
+        builder.setItems(arr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                GameController.getInstance().rob(board.getPlayerById(which));
+
+                switch (which) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3: // sheep
+                    case 4: // goat
+                }
+            }
+        });
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void toogleFabMenu() {
         if (this.fabOpen) {
             this.layoutSettlement.startAnimation(closeMenu);
@@ -315,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupHexView() {
-        hexView = new HexView(getApplicationContext());
+        hexView = new HexView(this);
 
         if (BuildConfig.DEBUG) {
             // do something for a debug build

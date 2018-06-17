@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class Inventory {
 
-    Map<Resource.ResourceType, Integer> resourceHand;
-    Map<DevelopmentCard, Integer> deploymentCardHand;
+    private Map<Resource.ResourceType, Integer> resourceHand;
+    private Map<DevelopmentCard, Integer> deploymentCardHand;
 
     public Inventory() {
         this.resourceHand = new HashMap<>();

@@ -154,6 +154,6 @@ public class Player {
 
     @Override
     public String toString() {
-        return "(id: " + this.playerNumber + ") " + playerName;
+        return "(id: " + this.playerNumber + ") " + playerName + " color: " + getColor();
     }
 }
