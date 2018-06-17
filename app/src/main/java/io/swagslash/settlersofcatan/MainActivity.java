@@ -450,8 +450,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 final TradeOffer to = (TradeOffer) object;
                 List<Player> selectedPlayers = to.getPlayers();
                 if (selectedPlayers.contains(player)) {
-                    final AlertDialog.Builder b = new AlertDialog.Builder(getApplicationContext());
-                    b.setMessage(to.getOfferer().getPlayerName() + " wants to trade with you.");
+                    final AlertDialog.Builder b = new AlertDialog.Builder(this);
+                    b.setMessage(to.getActor().getPlayerName() + " wants to trade with you.");
                     b.setPositiveButton(R.string.accept_trade, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -467,7 +467,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // send TradeDecline ?
                         }
                     });
-                    b.create().show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            b.show();
+                        }
+                    });
                 }
             }
         }
