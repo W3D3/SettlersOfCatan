@@ -9,6 +9,7 @@ import com.esotericsoftware.kryonet.Connection;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,11 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
 
         network.init(this);
         frag = (LobbyMemberFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_lobby);
+        try {
+            frag.addMember(new NetworkDevice(SettlerApp.getPlayer().getPlayerName(),InetAddress.getByName("localhost")));
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -70,7 +76,8 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
             SettlerApp.getManager().destroy();
             SettlerApp.setNetwork(new GameClient());
 
-            super.onBackPressed();
+            Intent i = new Intent(getApplicationContext(), BrowserActivity.class);
+            startActivity(i);
         }
         else{
             super.onBackPressed();

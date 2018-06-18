@@ -111,4 +111,5 @@
     <string name="btn_play">Play Game</string>
     <string name="btn_discover">Discover Lobbies</string>
     <string name="btn_create_lobby">Create Lobby</string>
+    <string name="btn_direct_connect">Direct Connect</string>
 </resources>
