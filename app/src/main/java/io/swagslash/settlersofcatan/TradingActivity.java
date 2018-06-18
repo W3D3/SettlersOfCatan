@@ -14,9 +14,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Trade;
 import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
+import io.swagslash.settlersofcatan.utility.TradeDeclineAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferIntent;
 
@@ -32,6 +34,7 @@ public class TradingActivity extends AppCompatActivity {
     private TradeAcceptAction tradeAcceptAction;
     private TradeOfferAction tradeOfferAction;
     private TradeOfferIntent tradeOfferIntent;
+    private TradeDeclineAction tradeDeclineAction;
     private Player current;
     private List<Player> allOtherPlayers = new ArrayList<>();
     private List<Player> selectedPlayers = new ArrayList<>();
@@ -39,6 +42,8 @@ public class TradingActivity extends AppCompatActivity {
     private int min = 0;
     private int max = 99;
     private boolean sendOrCreate;
+
+    private AbstractNetworkManager anm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class TradingActivity extends AppCompatActivity {
         this.demandTextViews.add((TextView) findViewById(R.id.wool_offeree_value));
 
         current = SettlerApp.getPlayer();
+        anm = SettlerApp.getManager();
 
         Intent i = getIntent();
         if (i.hasExtra(TRADEOFFERINTENT)) {
@@ -152,14 +158,17 @@ public class TradingActivity extends AppCompatActivity {
             // update your resources ?
 
             // send TradeAccept
-            TradeAcceptAction taa = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, current);
-            SettlerApp.getManager().sendToAll(taa);
+            this.tradeAcceptAction = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()));
+            anm.sendToAll(this.tradeAcceptAction);
+            finish();
         } else {
             if (!selectedPlayers.isEmpty()) {
                 this.tradeOfferAction = Trade.createTradeOfferAction(selectedPlayers, current);
                 this.readValues(this.tradeOfferAction, true);
                 this.readValues(this.tradeOfferAction, false);
-                SettlerApp.getManager().sendToAll(this.tradeOfferAction);
+                Toast.makeText(this, "sending ...", Toast.LENGTH_SHORT).show();
+                anm.sendToAll(this.tradeOfferAction);
+                finish();
             } else {
                 Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
             }
@@ -170,7 +179,8 @@ public class TradingActivity extends AppCompatActivity {
     public void onBackPressed() {
         // send TradeDecline
         if (sendOrCreate) {
-            SettlerApp.getManager().sendToAll(Trade.createTradeDeclineActionFromIntent(this.tradeOfferIntent, current));
+            this.tradeDeclineAction = Trade.createTradeDeclineActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()));
+            SettlerApp.getManager().sendToAll(this.tradeDeclineAction);
         }
         super.onBackPressed();
     }

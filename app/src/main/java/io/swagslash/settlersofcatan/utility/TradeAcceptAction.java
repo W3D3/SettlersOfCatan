@@ -21,4 +21,11 @@ public class TradeAcceptAction extends TradeOfferAction {
     public void setAcceptor(Player acceptor) {
         this.acceptor = acceptor;
     }
+
+    @Override
+    public String toString() {
+        return "TradeAcceptAction{" +
+                "acceptor=" + acceptor +
+                '}';
+    }
 }

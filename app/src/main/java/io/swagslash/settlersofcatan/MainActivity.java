@@ -459,6 +459,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         updateDice();
                     }
                 });
+            } else if (object instanceof TradeAcceptAction) {
+                TradeAcceptAction taa = (TradeAcceptAction) object;
+                Log.d("trade", taa.toString());
+                if (itIsYou) {
+                    // you are the one who created the offer
+                    if (!t.getAcceptedTrade().contains(taa.getId())) {
+                        // if not already accepted
+                        // update your resources ?
+
+                        t.getAcceptedTrade().add(taa.getId());
+                        final String tmp = taa.getAcceptor().getPlayerName() + " accepted your trade offer";
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // show toast
+                                Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            } else if (object instanceof TradeDeclineAction) {
+                TradeDeclineAction tda = (TradeDeclineAction) object;
+                if (itIsYou) {
+                    // you are the one who created the offer
+                    // remove declining player from pendingTradeWith
+                    t.getPendingTradeWith().remove(tda.getDenier());
+                    final String tmp = tda.getDenier().getPlayerName() + " declined your trade offer";
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // show toast
+                            Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             } else if (object instanceof TradeOfferAction) {
                 final TradeOfferAction to = (TradeOfferAction) object;
                 if (itIsYou) {
@@ -491,40 +526,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void run() {
                             b.show();
-                        }
-                    });
-                }
-            } else if (object instanceof TradeAcceptAction) {
-                TradeAcceptAction taa = (TradeAcceptAction) object;
-                if (itIsYou) {
-                    // you are the one who created the offer
-                    if (!t.getAcceptedTrade().contains(taa.getId())) {
-                        // if not already accepted
-                        // update your resources ?
-
-                        t.getAcceptedTrade().add(taa.getId());
-                        final String tmp = taa.getAcceptor().getPlayerName() + " accepted your trade offer";
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // show toast
-                                Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                }
-            } else if (object instanceof TradeDeclineAction) {
-                TradeDeclineAction tda = (TradeDeclineAction) object;
-                if (itIsYou) {
-                    // you are the one who created the offer
-                    // remove declining player from pendingTradeWith
-                    t.getPendingTradeWith().remove(tda.getDenier());
-                    final String tmp = tda.getDenier().getPlayerName() + " declined your trade offer";
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // show toast
-                            Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

@@ -49,7 +49,7 @@ public class Trade {
      * @return the the created TradeDeclineAction
      */
     public static TradeDeclineAction createTradeDeclineAction(TradeOfferAction to, Player denier) {
-        TradeDeclineAction tda = new TradeDeclineAction();
+        TradeDeclineAction tda = new TradeDeclineAction(to.getActor());
         tda.setId(to.getId());
         tda.setDenier(denier);
         return tda;
@@ -61,7 +61,7 @@ public class Trade {
      * @return the the created TradeDeclineAction
      */
     public static TradeDeclineAction createTradeDeclineActionFromIntent(TradeOfferIntent toi, Player denier) {
-        TradeDeclineAction tda = new TradeDeclineAction();
+        TradeDeclineAction tda = new TradeDeclineAction(denier);
         tda.setId(toi.getId());
         tda.setDenier(denier);
         return tda;
@@ -73,7 +73,7 @@ public class Trade {
      * @return the the created TradeAcceptAction
      */
     public static TradeAcceptAction createTradeAcceptActionFromIntent(TradeOfferIntent toi, Player acceptor) {
-        TradeAcceptAction taa = new TradeAcceptAction();
+        TradeAcceptAction taa = new TradeAcceptAction(acceptor);
         taa.setId(toi.getId());
         taa.setAcceptor(acceptor);
         taa.setDemand(toi.getDemand());

@@ -13,7 +13,6 @@ public class TradeOfferAction extends GameAction {
     private int id;
     private HashMap<Resource.ResourceType, Integer> offer = new HashMap<>();
     private HashMap<Resource.ResourceType, Integer> demand = new HashMap<>();
-    private Player offerer;
     private List<Player> selectedOfferees = new ArrayList<>();
 
     TradeOfferAction() {
@@ -50,14 +49,6 @@ public class TradeOfferAction extends GameAction {
         } else {
             throw new IllegalArgumentException("wrong resource type");
         }
-    }
-
-    public Player getOfferer() {
-        return offerer;
-    }
-
-    public void setOfferer(Player offerer) {
-        this.offerer = offerer;
     }
 
     public List<Player> getSelectedOfferees() {
