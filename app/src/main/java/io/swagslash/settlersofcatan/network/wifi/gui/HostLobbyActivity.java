@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.esotericsoftware.kryonet.Connection;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +50,13 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
         try {
             frag.addMember(new NetworkDevice(SettlerApp.getPlayer().getPlayerName(),InetAddress.getByName("localhost")));
         } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        TextView tv = findViewById(R.id.tvHostAddress);
+        try {
+            tv.setText("Your Address: " + AbstractNetworkManager.ip());
+        } catch (SocketException e) {
             e.printStackTrace();
         }
 

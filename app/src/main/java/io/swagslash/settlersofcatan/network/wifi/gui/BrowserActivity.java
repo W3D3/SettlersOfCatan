@@ -11,6 +11,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -29,6 +30,8 @@ import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.MyLobbyServiceRecyclerViewAdapter;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
+
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 public class BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, INetworkCallback {
 
@@ -59,7 +62,13 @@ public class BrowserActivity extends AppCompatActivity implements MyLobbyService
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                lobbies.setLobbies(foundLobbies);
+                                if(foundLobbies.size() == 0){
+                                    Toast.makeText(BrowserActivity.this, "No lobbies found", Toast.LENGTH_LONG).show();
+                                    lobbies.setLobbies(new ArrayList<NetworkDevice>());
+                                }else{
+                                    lobbies.setLobbies(foundLobbies);
+                                }
+
                             }
                         });
                     }
@@ -98,8 +107,9 @@ public class BrowserActivity extends AppCompatActivity implements MyLobbyService
                     public void onClick(DialogInterface dialog, int which) {
                         try {
                             new EstablishConnection(InetAddress.getByName(input.getText().toString())).execute();
-                        } catch (UnknownHostException e) {
-                            e.printStackTrace();
+                        } catch (Exception e){
+                            Log.d(TAG,"Unable to connect to host with address"+ input.getText().toString());
+                            dialog.cancel();
                         }
                     }
                 });
