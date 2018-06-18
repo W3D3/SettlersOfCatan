@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.esotericsoftware.kryonet.Connection;
 
@@ -56,14 +57,22 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStartGame:
-                List<String> players = new ArrayList<>();
-                for (NetworkDevice nd : network.getDevices()) {
-                    players.add(nd.getDeviceName());
+                if (network.getDevices().size() > 1) {
+                    List<String> players = new ArrayList<>();
+                    for (NetworkDevice nd : network.getDevices()) {
+                        players.add(nd.getDeviceName());
+                    }
+                    SettlerApp.generateBoard(players);
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    network.switchOut();
+                    startActivity(i);
+                } else {
+                    if (network.getDevices().size() > 4) {
+                        Toast.makeText(this, "More than 4 Players are not allowed", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "You need at least to Players to start a game", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                SettlerApp.generateBoard(players);
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                network.switchOut();
-                startActivity(i);
                 break;
             case R.id.btnCloseLobby:
                 closeLobby();
