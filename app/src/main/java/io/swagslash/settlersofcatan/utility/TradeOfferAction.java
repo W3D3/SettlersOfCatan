@@ -10,11 +10,13 @@ import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class TradeOfferAction extends GameAction {
 
+    private int id;
     private HashMap<Resource.ResourceType, Integer> offer = new HashMap<>();
     private HashMap<Resource.ResourceType, Integer> demand = new HashMap<>();
-    private List<Player> selectedPlayers = new ArrayList<>();
+    private Player offerer;
+    private List<Player> selectedOfferees = new ArrayList<>();
 
-    public TradeOfferAction() {
+    TradeOfferAction() {
 
     }
 
@@ -50,20 +52,44 @@ public class TradeOfferAction extends GameAction {
         }
     }
 
-    public List<Player> getPlayers() {
-        return selectedPlayers;
+    public Player getOfferer() {
+        return offerer;
     }
 
-    public void setPlayers(List<Player> selectedPlayers) {
-        this.selectedPlayers = selectedPlayers;
+    public void setOfferer(Player offerer) {
+        this.offerer = offerer;
+    }
+
+    public List<Player> getSelectedOfferees() {
+        return selectedOfferees;
+    }
+
+    public void setSelectedOfferees(List<Player> selectedOfferees) {
+        this.selectedOfferees = selectedOfferees;
     }
 
     public HashMap<Resource.ResourceType, Integer> getOffer() {
         return offer;
     }
 
+    public void setOffer(HashMap<Resource.ResourceType, Integer> offer) {
+        this.offer = offer;
+    }
+
     public HashMap<Resource.ResourceType, Integer> getDemand() {
         return demand;
+    }
+
+    public void setDemand(HashMap<Resource.ResourceType, Integer> demand) {
+        this.demand = demand;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -71,7 +97,7 @@ public class TradeOfferAction extends GameAction {
         return "TradeOfferAction{" +
                 "offer=" + offer +
                 ", demand=" + demand +
-                ", selectedPlayers=" + selectedPlayers +
+                ", selectedOfferees=" + selectedOfferees +
                 '}';
     }
 }

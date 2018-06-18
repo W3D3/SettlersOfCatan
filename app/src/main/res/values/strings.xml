@@ -22,8 +22,9 @@
     <string name="trading_submit">Send Offer</string>
     <string name="ic_minus">decrease value by 1</string>
     <string name="ic_plus">increase value by 1</string>
-    <string name="accept_trade">Accept</string>
-    <string name="decline_trade">Decline</string>
+    <string name="look_trade">View Offer</string>
+    <string name="accept_trade">Accept Offer</string>
+    <string name="decline_trade">Decline to trade</string>
     <!-- Cards -->
     <string name="cards_header">Your Cards</string>
     <string name="cards_submit">Use Cards</string>

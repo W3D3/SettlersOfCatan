@@ -6,12 +6,14 @@ import java.util.HashMap;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class TradeOfferIntent implements Serializable {
+
+    private int id;
     private String offerer;
     private String offeree;
     private HashMap<Resource.ResourceType, Integer> offer = new HashMap<>();
     private HashMap<Resource.ResourceType, Integer> demand = new HashMap<>();
 
-    public TradeOfferIntent() {
+    TradeOfferIntent() {
 
     }
 
@@ -47,6 +49,14 @@ public class TradeOfferIntent implements Serializable {
         this.demand = demand;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void addResource(Resource.ResourceType type, int val, boolean offerOrDemand) {
         if (!type.equals(Resource.ResourceType.NOTHING)) {
             if (offerOrDemand) {
@@ -80,39 +90,4 @@ public class TradeOfferIntent implements Serializable {
                 ", demand=" + demand +
                 '}';
     }
-
-    /*
-    protected TradeOfferIntent(Parcel in) {
-        offerer = in.readString();
-        offeree = in.readString();
-        offer = (HashMap<Resource.ResourceType, Integer>) in.readValue(HashMap.class.getClassLoader());
-        demand = (HashMap<Resource.ResourceType, Integer>) in.readValue(HashMap.class.getClassLoader());
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(offerer);
-        dest.writeString(offeree);
-        dest.writeValue(offer);
-        dest.writeValue(demand);
-    }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<TradeOfferIntent> CREATOR = new Parcelable.Creator<TradeOfferIntent>() {
-        @Override
-        public TradeOfferIntent createFromParcel(Parcel in) {
-            return new TradeOfferIntent(in);
-        }
-
-        @Override
-        public TradeOfferIntent[] newArray(int size) {
-            return new TradeOfferIntent[size];
-        }
-    };
-    */
 }

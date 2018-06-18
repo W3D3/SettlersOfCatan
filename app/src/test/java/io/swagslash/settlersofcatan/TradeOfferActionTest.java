@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
-import io.swagslash.settlersofcatan.utility.TradeHelper;
+import io.swagslash.settlersofcatan.utility.Trade;
 import io.swagslash.settlersofcatan.utility.TradeOfferAction;
 
 public class TradeOfferActionTest {
@@ -47,15 +47,15 @@ public class TradeOfferActionTest {
 
     @Test
     public void checkConversion() {
-        Assert.assertEquals(TradeHelper.convertStringToResource("ore"), Resource.ResourceType.ORE);
-        Assert.assertEquals(TradeHelper.convertStringToResource("graiN"), Resource.ResourceType.GRAIN);
-        Assert.assertEquals(TradeHelper.convertStringToResource("brIck"), Resource.ResourceType.BRICK);
-        Assert.assertEquals(TradeHelper.convertStringToResource("wood"), Resource.ResourceType.WOOD);
-        Assert.assertEquals(TradeHelper.convertStringToResource("Wool"), Resource.ResourceType.WOOL);
-        Assert.assertEquals(TradeHelper.convertStringToResource("Nothing"), Resource.ResourceType.NOTHING);
+        Assert.assertEquals(Trade.convertStringToResource("ore"), Resource.ResourceType.ORE);
+        Assert.assertEquals(Trade.convertStringToResource("graiN"), Resource.ResourceType.GRAIN);
+        Assert.assertEquals(Trade.convertStringToResource("brIck"), Resource.ResourceType.BRICK);
+        Assert.assertEquals(Trade.convertStringToResource("wood"), Resource.ResourceType.WOOD);
+        Assert.assertEquals(Trade.convertStringToResource("Wool"), Resource.ResourceType.WOOL);
+        Assert.assertEquals(Trade.convertStringToResource("Nothing"), Resource.ResourceType.NOTHING);
 
-        Assert.assertEquals(TradeHelper.convertStringToResource("kiahsfd"), Resource.ResourceType.NOTHING);
-        Assert.assertEquals(TradeHelper.convertStringToResource("235"), Resource.ResourceType.NOTHING);
+        Assert.assertEquals(Trade.convertStringToResource("kiahsfd"), Resource.ResourceType.NOTHING);
+        Assert.assertEquals(Trade.convertStringToResource("235"), Resource.ResourceType.NOTHING);
     }
 
     @Test
