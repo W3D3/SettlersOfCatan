@@ -1,6 +1,7 @@
 package io.swagslash.settlersofcatan.utility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
@@ -9,6 +10,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class Trade {
@@ -80,6 +82,21 @@ public class Trade {
         return taa;
     }
 
+    /**
+     * helper method to create a TradeOfferIntent
+     *
+     * @return the the created TradeOfferIntent
+     */
+    public static TradeAcceptIntent createTradeAcceptIntentFromAction(TradeOfferAction to, Player offeree) {
+        TradeAcceptIntent tai = new TradeAcceptIntent();
+        tai.setId(to.getId());
+        tai.setOfferer(to.getActor().getPlayerName());
+        tai.setOfferee(offeree.getPlayerName());
+        tai.setOffer(to.getOffer());
+        tai.setDemand(to.getDemand());
+        return tai;
+    }
+
     public static Resource.ResourceType convertStringToResource(String type) {
         Resource.ResourceType tmp = Resource.ResourceType.NOTHING;
         try {
@@ -88,6 +105,16 @@ public class Trade {
             Logger.getAnonymousLogger().log(new LogRecord(Level.WARNING, e.getMessage()));
         }
         return tmp;
+    }
+
+    public static void addResources(Inventory inv, HashMap<Resource.ResourceType, Integer> hm) {
+        Resource res;
+        for (Resource.ResourceType r : hm.keySet()) {
+            res = new Resource(r);
+            for (int i = 0; i < hm.get(r); i++) {
+                inv.addResource(res);
+            }
+        }
     }
 
     public List<Player> getPendingTradeWith() {

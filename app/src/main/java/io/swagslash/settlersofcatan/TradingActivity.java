@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
+import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Trade;
 import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
@@ -27,7 +28,10 @@ public class TradingActivity extends AppCompatActivity {
     // constants
     public static final String TRADEOFFERINTENT = "TradeOfferIntent";
     public static final String TRADEPENDING = "TradePendingWith";
+    public static final String UPDATEAFTERTRADE = "UpdateAfterTrade";
+    public static final int UPDATEAFTERTRADEREQUESTCODE = 42;
 
+    private ArrayList<TextView> resourceVals;
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
@@ -61,6 +65,14 @@ public class TradingActivity extends AppCompatActivity {
         this.demandTextViews.add((TextView) findViewById(R.id.brick_offeree_value));
         this.demandTextViews.add((TextView) findViewById(R.id.grain_offeree_value));
         this.demandTextViews.add((TextView) findViewById(R.id.wool_offeree_value));
+
+        // resource show
+        this.resourceVals = new ArrayList<>();
+        this.resourceVals.add((TextView) findViewById(R.id.wood_count));
+        this.resourceVals.add((TextView) findViewById(R.id.wool_count));
+        this.resourceVals.add((TextView) findViewById(R.id.brick_count));
+        this.resourceVals.add((TextView) findViewById(R.id.grain_count));
+        this.resourceVals.add((TextView) findViewById(R.id.ore_count));
 
         current = SettlerApp.getPlayer();
         anm = SettlerApp.getManager();
@@ -131,9 +143,15 @@ public class TradingActivity extends AppCompatActivity {
         String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
         TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
         int val = Integer.parseInt(tv.getText().toString());
+        int tmp_max;
         switch (tmp[2]) {
             case "plus":
-                if (val < max) {
+                if (tmp[1].equals("offerer")) {
+                    tmp_max = current.getInventory().countResource(Trade.convertStringToResource(tmp[0]));
+                } else {
+                    tmp_max = max;
+                }
+                if (val < tmp_max) {
                     val++;
                 }
                 break;
@@ -155,11 +173,14 @@ public class TradingActivity extends AppCompatActivity {
      */
     public void onSubmit(View view) {
         if (sendOrCreate) {
-            // update your resources ?
-
             // send TradeAccept
             this.tradeAcceptAction = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()));
             anm.sendToAll(this.tradeAcceptAction);
+            // return update to main to your resources
+            Intent in = new Intent();
+            in.putExtra(UPDATEAFTERTRADE, Trade.createTradeAcceptIntentFromAction(this.tradeAcceptAction, current));
+            setResult(UPDATEAFTERTRADEREQUESTCODE, in);
+            //Trade.addResources(current.getInventory(), this.tradeOfferIntent.getOffer());
             finish();
         } else {
             if (!selectedPlayers.isEmpty()) {
@@ -237,5 +258,13 @@ public class TradingActivity extends AppCompatActivity {
      */
     public String getResourceStringFromView(View v) {
         return getResources().getResourceEntryName(v.getId()).split("_")[0];
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void updateResources() {
+        Inventory inv = current.getInventory();
+        for (TextView tv : resourceVals) {
+            tv.setText(String.format(MainActivity.FORMAT, inv.countResource(Trade.convertStringToResource(getResourceStringFromView(tv)))));
+        }
     }
 }

@@ -47,6 +47,7 @@ import io.swagslash.settlersofcatan.utility.Dice;
 import io.swagslash.settlersofcatan.utility.DiceSix;
 import io.swagslash.settlersofcatan.utility.Trade;
 import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
+import io.swagslash.settlersofcatan.utility.TradeAcceptIntent;
 import io.swagslash.settlersofcatan.utility.TradeDeclineAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferAction;
 
@@ -466,14 +467,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // you are the one who created the offer
                     if (!t.getAcceptedTrade().contains(taa.getId())) {
                         // if not already accepted
-                        // update your resources ?
-
+                        // update your resources
+                        Trade.addResources(player.getInventory(), taa.getDemand());
                         t.getAcceptedTrade().add(taa.getId());
                         final String tmp = taa.getAcceptor().getPlayerName() + " accepted your trade offer";
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 // show toast
+                                updateResources();
                                 Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -512,13 +514,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // and Board and Inventory etc. etc.) isn't serializable
                             Intent in2 = new Intent(b.getContext(), TradingActivity.class);
                             in2.putExtra(TradingActivity.TRADEOFFERINTENT, Trade.createTradeOfferIntentFromAction(to, player));
-                            startActivity(in2);
+                            // start for result to get a return value to update stuff
+                            startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
                         }
                     });
                     b.setNegativeButton(R.string.decline_trade, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // send TradeDeclineAction ?
+                            // send TradeDeclineAction
                             SettlerApp.getManager().sendToAll(Trade.createTradeDeclineAction(to, player));
                         }
                     });
@@ -630,5 +633,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     public String getResourceStringFromView(View v) {
         return getResources().getResourceEntryName(v.getId()).split("_")[0];
+    }
+
+    /**
+     * is called to refresh you resources after you accepted an offer
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
+            if (resultCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
+                TradeAcceptIntent tai = (TradeAcceptIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
+                Trade.addResources(player.getInventory(), tai.getOffer());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateResources();
+                    }
+                });
+            }
+        }
     }
 }
