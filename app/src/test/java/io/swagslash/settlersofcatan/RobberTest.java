@@ -24,8 +24,6 @@ public class RobberTest {
         Player p = new Player(null, 3, Color.GREEN, "Player 4");
         rob.selectPlayer(p);
         Assert.assertEquals(p, rob.selectedPlayer);
-
-
     }
 
     /*
@@ -112,7 +110,5 @@ public class RobberTest {
 
 
         Assert.assertEquals(sumbefore - 1, sumafter);
-
-
     }
 }

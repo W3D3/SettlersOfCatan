@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -30,6 +29,7 @@ import com.otaliastudios.zoom.ZoomLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.controller.ActionController;
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
@@ -81,14 +81,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AbstractNetworkManager network;
     Player player;
 
-    //@SuppressLint("WrongViewCast")
+    private ActionController actionController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setupHexView();
         network = SettlerApp.getManager();
         network.switchIn(this);
-        //setContentView(R.layout.activity_main);
 
         TabLayout tabs = findViewById(R.id.tabs);
         for (View view : tabs.getTouchables()) {
@@ -369,16 +369,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Point mdispSize = new Point();
         mdisp.getSize(mdispSize);
 
-        System.out.println(android.os.Build.VERSION.SDK_INT);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || true) {
-            hexView.setZoomLayout(zl);
-            hexView.prepare();
-            zl.addView(hexView);
-        } else {
-            hexView.prepare();
-            container.removeView(zl);
-            container.addView(hexView);
-        }
+        hexView.setZoomLayout(zl);
+        hexView.prepare();
+        zl.addView(hexView);
     }
 
     @Override

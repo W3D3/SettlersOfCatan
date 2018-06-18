@@ -70,7 +70,7 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
                     if (network.getDevices().size() > 4) {
                         Toast.makeText(this, "More than 4 Players are not allowed", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(this, "You need at least to Players to start a game", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "You need at least 2 Players to start a game", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;

@@ -119,6 +119,9 @@ public class Board {
             boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
             Hex hex = new Hex(this, terrainsShuffled.pop(), location);
             if (needsNumberToken) hex.setNumberToken(numberTokens.pop());
+            else {
+                hex.setRobber();
+            }
 
             calculateVerticesAndEdges(hex);
             for (HexPoint point : hex.getVerticesPosition()) {

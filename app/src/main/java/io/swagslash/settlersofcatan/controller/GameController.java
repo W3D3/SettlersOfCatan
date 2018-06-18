@@ -111,6 +111,12 @@ public class GameController {
         return null;
     }
 
+    /**
+     * The current Player of the Application steals somthing from player
+     *
+     * @param player Player to steal from
+     * @return if the action was successful
+     */
     public boolean rob(Player player) {
         Resource.ResourceType type = Robber.rob(SettlerApp.getPlayer(), player);
         if (type == null) {
