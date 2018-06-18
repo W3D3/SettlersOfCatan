@@ -27,7 +27,7 @@ public class Robber extends IRobber {
         this.currentField = currentField;
     }
 
-    public static void rob(Player robber, Player robbedPlayer) {
+    public static Resource.ResourceType rob(Player robber, Player robbedPlayer) {
         //Map ist so ausgelegt, dass der Key der Typ ist und der Integer Wert die Anzahl der Ressourcenkarten angebt.
         int numberWood = robbedPlayer.getInventory().getResourceHand().get(Resource.ResourceType.WOOD);
         int numberBrick = robbedPlayer.getInventory().getResourceHand().get(Resource.ResourceType.BRICK);
@@ -37,36 +37,48 @@ public class Robber extends IRobber {
         int size = numberBrick + numberGrain + numberWood + numberWool + numberOre;
 
         Random R = new Random();
-        if (size == 0) return;
+        if (size == 0) return null;
 
         int rand = R.nextInt(size);
         //Steal Wood
         if (rand < numberWood) {
             robbedPlayer.getInventory().getResourceHand().put(Resource.ResourceType.WOOD, numberWood - 1);
             robber.getInventory().addResource(new Resource(Resource.ResourceType.WOOD));
+            return Resource.ResourceType.WOOD;
         }
         //Steal Brick
         else if (rand < numberWood + numberBrick) {
             robbedPlayer.getInventory().getResourceHand().put(Resource.ResourceType.BRICK, numberBrick - 1);
             robber.getInventory().addResource(new Resource(Resource.ResourceType.BRICK));
+            return Resource.ResourceType.BRICK;
         }
         //Steal Wool
         else if (rand < numberWood + numberBrick + numberWool) {
             robbedPlayer.getInventory().getResourceHand().put(Resource.ResourceType.WOOL, numberWool - 1);
             robber.getInventory().addResource(new Resource(Resource.ResourceType.WOOL));
+            return Resource.ResourceType.WOOL;
         }
         //Steal Grain
         else if (rand < numberWood + numberBrick + numberWool + numberGrain) {
             robbedPlayer.getInventory().getResourceHand().put(Resource.ResourceType.GRAIN, numberGrain - 1);
             robber.getInventory().addResource(new Resource(Resource.ResourceType.GRAIN));
+            return Resource.ResourceType.GRAIN;
         }
-        //Steal l Ore
+        //Steal Ore
         else {
             robbedPlayer.getInventory().getResourceHand().put(Resource.ResourceType.ORE, numberOre - 1);
             robber.getInventory().addResource(new Resource(Resource.ResourceType.ORE));
+            return Resource.ResourceType.ORE;
         }
-
     }
+
+    public static void rob(Player robber, Player robbedPlayer, Resource.ResourceType typ) {
+        Integer amount = robbedPlayer.getInventory().getResourceHand().get(typ);
+        robbedPlayer.getInventory().getResourceHand().put(Resource.ResourceType.WOOD, amount - 1);
+        robber.getInventory().addResource(new Resource(Resource.ResourceType.WOOD));
+    }
+
+
 
     /*
     *

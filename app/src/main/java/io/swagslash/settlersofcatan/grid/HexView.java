@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import io.swagslash.settlersofcatan.GridActivity;
+import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.GameController;
@@ -68,13 +68,13 @@ public class HexView extends View {
     private Paint vertexClickPaint;
     private Paint textPaint;
 
-    GridActivity activity;
+    MainActivity activity;
 
     public HexView(Context context) {
         super(context);
 
-        if (context instanceof GridActivity) {
-            activity = (GridActivity) context;
+        if (context instanceof MainActivity) {
+            activity = (MainActivity) context;
         }
 
         hexes = new ArrayList<>();

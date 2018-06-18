@@ -3,6 +3,7 @@ package io.swagslash.settlersofcatan.pieces;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 /**
  * Created by Christoph Wedenig (christoph@wedenig.org) on 14.06.18.
@@ -12,13 +13,22 @@ public abstract class IRobber implements IDrawable {
     Hex currentHex;
 
     /**
-     * Robs the player
      *
-     * @param robber       The player to get the stolen resources
+     * @param robber The player to get the stolen resources
      * @param robbedPlayer The player to be robbed
+     * @param type Resource which will be robbed
      */
-    public static void rob(Player robber, Player robbedPlayer) {
+    public static void rob(Player robber, Player robbedPlayer, Resource.ResourceType type) {
         return;
+    }
+
+    /**
+     * @param robber
+     * @param robbedPlayer
+     * @return
+     */
+    public static Resource.ResourceType rob(Player robber, Player robbedPlayer) {
+        return null;
     }
 
     /**

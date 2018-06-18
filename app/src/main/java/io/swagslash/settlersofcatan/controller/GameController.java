@@ -1,17 +1,19 @@
 package io.swagslash.settlersofcatan.controller;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.Robber;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
+import io.swagslash.settlersofcatan.controller.actions.RobAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
-import io.swagslash.settlersofcatan.pieces.IRobber;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.items.Bank;
 import io.swagslash.settlersofcatan.pieces.items.IBank;
 import io.swagslash.settlersofcatan.pieces.items.ICard;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 /**
  * Created by Christoph Wedenig (christoph@wedenig.org) on 07.05.18.
@@ -89,12 +91,17 @@ public class GameController {
         if (roll1 < 1 || roll1 > 6 || roll2 < 1 || roll2 > 6)
             throw new IllegalArgumentException("Invalid Dice roll.");
         Integer num = roll1 + roll2;
+        if (num == 7) {
+            SettlerApp.getPlayer().getInventory().randomDiscard();
+            SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.MOVING_ROBBER);
+            return false;
+        }
         for (Hex hex : board.getHexagons()) {
             if (hex.distributeResources(num))
                 System.out.println(hex.toString() + " distrubuted resources.");
         }
 
-        return false;
+        return true;
     }
 
     public ICard drawCard(Player player) {
@@ -105,8 +112,17 @@ public class GameController {
     }
 
     public boolean rob(Player player) {
-        IRobber.rob(SettlerApp.getPlayer(), player);
+        Resource.ResourceType type = Robber.rob(SettlerApp.getPlayer(), player);
+        if (type == null) {
+            return true;
+        }
+        RobAction robbery = new RobAction(SettlerApp.getPlayer(), player, type);
+        SettlerApp.getManager().sendToAll(robbery);
+        return true;
+    }
 
+    public boolean remoteRob(RobAction robbery) {
+        Robber.rob(robbery.getRobber(), robbery.robbedPlayer, robbery.getType());
         return true;
     }
 

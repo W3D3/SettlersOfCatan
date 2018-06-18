@@ -14,6 +14,7 @@ import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.RobAction;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.pieces.Board;
@@ -83,6 +84,7 @@ public class Network {
         kryo.register(LeaveMessage.class);
         kryo.register(TurnAction.class);
         kryo.register(DiceRollAction.class);
+        kryo.register(RobAction.class);
     }
 
     static public class RegisterName {

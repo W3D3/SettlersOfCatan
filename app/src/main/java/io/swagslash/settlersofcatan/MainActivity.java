@@ -35,6 +35,7 @@ import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.RobAction;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
@@ -172,9 +173,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
                     t.show();
                     DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), roll1, roll2);
-                    GameController.getInstance().handleDiceRolls(roll1,roll2);
                     SettlerApp.getManager().sendToAll(roll);
-                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    if (GameController.getInstance().handleDiceRolls(roll1, roll2)) {
+                        SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -300,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void choosePlayer(final List<Player> players) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Choose an animal");
+        builder.setTitle("Choose an player");
 
 
         List<String> playerNames = new ArrayList<>();
@@ -313,15 +315,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         builder.setItems(arr, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Log.d("Dialog", String.valueOf(which));
                 GameController.getInstance().rob(board.getPlayerById(which));
-
-                switch (which) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3: // sheep
-                    case 4: // goat
-                }
             }
         });
 
@@ -329,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
 
     private void toogleFabMenu() {
         if (this.fabOpen) {
@@ -456,6 +452,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         updateResources();
                     }
                 });
+            } else if (object instanceof RobAction) {
+                GameController.getInstance().remoteRob((RobAction) object);
             }
         }
     }

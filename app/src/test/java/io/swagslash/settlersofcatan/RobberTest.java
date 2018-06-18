@@ -70,8 +70,8 @@ public class RobberTest {
     @Test
     public void TestRob() {
 
-            Player p2 = new Player(null, 1, Color.RED, "Player 2");
-            Player raueber = new Player(null, 2, Color.WHITE, "Player 3");
+        Player p2 = new Player(null, 1, Color.RED, "Player 2");
+        Player raueber = new Player(null, 2, Color.WHITE, "Player 3");
         p2.getInventory().addResource(new Resource(Resource.ResourceType.GRAIN));
         p2.getInventory().addResource(new Resource(Resource.ResourceType.GRAIN));
         p2.getInventory().addResource(new Resource(Resource.ResourceType.WOOD));
@@ -90,6 +90,28 @@ public class RobberTest {
 
         Assert.assertEquals(sumbefore - 1, sumafter);
 
+
+    }
+
+
+    @Test
+    public void TestRob2() {
+
+        Player p2 = new Player(null, 1, Color.RED, "Player 2");
+        Player raueber = new Player(null, 2, Color.WHITE, "Player 3");
+        p2.getInventory().addResource(new Resource(Resource.ResourceType.GRAIN));
+        p2.getInventory().addResource(new Resource(Resource.ResourceType.WOOD));
+
+        Robber.rob(raueber, p2);
+        int sumbefore = 2;
+        int sumafter = p2.getInventory().getResourceHand().get(Resource.ResourceType.GRAIN) +
+                p2.getInventory().getResourceHand().get(Resource.ResourceType.BRICK) +
+                p2.getInventory().getResourceHand().get(Resource.ResourceType.WOOD) +
+                p2.getInventory().getResourceHand().get(Resource.ResourceType.WOOL) +
+                p2.getInventory().getResourceHand().get(Resource.ResourceType.ORE);
+
+
+        Assert.assertEquals(sumbefore - 1, sumafter);
 
 
     }

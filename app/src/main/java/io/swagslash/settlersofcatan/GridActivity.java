@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
@@ -163,6 +164,7 @@ public class GridActivity extends AppCompatActivity {
         builder.setItems(arr, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Log.d("Dialog", String.valueOf(which));
                 GameController.getInstance().rob(board.getPlayerById(which));
 
                 switch (which) {
