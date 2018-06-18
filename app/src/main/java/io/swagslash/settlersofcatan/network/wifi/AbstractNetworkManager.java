@@ -13,7 +13,17 @@ import java.util.List;
 
 public abstract class AbstractNetworkManager {
 
+    private InetAddress ip;
+
+    public InetAddress getIp() {
+        return ip;
+    }
+
+    public void setIp(InetAddress ip) {
+        this.ip = ip;
+    }
     public abstract void init(INetworkCallback activity);
+
 
     public void switchOut(){
 
@@ -85,7 +95,7 @@ public abstract class AbstractNetworkManager {
     public void destroy() {
     }
 
-    public static InetAddress ip() throws SocketException {
+    public InetAddress ip() throws SocketException {
         Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
         NetworkInterface ni;
         while (nis.hasMoreElements()) {

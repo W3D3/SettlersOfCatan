@@ -18,7 +18,6 @@ import com.esotericsoftware.kryonet.Connection;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +29,6 @@ import io.swagslash.settlersofcatan.network.wifi.LobbyServiceFragment;
 import io.swagslash.settlersofcatan.network.wifi.MyLobbyServiceRecyclerViewAdapter;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
-
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 public class BrowserActivity extends AppCompatActivity implements MyLobbyServiceRecyclerViewAdapter.OnLobbyServiceClickListener, INetworkCallback {
 
@@ -100,7 +97,7 @@ public class BrowserActivity extends AppCompatActivity implements MyLobbyService
 
 
                 final EditText input = new EditText(this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
                 builder.setView(input);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override

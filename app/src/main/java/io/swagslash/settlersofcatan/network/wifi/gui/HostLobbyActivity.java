@@ -8,12 +8,8 @@ import android.widget.TextView;
 
 import com.esotericsoftware.kryonet.Connection;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,18 +43,13 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
 
         network.init(this);
         frag = (LobbyMemberFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_lobby);
-        try {
-            frag.addMember(new NetworkDevice(SettlerApp.getPlayer().getPlayerName(),InetAddress.getByName("localhost")));
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        NetworkDevice self = new NetworkDevice(SettlerApp.playerName, network.getIp());
+        frag.addMember(self);
+        network.addMember(self);
 
-        TextView tv = findViewById(R.id.tvHostAddress);
-        try {
-            tv.setText("Your Address: " + AbstractNetworkManager.ip());
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
+
+        TextView tv = findViewById(R.id.tvHostIP);
+        tv.setText("Your Ip: " + network.getIp().toString());
 
     }
 
@@ -66,7 +57,6 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
         switch (v.getId()) {
             case R.id.btnStartGame:
                 List<String> players = new ArrayList<>();
-                players.add(SettlerApp.playerName);
                 for (NetworkDevice nd : network.getDevices()) {
                     players.add(nd.getDeviceName());
                 }
@@ -124,6 +114,7 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
                     public void run() {
                         network.addMember(new NetworkDevice(conname, address));
                         updateMember();
+
                         frag.setMember(network.getDevices());
                     }
                 });
