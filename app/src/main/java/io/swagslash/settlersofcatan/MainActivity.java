@@ -162,8 +162,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION) return;
                     Dice d6 = new DiceSix();
 
-                    int roll1 = 4;//d6.roll();
-                    int roll2 = 3;//d6.roll();
+                    int roll1 = d6.roll();
+                    int roll2 = d6.roll();
                     shakeValue = roll1 + roll2;
 
                     diceOne.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll1, "drawable", getPackageName()));

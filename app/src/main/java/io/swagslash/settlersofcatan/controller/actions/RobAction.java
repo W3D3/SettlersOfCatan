@@ -10,13 +10,16 @@ public class RobAction extends GameAction {
     public Resource.ResourceType type;
 
     public RobAction() {
+
     }
 
-    public RobAction(Player robber, Player robbedPlayer, Resource.ResourceType type) {
-        this.robber = robber;
+    public RobAction(Player actor, Player robbedPlayer, Resource.ResourceType type) {
+        super(actor);
+        this.robber = actor;
         this.robbedPlayer = robbedPlayer;
         this.type = type;
     }
+
 
     public Player getRobber() {
         return robber;
