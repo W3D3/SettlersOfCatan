@@ -115,11 +115,6 @@ public class Robber extends IRobber {
         selectedPlayer = p;
     }
 
-    @Override
-    public void calculatePath(Pair<Integer, Integer> offset, int scale) {
-
-    }
-
     public Path getPath() {
         return path;
     }

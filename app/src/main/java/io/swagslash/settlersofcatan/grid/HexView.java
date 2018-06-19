@@ -34,6 +34,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.utility.Pair;
 
@@ -250,8 +251,12 @@ public class HexView extends View {
                     }
                     break;
                 case SETTLEMENT:
-                    circlePaint.setColor(vertex.getOwner().getColor());
-                    c.drawPath(vertex.getPath(), circlePaint);
+                    if (phaseController.getCurrentPhase() == Board.Phase.SETUP_CITY) {
+                        c.drawPath(vertex.getPath(), vertexClickPaint);
+                    } else {
+                        circlePaint.setColor(vertex.getOwner().getColor());
+                        c.drawPath(vertex.getPath(), circlePaint);
+                    }
                     break;
                 case CITY:
                     circlePaint.setColor(vertex.getOwner().getColor());
@@ -290,6 +295,7 @@ public class HexView extends View {
                     c.drawText(hex.getNumberToken().toString(), (float)coordinates.x, (float)coordinates.y, textPaint);
                     invalidate();
                 } else if (hex.hasRobber()) {
+                    hex.getRobber().calculatePath(offset, scale);
                     c.drawPath(hex.getRobber().getPath(), textPaint);
                     invalidate();
                 }
@@ -451,11 +457,25 @@ public class HexView extends View {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_ROAD);
                     buildSuccess = true;
                 }
+                //TODO REMOVE!
+                //GameController.getInstance().buildCity(vertex, SettlerApp.getPlayer());
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.BRICK), 5);
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.WOOD), 5);
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.ORE), 5);
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.GRAIN), 5);
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.WOOL), 5);
 
                 generateVerticePaths();
                 redraw();
                 break;
             case SETUP_CITY:
+                if (GameController.getInstance().buildCity(vertex, SettlerApp.getPlayer())) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    buildSuccess = true;
+                }
+
+                generateVerticePaths();
+                redraw();
                 break;
             default:
                 break;

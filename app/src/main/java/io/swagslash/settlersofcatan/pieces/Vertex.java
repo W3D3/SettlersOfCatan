@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.utility.Pair;
@@ -172,10 +173,13 @@ public class Vertex {
         HexPoint drawPoint = this.getCoordinates().scale(offset, scale);
         switch (this.getUnitType()) {
             case CITY:
-                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 30, Path.Direction.CW);
+                path.addRect((float) drawPoint.x - 15, (float) drawPoint.y - 15, (float) drawPoint.x + 15, (float) drawPoint.y + 10, Path.Direction.CCW);
                 break;
             case SETTLEMENT:
-                path.addCircle((float) drawPoint.x, (float) drawPoint.y, 20, Path.Direction.CW);
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY)
+                    path.addCircle((float) drawPoint.x, (float) drawPoint.y, 40, Path.Direction.CW);
+                else
+                    path.addCircle((float) drawPoint.x, (float) drawPoint.y, 20, Path.Direction.CW);
                 break;
             case NONE:
                 path.addCircle((float) drawPoint.x, (float) drawPoint.y, 40, Path.Direction.CW);
@@ -193,7 +197,7 @@ public class Vertex {
     @Override
     public String toString() {
         String string = "";
-        string += "Vertex [" + this.getCoordinates().toString() + "]";
+        string += getUnitType().toString() + " [" + this.getCoordinates().toString() + "]";
         if (getOwner() != null) string += "/ owned by " + this.getOwner();
         return string;
     }

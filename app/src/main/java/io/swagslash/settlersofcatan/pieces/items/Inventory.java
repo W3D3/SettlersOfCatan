@@ -30,14 +30,24 @@ public class Inventory {
     }
 
     public void addResource(Resource resource) {
+        addResource(resource, 1);
+    }
+
+    public void addResource(Resource resource, Integer amount) {
+        if (amount < 0) throw new IllegalArgumentException("No negatives allowed");
         Integer count = this.resourceHand.get(resource.getResourceType());
-        count++;
+        count += amount;
         this.resourceHand.put(resource.getResourceType(), count);
     }
 
     public void removeResource(Resource resource) {
+        removeResource(resource, 1);
+    }
+
+    public void removeResource(Resource resource, Integer amount) {
+        if (amount < 0) throw new IllegalArgumentException("No negatives allowed");
         Integer count = this.resourceHand.get(resource.getResourceType());
-        count--;
+        count -= amount;
         this.resourceHand.put(resource.getResourceType(), count);
     }
 

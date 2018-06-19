@@ -15,7 +15,7 @@ public interface IDrawable {
      * @param offset Pair of offsets, first Integer is x offset and second is y offset
      * @param scale  Multiplier scale
      */
-    void calculatePath(Pair<Integer, Integer> offset, int scale);
+    void calculatePath(Pair<Integer, Integer> offset, Integer scale);
 
     /**
      * Gets the most recently calculated Path of the IDrawable

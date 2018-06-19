@@ -22,7 +22,7 @@ public class Hex {
     private NumberToken numberToken;
     private TerrainType terrainType;
     private AxialHexLocation hexLocation;
-    private IRobber robber;
+    private Robber robber;
     private List<HexPoint> verticesPosition;
     private List<HexPointPair> edgePosition;
     private HexPoint center;
@@ -182,7 +182,7 @@ public class Hex {
         this.terrainType = terrainType;
     }
 
-    public IRobber getRobber() {
+    public Robber getRobber() {
         return robber;
     }
 

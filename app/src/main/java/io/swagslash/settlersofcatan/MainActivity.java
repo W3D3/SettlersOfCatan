@@ -163,13 +163,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION) return;
                     Dice d6 = new DiceSix();
 
-                    int roll1 = d6.roll();
-                    int roll2 = d6.roll();
+                    int roll1 = 3;//d6.roll();
+                    int roll2 = 4;//d6.roll();
                     shakeValue = roll1 + roll2;
 
                     diceOne.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll1, "drawable", getPackageName()));
                     diceTwo.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll2, "drawable", getPackageName()));
 
+                    Log.d("ROLLED", "Rolled a :" + shakeValue);
                     Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
                     t.show();
                     DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), roll1, roll2);
@@ -177,12 +178,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (GameController.getInstance().handleDiceRolls(roll1, roll2)) {
                         SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                     }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateResources();
-                        }
-                    });
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            updateResources();
+//                        }
+//                    });
                 }
             };
             shakeDetector.setShakeListener(shakeListener);
@@ -243,6 +244,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build city.");
                     return;
+                }
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_CITY);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateEdgePaths();
+                            hexView.redraw();
+                        }
+                    });
+                } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateEdgePaths();
+                            hexView.redraw();
+                        }
+                    });
                 }
                 break;
             case R.id.fab_street:

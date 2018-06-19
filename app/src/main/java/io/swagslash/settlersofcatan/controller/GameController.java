@@ -76,10 +76,9 @@ public class GameController {
     }
 
     public boolean buildCity(Vertex vertex, Player player) {
-        IBank bank = null;
         if (vertex.canBuildCity(player)) {
             if (bank.payForCity(player)) {
-                vertex.buildSettlement(player);
+                vertex.buildCity(player);
                 SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_CITY, vertex.getCoordinates()));
                 return true;
             }
@@ -92,7 +91,7 @@ public class GameController {
             throw new IllegalArgumentException("Invalid Dice roll.");
         Integer num = roll1 + roll2;
         if (num == 7) {
-            SettlerApp.getPlayer().getInventory().randomDiscard();
+            //SettlerApp.getPlayer().getInventory().randomDiscard();
             SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.MOVING_ROBBER);
             return false;
         }
