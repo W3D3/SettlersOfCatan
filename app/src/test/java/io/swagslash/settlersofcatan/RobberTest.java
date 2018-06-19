@@ -3,11 +3,16 @@ package io.swagslash.settlersofcatan;
 import android.graphics.Color;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.swagslash.settlersofcatan.controller.GameController;
+import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
-import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 
 /**
  * Created by thoma on 29.05.2018.
@@ -15,15 +20,36 @@ import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 
 public class RobberTest {
 
+    Board b;
+    Player p1;
+    Player p2;
 
+    @Before
+    public void prepare() {
+        List<String> players = new ArrayList<>();
+        players.add("P1");
+        players.add("P2");
+        b = new Board(players, true, 10);
+        b.setupBoard();
+        SettlerApp.board = b;
+
+        p1 = b.getPlayerById(0);
+        p2 = b.getPlayerById(1);
+    }
 
 
     @Test
-    public void TestSelectedPlayer() {
-        Robber rob = new Robber(new Hex(null, Hex.TerrainType.FIELD, new AxialHexLocation(1, 1)));
-        Player p = new Player(null, 3, Color.GREEN, "Player 4");
-        rob.selectPlayer(p);
-        Assert.assertEquals(p, rob.selectedPlayer);
+    public void testPlayersToRob() {
+        for (Hex hex : b.getHexagons()) {
+            if (hex.getTerrainType() != Hex.TerrainType.DESERT) {
+                hex.getVertices().get(0).buildSettlement(p1);
+                hex.getVertices().get(1).buildSettlement(p2);
+
+                GameController.getInstance().moveRobber(hex);
+                Assert.assertEquals(p2, hex.getRobber().getRobbablePlayers(p1).get(0));
+                break;
+            }
+        }
     }
 
     /*

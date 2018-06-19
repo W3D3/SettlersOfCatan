@@ -111,6 +111,14 @@ public class GameController {
         return null;
     }
 
+    public boolean moveRobber(Hex hex) {
+        for (Hex hexagon : board.getHexagons()) {
+            hexagon.removeRobber();
+        }
+        hex.setRobber();
+        return true;
+    }
+
     /**
      * The current Player of the Application steals somthing from player
      *

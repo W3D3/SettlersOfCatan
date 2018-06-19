@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -87,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setupHexView();
+        board = SettlerApp.board;
         network = SettlerApp.getManager();
         network.switchIn(this);
 
@@ -349,12 +348,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setupHexView() {
         hexView = new HexView(this);
 
-        if (BuildConfig.DEBUG) {
-            // do something for a debug build
-            //String[] array ={"P1", "P2"};
-            //SettlerApp.generateBoard(new ArrayList<>(Arrays.asList(array)));
-        }
-        board = SettlerApp.board;
 
         hexView.setBoard(board);
         hexView.setManager(getWindowManager());
@@ -363,12 +356,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final ZoomLayout zl = findViewById(R.id.zoomContainer);
         final LinearLayout container = findViewById(R.id.gridContainer);
-        //Button btn = (Button) findViewById(R.id.button);
-        zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
-        Display mdisp = getWindowManager().getDefaultDisplay();
-        Point mdispSize = new Point();
-        mdisp.getSize(mdispSize);
 
+        zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
         hexView.setZoomLayout(zl);
         hexView.prepare();
         zl.addView(hexView);

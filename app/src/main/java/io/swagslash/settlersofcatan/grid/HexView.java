@@ -323,7 +323,7 @@ public class HexView extends View {
                 public boolean onSingleTapConfirmed(MotionEvent e) {
                     if(handleVertexClick(e)) return true;
                     if(handleEdgeClick(e)) return true;
-                    showHexDetailFromMotionEvent(e, "Single Tap");
+                    handleHexClick(e, "Single Tap");
 
                     return true;
                 }
@@ -336,13 +336,13 @@ public class HexView extends View {
                 @Override
                 public void onLongPress(MotionEvent e) {
                     super.onLongPress(e);
-                    showHexDetailFromMotionEvent(e, "Long Press");
+                    handleHexClick(e, "Long Press");
                 }
 
                 // Keep this in for future use
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
-                    showHexDetailFromMotionEvent(e, "Double Tap");
+                    handleHexClick(e, "Double Tap");
                     return false;
                 }
             });
@@ -401,7 +401,7 @@ public class HexView extends View {
         return null;
     }
 
-    private void showHexDetailFromMotionEvent(MotionEvent event, String msg) {
+    private void handleHexClick(MotionEvent event, String msg) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
         Hex hex = getHexFromCoordinates(coordinates.first, coordinates.second);
         if (hex == null) return;
@@ -411,6 +411,7 @@ public class HexView extends View {
                 if (GameController.getInstance().canRob(hex)) {
 
                     generateHexPaths();
+                    GameController.getInstance().moveRobber(hex);
                     activity.choosePlayer(board.getPlayers());
 
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
