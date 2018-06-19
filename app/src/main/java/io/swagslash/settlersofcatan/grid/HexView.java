@@ -418,7 +418,7 @@ public class HexView extends View {
 
                     generateHexPaths();
                     GameController.getInstance().moveRobber(hex);
-                    activity.choosePlayer(board.getPlayers());
+                    activity.choosePlayerToRob(hex.getRobber().getRobbablePlayers(SettlerApp.getPlayer()));
 
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                 }

@@ -27,7 +27,6 @@ import com.otaliastudios.zoom.ZoomLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.swagslash.settlersofcatan.controller.ActionController;
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AbstractNetworkManager network;
     Player player;
 
-    private ActionController actionController;
+    //private ActionController actionController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,8 +162,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION) return;
                     Dice d6 = new DiceSix();
 
-                    int roll1 = 3;//d6.roll();
-                    int roll2 = 4;//d6.roll();
+                    int roll1 = 4;//d6.roll();
+                    int roll2 = 3;//d6.roll();
                     shakeValue = roll1 + roll2;
 
                     diceOne.setBackgroundResource(getResources().getIdentifier("ic_dice_" + roll1, "drawable", getPackageName()));
@@ -178,12 +177,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (GameController.getInstance().handleDiceRolls(roll1, roll2)) {
                         SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                     }
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            updateResources();
-//                        }
-//                    });
+                    // WARNING CANNOT RUN ON UI THREAD HERE
+                    // this freezes the app
                 }
             };
             shakeDetector.setShakeListener(shakeListener);
@@ -319,24 +314,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void choosePlayer(final List<Player> players) {
+    public void choosePlayerToRob(final List<Player> players) {
 
+        //TODO reactivate this
+//        if(players.size() == 1) {
+//            GameController.getInstance().rob(players.get(0));
+//            return;
+//        }
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Choose an player");
+        builder.setTitle("Choose a player");
 
 
         List<String> playerNames = new ArrayList<>();
         for (Player player : players) {
             playerNames.add(player.getPlayerName());
         }
-        String[] arr = playerNames.toArray(new String[playerNames.size()]);
+        final String[] arr = playerNames.toArray(new String[playerNames.size()]);
 
 
         builder.setItems(arr, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.d("Dialog", String.valueOf(which));
-                GameController.getInstance().rob(board.getPlayerById(which));
+                Log.d("SELECTED TO ROB", players.get(which) + " will be robbed.");
+                GameController.getInstance().rob(players.get(which));
             }
         });
 
