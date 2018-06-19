@@ -41,7 +41,8 @@ public class Board {
         this.edges = new HashMap<>();
         this.players = new ArrayList<>(playerNames.size());
 
-        if (playerNames.size() < 2 || playerNames.size() > 4)
+        //TODO change to 2?
+        if (playerNames.size() < 1 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
         generatePlayers(playerNames);

@@ -84,10 +84,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setupHexView();
+
         board = SettlerApp.board;
         network = SettlerApp.getManager();
         network.switchIn(this);
+        this.setupHexView();
 
         TabLayout tabs = findViewById(R.id.tabs);
         for (View view : tabs.getTouchables()) {

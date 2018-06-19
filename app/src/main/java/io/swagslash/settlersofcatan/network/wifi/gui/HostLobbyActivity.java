@@ -24,6 +24,7 @@ import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.LobbyMemberFragment;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
+import io.swagslash.settlersofcatan.network.wifi.NoNetwork;
 
 public class HostLobbyActivity extends AppCompatActivity implements INetworkCallback {
 
@@ -57,13 +58,14 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStartGame:
-                if (network.getDevices().size() > 1) {
+                if (network.getDevices().size() > 0) {
                     List<String> players = new ArrayList<>();
                     for (NetworkDevice nd : network.getDevices()) {
                         players.add(nd.getDeviceName());
                     }
                     SettlerApp.generateBoard(players);
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    if (players.size() == 1) network = new NoNetwork();
                     network.switchOut();
                     startActivity(i);
                 } else {

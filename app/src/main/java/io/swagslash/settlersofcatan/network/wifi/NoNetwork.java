@@ -16,4 +16,9 @@ public class NoNetwork extends AbstractNetworkManager {
     public void sendtoHost(Connection connection, Object message) {
         //does nothing
     }
+
+    @Override
+    public boolean isHost() {
+        return true;
+    }
 }
