@@ -103,7 +103,7 @@ public class Robber extends IRobber {
         }
         //Entfernen des setztenden Players aus der Liste
         if (robbablePlayer.contains(currentPlayer)) {
-            //robbablePlayer.remove(currentPlayer);
+            robbablePlayer.remove(currentPlayer);
         }
         return robbablePlayer;
     }
