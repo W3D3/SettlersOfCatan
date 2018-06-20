@@ -50,6 +50,7 @@ public class TradingActivity extends AppCompatActivity {
     private AbstractNetworkManager anm;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trading);
@@ -173,15 +174,25 @@ public class TradingActivity extends AppCompatActivity {
      */
     public void onSubmit(View view) {
         if (sendOrCreate) {
-            // send TradeAccept
-            this.tradeAcceptAction = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()));
-            anm.sendToAll(this.tradeAcceptAction);
-            // return update to main to your resources
-            Intent in = new Intent();
-            in.putExtra(UPDATEAFTERTRADE, Trade.createTradeAcceptIntentFromAction(this.tradeAcceptAction, current));
-            setResult(UPDATEAFTERTRADEREQUESTCODE, in);
-            //Trade.addResources(current.getInventory(), this.tradeOfferIntent.getOffer());
-            finish();
+            // check if offer is possible
+            if (Trade.isTradePossible(SettlerApp.board.getPlayerByName(this.tradeOfferIntent.getOfferee()).getInventory(), tradeOfferIntent.getDemand())) {
+                // offeree has enough resources to trade
+                // send TradeAccept
+                this.tradeAcceptAction = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
+                anm.sendToAll(this.tradeAcceptAction);
+                // return update to main to your resources
+                Intent in = new Intent();
+                in.putExtra(UPDATEAFTERTRADE, Trade.createTradeAcceptIntentFromAction(this.tradeAcceptAction, this.tradeAcceptAction.getOfferee()));
+                setResult(UPDATEAFTERTRADEREQUESTCODE, in);
+                finish();
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(TradingActivity.this, "your resources are not sufficient", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         } else {
             if (!selectedPlayers.isEmpty()) {
                 this.tradeOfferAction = Trade.createTradeOfferAction(selectedPlayers, current);

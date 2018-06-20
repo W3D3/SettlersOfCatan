@@ -466,11 +466,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (itIsYou) {
                     // you are the one who created the offer
                     if (!t.getAcceptedTrade().contains(taa.getId())) {
-                        // if not already accepted
-                        // update your resources
-                        Trade.addResources(player.getInventory(), taa.getDemand());
+                        // if not already accepted, accept it
                         t.getAcceptedTrade().add(taa.getId());
-                        final String tmp = taa.getAcceptor().getPlayerName() + " accepted your trade offer";
+                        // update offerer's resources
+                        Trade.updateInventoryAfterTrade(taa.getOfferer().getInventory(), taa.getDemand(), taa.getOffer());
+                        final String tmp = taa.getOfferee().getPlayerName() + " accepted your trade offer";
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -486,8 +486,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (itIsYou) {
                     // you are the one who created the offer
                     // remove declining player from pendingTradeWith
-                    t.getPendingTradeWith().remove(tda.getDenier());
-                    final String tmp = tda.getDenier().getPlayerName() + " declined your trade offer";
+                    t.getPendingTradeWith().remove(tda.getOfferee());
+                    final String tmp = tda.getOfferee().getPlayerName() + " declined your trade offer";
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -503,9 +503,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // add selected offerees to pending
                     t.getPendingTradeWith().addAll(to.getSelectedOfferees());
                 }
+                // player = offeree
                 if (to.getSelectedOfferees().contains(player)) {
                     final AlertDialog.Builder b = new AlertDialog.Builder(this);
-                    b.setMessage(to.getActor().getPlayerName() + " wants to trade with you.");
+                    b.setMessage(to.getOfferer().getPlayerName() + " wants to trade with you.");
                     b.setPositiveButton(R.string.look_trade, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -514,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             // and Board and Inventory etc. etc.) isn't serializable
                             Intent in2 = new Intent(b.getContext(), TradingActivity.class);
                             in2.putExtra(TradingActivity.TRADEOFFERINTENT, Trade.createTradeOfferIntentFromAction(to, player));
-                            // start for result to get a return value to update stuff
+                            // start for result to get a return value to update resources
                             startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
                         }
                     });
@@ -644,17 +645,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
-            if (resultCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
-                TradeAcceptIntent tai = (TradeAcceptIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
-                Trade.addResources(player.getInventory(), tai.getOffer());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateResources();
-                    }
-                });
-            }
+        if (requestCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE && resultCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
+            TradeAcceptIntent tai = (TradeAcceptIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
+            // update offeree's resources
+            Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(tai.getOfferee()).getInventory(), tai.getOffer(), tai.getDemand());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateResources();
+                }
+            });
         }
     }
 }

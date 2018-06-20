@@ -3,6 +3,7 @@ package io.swagslash.settlersofcatan.utility;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -10,6 +11,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
@@ -26,6 +28,7 @@ public class Trade {
     public static TradeOfferAction createTradeOfferAction(List<Player> selectedPlayers, Player offerer) {
         TradeOfferAction toa = new TradeOfferAction(offerer);
         toa.setId(new Random().nextInt(100000));
+        toa.setOfferer(offerer);
         toa.setSelectedOfferees(selectedPlayers);
         return toa;
     }
@@ -38,7 +41,7 @@ public class Trade {
     public static TradeOfferIntent createTradeOfferIntentFromAction(TradeOfferAction to, Player offeree) {
         TradeOfferIntent toi = new TradeOfferIntent();
         toi.setId(to.getId());
-        toi.setOfferer(to.getActor().getPlayerName());
+        toi.setOfferer(to.getOfferer().getPlayerName());
         toi.setOfferee(offeree.getPlayerName());
         toi.setOffer(to.getOffer());
         toi.setDemand(to.getDemand());
@@ -50,10 +53,10 @@ public class Trade {
      *
      * @return the the created TradeDeclineAction
      */
-    public static TradeDeclineAction createTradeDeclineAction(TradeOfferAction to, Player denier) {
+    public static TradeDeclineAction createTradeDeclineAction(TradeOfferAction to, Player offeree) {
         TradeDeclineAction tda = new TradeDeclineAction(to.getActor());
         tda.setId(to.getId());
-        tda.setDenier(denier);
+        tda.setOfferee(offeree);
         return tda;
     }
 
@@ -62,10 +65,10 @@ public class Trade {
      *
      * @return the the created TradeDeclineAction
      */
-    public static TradeDeclineAction createTradeDeclineActionFromIntent(TradeOfferIntent toi, Player denier) {
-        TradeDeclineAction tda = new TradeDeclineAction(denier);
+    public static TradeDeclineAction createTradeDeclineActionFromIntent(TradeOfferIntent toi, Player offeree) {
+        TradeDeclineAction tda = new TradeDeclineAction(offeree);
         tda.setId(toi.getId());
-        tda.setDenier(denier);
+        tda.setOfferee(offeree);
         return tda;
     }
 
@@ -74,11 +77,13 @@ public class Trade {
      *
      * @return the the created TradeAcceptAction
      */
-    public static TradeAcceptAction createTradeAcceptActionFromIntent(TradeOfferIntent toi, Player acceptor) {
-        TradeAcceptAction taa = new TradeAcceptAction(acceptor);
+    public static TradeAcceptAction createTradeAcceptActionFromIntent(TradeOfferIntent toi, Player offeree) {
+        TradeAcceptAction taa = new TradeAcceptAction(offeree);
         taa.setId(toi.getId());
-        taa.setAcceptor(acceptor);
+        taa.setOfferer(SettlerApp.board.getPlayerByName(toi.getOfferer()));
+        taa.setOfferee(offeree);
         taa.setDemand(toi.getDemand());
+        taa.setOffer(toi.getOffer());
         return taa;
     }
 
@@ -90,7 +95,7 @@ public class Trade {
     public static TradeAcceptIntent createTradeAcceptIntentFromAction(TradeOfferAction to, Player offeree) {
         TradeAcceptIntent tai = new TradeAcceptIntent();
         tai.setId(to.getId());
-        tai.setOfferer(to.getActor().getPlayerName());
+        tai.setOfferer(to.getOfferer().getPlayerName());
         tai.setOfferee(offeree.getPlayerName());
         tai.setOffer(to.getOffer());
         tai.setDemand(to.getDemand());
@@ -107,7 +112,7 @@ public class Trade {
         return tmp;
     }
 
-    public static void addResources(Inventory inv, HashMap<Resource.ResourceType, Integer> hm) {
+    private static void addResources(Inventory inv, HashMap<Resource.ResourceType, Integer> hm) {
         Resource res;
         for (Resource.ResourceType r : hm.keySet()) {
             res = new Resource(r);
@@ -115,6 +120,31 @@ public class Trade {
                 inv.addResource(res);
             }
         }
+    }
+
+    private static void subResources(Inventory inv, HashMap<Resource.ResourceType, Integer> hm) {
+        Resource res;
+        for (Resource.ResourceType r : hm.keySet()) {
+            res = new Resource(r);
+            for (int i = 0; i < hm.get(r); i++) {
+                inv.removeResource(res);
+            }
+        }
+    }
+
+    public static void updateInventoryAfterTrade(Inventory inv, HashMap<Resource.ResourceType, Integer> add, HashMap<Resource.ResourceType, Integer> sub) {
+        Trade.addResources(inv, add);
+        Trade.subResources(inv, sub);
+    }
+
+    public static boolean isTradePossible(Inventory inv, HashMap<Resource.ResourceType, Integer> toCheck) {
+        Map<Resource.ResourceType, Integer> resources = inv.getResourceHand();
+        for (Resource.ResourceType r : toCheck.keySet()) {
+            if (toCheck.get(r) < resources.get(r)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public List<Player> getPendingTradeWith() {

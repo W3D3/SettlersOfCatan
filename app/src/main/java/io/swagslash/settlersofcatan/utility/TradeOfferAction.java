@@ -11,9 +11,10 @@ import io.swagslash.settlersofcatan.pieces.items.Resource;
 public class TradeOfferAction extends GameAction {
 
     private int id;
+    private Player offerer;
+    private List<Player> selectedOfferees = new ArrayList<>();
     private HashMap<Resource.ResourceType, Integer> offer = new HashMap<>();
     private HashMap<Resource.ResourceType, Integer> demand = new HashMap<>();
-    private List<Player> selectedOfferees = new ArrayList<>();
 
     TradeOfferAction() {
 
@@ -81,6 +82,14 @@ public class TradeOfferAction extends GameAction {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Player getOfferer() {
+        return offerer;
+    }
+
+    public void setOfferer(Player offerer) {
+        this.offerer = offerer;
     }
 
     @Override

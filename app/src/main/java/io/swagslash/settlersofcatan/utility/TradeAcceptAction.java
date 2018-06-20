@@ -4,7 +4,7 @@ import io.swagslash.settlersofcatan.Player;
 
 public class TradeAcceptAction extends TradeOfferAction {
 
-    private Player acceptor;
+    private Player offeree;
 
     TradeAcceptAction() {
 
@@ -14,18 +14,18 @@ public class TradeAcceptAction extends TradeOfferAction {
         super(actor);
     }
 
-    public Player getAcceptor() {
-        return acceptor;
+    public Player getOfferee() {
+        return offeree;
     }
 
-    public void setAcceptor(Player acceptor) {
-        this.acceptor = acceptor;
+    public void setOfferee(Player offeree) {
+        this.offeree = offeree;
     }
 
     @Override
     public String toString() {
         return "TradeAcceptAction{" +
-                "acceptor=" + acceptor +
+                "offeree=" + offeree +
                 '}';
     }
 }
