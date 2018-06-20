@@ -308,8 +308,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.trading:
                 if (itsMyTurn()) {
                     Intent in2 = new Intent(this, TradingActivity.class);
+
+                    // trade with player
                     in2.putExtra(TradingActivity.TRADEPENDING, (Serializable) t.getPendingTradeWith());
+                    in2.putExtra(TradingActivity.PLAYERORBANK, true);
                     startActivity(in2);
+
+                    // trade with bank
+                    //in2.putExtra(TradingActivity.PLAYERORBANK, false);
+                    //startActivity(in2);
                 } else {
                     Toast.makeText(getApplicationContext(), "It is not your turn!", Toast.LENGTH_LONG).show();
                 }

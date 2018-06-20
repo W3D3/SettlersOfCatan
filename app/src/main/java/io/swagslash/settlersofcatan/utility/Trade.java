@@ -19,6 +19,8 @@ public class Trade {
 
     private List<Player> pendingTradeWith = new ArrayList<>();
     private Vector<Integer> acceptedTrade = new Vector<>();
+    public static final int TRADEWITHBANK = 4;
+    public static final int TRADEWITHHARBOR = 3;
 
     /**
      * helper method to create a TradeOfferAction

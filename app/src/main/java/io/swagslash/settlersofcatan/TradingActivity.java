@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
-import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Trade;
 import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
@@ -30,6 +29,7 @@ public class TradingActivity extends AppCompatActivity {
     public static final String TRADEPENDING = "TradePendingWith";
     public static final String UPDATEAFTERTRADE = "UpdateAfterTrade";
     public static final int UPDATEAFTERTRADEREQUESTCODE = 42;
+    public static final String PLAYERORBANK = "PlayerOrBank";
 
     private ArrayList<TextView> resourceVals;
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
@@ -46,6 +46,7 @@ public class TradingActivity extends AppCompatActivity {
     private int min = 0;
     private int max = 99;
     private boolean sendOrCreate;
+    private boolean playerOrBank;
 
     private AbstractNetworkManager anm;
 
@@ -88,10 +89,16 @@ public class TradingActivity extends AppCompatActivity {
             this.writeValues(tradeOfferIntent);
             sendOrCreate = true;
         } else if (i.hasExtra(TRADEPENDING)) {
-            // you are creating an offer to trade
-            List<Player> nonSelectablePlayers = (List<Player>) i.getSerializableExtra(TRADEPENDING);
-            createPlayerList(nonSelectablePlayers);
-            sendOrCreate = false;
+            if (i.hasExtra(PLAYERORBANK)) {
+                // copy value from intent
+                playerOrBank = i.getBooleanExtra(PLAYERORBANK, false);
+            }
+            if (playerOrBank) {
+                // you are creating an offer to trade
+                List<Player> nonSelectablePlayers = (List<Player>) i.getSerializableExtra(TRADEPENDING);
+                createPlayerList(nonSelectablePlayers);
+                sendOrCreate = false;
+            }
         }
     }
 
@@ -194,16 +201,23 @@ public class TradingActivity extends AppCompatActivity {
                 });
             }
         } else {
-            if (!selectedPlayers.isEmpty()) {
-                this.tradeOfferAction = Trade.createTradeOfferAction(selectedPlayers, current);
-                this.readValues(this.tradeOfferAction, true);
-                this.readValues(this.tradeOfferAction, false);
-                Toast.makeText(this, "sending ...", Toast.LENGTH_SHORT).show();
-                anm.sendToAll(this.tradeOfferAction);
-                finish();
+            if (playerOrBank) {
+                // trade with player
+                if (!selectedPlayers.isEmpty()) {
+                    this.tradeOfferAction = Trade.createTradeOfferAction(selectedPlayers, current);
+                    this.readValues(this.tradeOfferAction, true);
+                    this.readValues(this.tradeOfferAction, false);
+                    Toast.makeText(this, "sending ...", Toast.LENGTH_SHORT).show();
+                    anm.sendToAll(this.tradeOfferAction);
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
+                // trade with bank
+
             }
+
         }
     }
 
@@ -269,13 +283,5 @@ public class TradingActivity extends AppCompatActivity {
      */
     public String getResourceStringFromView(View v) {
         return getResources().getResourceEntryName(v.getId()).split("_")[0];
-    }
-
-    @SuppressLint("DefaultLocale")
-    private void updateResources() {
-        Inventory inv = current.getInventory();
-        for (TextView tv : resourceVals) {
-            tv.setText(String.format(MainActivity.FORMAT, inv.countResource(Trade.convertStringToResource(getResourceStringFromView(tv)))));
-        }
     }
 }
