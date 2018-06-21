@@ -26,6 +26,8 @@ public class TradeOfferAction extends GameAction {
             offer.put(tmp, 0);
             demand.put(tmp, 0);
         }
+        offer.remove(Resource.ResourceType.NOTHING);
+        demand.remove(Resource.ResourceType.NOTHING);
     }
 
     public void addResource(Resource.ResourceType type, int val, boolean offerOrDemand) {
@@ -65,7 +67,11 @@ public class TradeOfferAction extends GameAction {
     }
 
     public void setOffer(HashMap<Resource.ResourceType, Integer> offer) {
-        this.offer = offer;
+        for (Resource.ResourceType r : this.offer.keySet()) {
+            if (offer.containsKey(r)) {
+                this.addResource(r, offer.get(r), true);
+            }
+        }
     }
 
     public HashMap<Resource.ResourceType, Integer> getDemand() {
@@ -73,7 +79,11 @@ public class TradeOfferAction extends GameAction {
     }
 
     public void setDemand(HashMap<Resource.ResourceType, Integer> demand) {
-        this.demand = demand;
+        for (Resource.ResourceType r : this.demand.keySet()) {
+            if (demand.containsKey(r)) {
+                this.addResource(r, demand.get(r), false);
+            }
+        }
     }
 
     public int getId() {

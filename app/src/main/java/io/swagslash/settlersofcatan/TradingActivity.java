@@ -185,7 +185,7 @@ public class TradingActivity extends AppCompatActivity {
             if (Trade.isTradePossible(SettlerApp.board.getPlayerByName(this.tradeOfferIntent.getOfferee()).getInventory(), tradeOfferIntent.getDemand())) {
                 // offeree has enough resources to trade
                 // send TradeAccept
-                this.tradeAcceptAction = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
+                this.tradeAcceptAction = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()), SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
                 anm.sendToAll(this.tradeAcceptAction);
                 // return update to main to your resources
                 Intent in = new Intent();

@@ -11,7 +11,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import io.swagslash.settlersofcatan.Player;
-import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
@@ -79,8 +78,7 @@ public class Trade {
      *
      * @return the the created TradeAcceptAction
      */
-    public static TradeAcceptAction createTradeAcceptActionFromIntent(TradeOfferIntent toi, Player offeree) {
-        Player offerer = SettlerApp.board.getPlayerByName(toi.getOfferer());
+    public static TradeAcceptAction createTradeAcceptActionFromIntent(TradeOfferIntent toi, Player offerer, Player offeree) {
         TradeAcceptAction taa = new TradeAcceptAction(offerer);
         taa.setId(toi.getId());
         taa.setOfferer(offerer);
