@@ -209,7 +209,7 @@ public class TradingActivity extends AppCompatActivity {
                     this.readValues(this.tradeOfferAction, false);
                     Toast.makeText(this, "sending ...", Toast.LENGTH_SHORT).show();
                     anm.sendToAll(this.tradeOfferAction);
-                    finish();
+                    //finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
                 }

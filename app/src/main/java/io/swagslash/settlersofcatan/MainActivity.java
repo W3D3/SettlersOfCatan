@@ -30,6 +30,7 @@ import com.otaliastudios.zoom.ZoomLayout;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
@@ -470,27 +471,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (object instanceof TradeAcceptAction) {
                 TradeAcceptAction taa = (TradeAcceptAction) object;
                 Log.d("trade", taa.toString());
-                if (itIsYou) {
+                if (itIsYou && taa.getOfferer().equals(player)) {
                     // you are the one who created the offer
                     if (!t.getAcceptedTrade().contains(taa.getId())) {
                         // if not already accepted, accept it
                         t.getAcceptedTrade().add(taa.getId());
                         // update offerer's resources
-                        Trade.updateInventoryAfterTrade(taa.getOfferer().getInventory(), taa.getDemand(), taa.getOffer());
+                        List<Player> players = SettlerApp.board.getPlayers();
+                        Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(taa.getOfferer().getPlayerName()).getInventory(), taa.getDemand(), taa.getOffer());
                         final String tmp = taa.getOfferee().getPlayerName() + " accepted your trade offer";
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 // show toast
-                                updateResources();
                                 Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
+                                updateResources();
                             }
                         });
                     }
                 }
             } else if (object instanceof TradeDeclineAction) {
                 TradeDeclineAction tda = (TradeDeclineAction) object;
-                if (itIsYou) {
+                if (itIsYou && tda.getOfferer().equals(player)) {
                     // you are the one who created the offer
                     // remove declining player from pendingTradeWith
                     t.getPendingTradeWith().remove(tda.getOfferee());
@@ -498,14 +500,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // show toast
                             Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
             } else if (object instanceof TradeOfferAction) {
                 final TradeOfferAction to = (TradeOfferAction) object;
-                if (itIsYou) {
+                if (itIsYou && to.getOfferer().equals(player)) {
                     // you are the one who created the offer
                     // add selected offerees to pending
                     t.getPendingTradeWith().addAll(to.getSelectedOfferees());
@@ -550,6 +551,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void advanceTurn() {
         //Log.d("PLAYER", "Player ended his turn. (" +  TurnController.getInstance().getCurrentPlayer() + ")");
+
+        // reset Trade
+        this.t = new Trade();
+
         TurnController.getInstance().advancePlayer();
         Log.d("PLAYER", "STARTING TURN of Player (" + TurnController.getInstance().getCurrentPlayer() + ")");
 
@@ -609,7 +614,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @SuppressLint("DefaultLocale")
     private void updateResources() {
-        Inventory inv = SettlerApp.getPlayer().getInventory();
+        Inventory inv = player.getInventory();
         for (TextView tv : resourceVals) {
             tv.setText(String.format(FORMAT, inv.countResource(Trade.convertStringToResource(getResourceStringFromView(tv)))));
         }
@@ -654,14 +659,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE && resultCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
             TradeAcceptIntent tai = (TradeAcceptIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
-            // update offeree's resources
-            Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(tai.getOfferee()).getInventory(), tai.getOffer(), tai.getDemand());
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    updateResources();
-                }
-            });
+            if (player.equals(SettlerApp.board.getPlayerByName(tai.getOfferee()))) {
+                // update offeree's resources
+                Trade.updateInventoryAfterTrade(player.getInventory(), tai.getOffer(), tai.getDemand());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateResources();
+                    }
+                });
+            }
         }
     }
 }

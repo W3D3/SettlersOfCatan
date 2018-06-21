@@ -80,9 +80,10 @@ public class Trade {
      * @return the the created TradeAcceptAction
      */
     public static TradeAcceptAction createTradeAcceptActionFromIntent(TradeOfferIntent toi, Player offeree) {
-        TradeAcceptAction taa = new TradeAcceptAction(offeree);
+        Player offerer = SettlerApp.board.getPlayerByName(toi.getOfferer());
+        TradeAcceptAction taa = new TradeAcceptAction(offerer);
         taa.setId(toi.getId());
-        taa.setOfferer(SettlerApp.board.getPlayerByName(toi.getOfferer()));
+        taa.setOfferer(offerer);
         taa.setOfferee(offeree);
         taa.setDemand(toi.getDemand());
         taa.setOffer(toi.getOffer());
@@ -142,7 +143,7 @@ public class Trade {
     public static boolean isTradePossible(Inventory inv, HashMap<Resource.ResourceType, Integer> toCheck) {
         Map<Resource.ResourceType, Integer> resources = inv.getResourceHand();
         for (Resource.ResourceType r : toCheck.keySet()) {
-            if (toCheck.get(r) < resources.get(r)) {
+            if (resources.get(r) < toCheck.get(r)) {
                 return false;
             }
         }
