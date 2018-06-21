@@ -491,7 +491,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             } else if (object instanceof TradeDeclineAction) {
                 TradeDeclineAction tda = (TradeDeclineAction) object;
-                if (itIsYou && tda.getOfferer().equals(player)) {
+                if (itIsYou) {
                     // you are the one who created the offer
                     // remove declining player from pendingTradeWith
                     t.getPendingTradeWith().remove(tda.getOfferee());
