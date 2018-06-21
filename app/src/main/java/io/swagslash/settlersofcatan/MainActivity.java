@@ -205,8 +205,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         roll2 = d6.roll();
         shakeValue = roll1 + roll2;
 
-        Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
-        t.show();
+        Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT).show();
 
         DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), roll1, roll2);
         GameController.getInstance().handleDiceRolls(roll1, roll2);
@@ -471,23 +470,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (object instanceof TradeAcceptAction) {
                 TradeAcceptAction taa = (TradeAcceptAction) object;
                 Log.d("trade", taa.toString());
-                if (itIsYou && taa.getOfferer().equals(player)) {
-                    // you are the one who created the offer
-                    if (!t.getAcceptedTrade().contains(taa.getId())) {
-                        // if not already accepted, accept it
-                        t.getAcceptedTrade().add(taa.getId());
-                        // update offerer's resources
-                        Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(taa.getOfferer().getPlayerName()).getInventory(), taa.getDemand(), taa.getOffer());
-                        final String tmp = taa.getOfferee().getPlayerName() + " accepted your trade offer";
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // show toast
-                                Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
-                                updateResources();
-                            }
-                        });
-                    }
+                if (itIsYou && taa.getOfferer().equals(player) && !t.getAcceptedTrade().contains(taa.getId())) {
+                    // you are the one who created the offer and if it isn't already accepted, accept it
+                    t.getAcceptedTrade().add(taa.getId());
+                    // update offerer's resources
+                    Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(taa.getOfferer().getPlayerName()).getInventory(), taa.getDemand(), taa.getOffer());
+                    final String tmp = taa.getOfferee().getPlayerName() + " accepted your trade offer";
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // show toast
+                            Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
+                            updateResources();
+                        }
+                    });
                 }
             } else if (object instanceof TradeDeclineAction) {
                 TradeDeclineAction tda = (TradeDeclineAction) object;
@@ -542,6 +538,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+
     }
 
     private boolean itsMyTurn() {

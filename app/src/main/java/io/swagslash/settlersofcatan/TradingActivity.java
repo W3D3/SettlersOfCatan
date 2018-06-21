@@ -31,7 +31,6 @@ public class TradingActivity extends AppCompatActivity {
     public static final int UPDATEAFTERTRADEREQUESTCODE = 42;
     public static final String PLAYERORBANK = "PlayerOrBank";
 
-    private ArrayList<TextView> resourceVals;
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
@@ -69,12 +68,12 @@ public class TradingActivity extends AppCompatActivity {
         this.demandTextViews.add((TextView) findViewById(R.id.wool_offeree_value));
 
         // resource show
-        this.resourceVals = new ArrayList<>();
-        this.resourceVals.add((TextView) findViewById(R.id.wood_count));
-        this.resourceVals.add((TextView) findViewById(R.id.wool_count));
-        this.resourceVals.add((TextView) findViewById(R.id.brick_count));
-        this.resourceVals.add((TextView) findViewById(R.id.grain_count));
-        this.resourceVals.add((TextView) findViewById(R.id.ore_count));
+        ArrayList<TextView> resourceVals = new ArrayList<>();
+        resourceVals.add((TextView) findViewById(R.id.wood_count));
+        resourceVals.add((TextView) findViewById(R.id.wool_count));
+        resourceVals.add((TextView) findViewById(R.id.brick_count));
+        resourceVals.add((TextView) findViewById(R.id.grain_count));
+        resourceVals.add((TextView) findViewById(R.id.ore_count));
 
         current = SettlerApp.getPlayer();
         anm = SettlerApp.getManager();
