@@ -134,7 +134,7 @@ public class TradingActivity extends AppCompatActivity {
         rv.setLayoutManager(rvl);
 
         // get all other players
-        allOtherPlayers = SettlerApp.board.getPlayers();
+        allOtherPlayers = new ArrayList<>(SettlerApp.board.getPlayers());
         allOtherPlayers.remove(current);
         // remove players to whom a trade offer was already send
         allOtherPlayers.removeAll(nonSelectablePlayers);
@@ -209,7 +209,7 @@ public class TradingActivity extends AppCompatActivity {
                     this.readValues(this.tradeOfferAction, false);
                     Toast.makeText(this, "sending ...", Toast.LENGTH_SHORT).show();
                     anm.sendToAll(this.tradeOfferAction);
-                    //finish();
+                    finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
                 }

@@ -30,7 +30,6 @@ import com.otaliastudios.zoom.ZoomLayout;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
@@ -171,8 +170,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // FIXME this only works in oncreate because P1 is host,
             // when selecting a random player to start, give them either enough time to open the activity
             // or wait for a ping of all your clients
-
-            initialTurn();
+            if (savedInstanceState == null) {
+                initialTurn();
+            }
         }
 
         // sensor init
@@ -226,8 +226,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     protected void onResume() {
-        super.onResume();
         sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        super.onResume();
     }
 
     /**
@@ -477,7 +477,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // if not already accepted, accept it
                         t.getAcceptedTrade().add(taa.getId());
                         // update offerer's resources
-                        List<Player> players = SettlerApp.board.getPlayers();
                         Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(taa.getOfferer().getPlayerName()).getInventory(), taa.getDemand(), taa.getOffer());
                         final String tmp = taa.getOfferee().getPlayerName() + " accepted your trade offer";
                         runOnUiThread(new Runnable() {
