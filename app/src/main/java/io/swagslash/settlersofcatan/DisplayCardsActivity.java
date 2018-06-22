@@ -7,8 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
 
 public class DisplayCardsActivity extends AppCompatActivity {
 
@@ -44,7 +48,17 @@ public class DisplayCardsActivity extends AppCompatActivity {
 
         // TODO: get player's cards
         String[] test = {"test0", "test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9"};
-        RecyclerView.Adapter rva = new CardListAdapter(Arrays.asList(test));
+        List<String> cards = new ArrayList<>();
+        Map<DevCard, Integer> handCards = SettlerApp.getPlayer().getInventory().getDeploymentCardHand();
+        int i;
+        for (DevCard devCard : SettlerApp.getPlayer().getInventory().getDeploymentCardHand().keySet()) {
+            i = handCards.get(devCard);
+            for (int j = 0; j < i; j++) {
+                cards.add(devCard.getCardText());
+            }
+        }
+
+        RecyclerView.Adapter rva = new CardListAdapter(cards);
         rv.setAdapter(rva);
     }
 

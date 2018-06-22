@@ -12,6 +12,7 @@ import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.CatanUtil;
 import io.swagslash.settlersofcatan.pieces.Hex;
+import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
 
 public class SettlerApp extends Application {
 
@@ -46,18 +47,20 @@ public class SettlerApp extends Application {
     public static void generateBoard(List<String> players){
         Board b = new Board(players, true, 10);
         Stack<Hex.TerrainType> terrainTypeStack = CatanUtil.getTerrainsShuffled();
+        Stack<DevCard.DevCardTyp> devCardTypStack = CatanUtil.getDevCardsShuffled();
         Network.SetupInfo setupInfo = new Network.SetupInfo();
         setupInfo.playerNames = players;
         setupInfo.terrainTypeStack = new Stack<>();
         setupInfo.terrainTypeStack.addAll(terrainTypeStack);
+        setupInfo.devCardTypStack.addAll(devCardTypStack);
         SettlerApp.getManager().sendToAll(setupInfo);
-        b.setupBoard(terrainTypeStack);
+        b.setupBoard(terrainTypeStack, devCardTypStack);
         board = b;
     }
 
     public static void generateBoard(Network.SetupInfo setupInfo) {
         Board b = new Board(setupInfo.playerNames, true, 10);
-        b.setupBoard(setupInfo.getTerrainTypeStack());
+        b.setupBoard(setupInfo.getTerrainTypeStack(), setupInfo.devCardTypStack);
         board = b;
     }
 

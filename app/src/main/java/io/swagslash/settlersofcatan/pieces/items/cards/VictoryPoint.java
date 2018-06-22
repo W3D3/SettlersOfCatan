@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan.pieces.items;
+package io.swagslash.settlersofcatan.pieces.items.cards;
 
 import android.content.Context;
 
@@ -11,7 +11,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
  * This Class has no Activation, when you Buy it, you become an VictoryPoint added
  */
 
-public class VictoryPoint extends DevelopmentCard {
+public class VictoryPoint extends DevCard {
 
     public VictoryPoint() {
         this.cardText = "1 Siegpunkt";

@@ -7,6 +7,7 @@ import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.RobAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.DevCardFactory;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
@@ -146,5 +147,13 @@ public class GameController {
                 return false;
         }
         return true;
+    }
+
+    public boolean drawDevCard(Player p) {
+        if (DevCardFactory.drawCard(p)) {
+            //TODO: Notify other about drawn card
+            return true;
+        } else
+            return false;
     }
 }

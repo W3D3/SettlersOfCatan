@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 
 /**
@@ -18,6 +19,7 @@ public class CatanUtil {
     public static final List<AxialHexLocation> hexes = initStartingSequence();
     public static final Stack<NumberToken> tokens = initNumberTokens();
     public static Stack<Hex.TerrainType> terrains = initTerrainList();
+    public static Stack<DevCard.DevCardTyp> devCards = initCardList();
     public static final Stack<Integer> colors = initColors();
 
     private static Stack<Integer> initColors() {
@@ -100,6 +102,22 @@ public class CatanUtil {
         return terrainStack;
     }
 
+    private static Stack<DevCard.DevCardTyp> initCardList() {
+        Stack<DevCard.DevCardTyp> cardStack = new Stack<>();
+        for (int i = 0; i < 14; i++) {
+            cardStack.push(DevCard.DevCardTyp.KNIGHT);
+        }
+        for (int i = 0; i < 5; i++) {
+            cardStack.push(DevCard.DevCardTyp.VICTORYPOINT);
+        }
+        for (int i = 0; i < 2; i++) {
+            cardStack.push(DevCard.DevCardTyp.YEAROFPLENTY);
+            cardStack.push(DevCard.DevCardTyp.MONOPOLY);
+            cardStack.push(DevCard.DevCardTyp.ROADBUILDING);
+        }
+        return cardStack;
+    }
+
     public static List<AxialHexLocation> getCatanBoardHexesInStartingSequence() {
         Stack<AxialHexLocation> stack = new Stack<>();
         stack.addAll(hexes);
@@ -123,5 +141,12 @@ public class CatanUtil {
         Stack<Integer> colorsStack = new Stack<>();
         colorsStack.addAll(colors);
         return colorsStack;
+    }
+
+    public static Stack<DevCard.DevCardTyp> getDevCardsShuffled() {
+        Stack<DevCard.DevCardTyp> devCardStack = new Stack<>();
+        devCardStack.addAll(devCards);
+        Collections.shuffle(devCardStack);
+        return devCardStack;
     }
 }

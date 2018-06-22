@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan.pieces.items;
+package io.swagslash.settlersofcatan.pieces.items.cards;
 
 import android.content.Context;
 
@@ -11,7 +11,7 @@ import io.swagslash.settlersofcatan.pieces.Hex;
  * Created by thoma on 10.06.2018.
  */
 
-public class Knight extends DevelopmentCard {
+public class Knight extends DevCard {
 
     public Knight() {
         this.cardText = "Wenn Sie diese Karte ausspielen versetzen Sie den Räuber und ziehen bei einen der betroffenen Spieler ein Karte";

@@ -15,7 +15,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
  * Other Development Cards are not easy to test via JUnit
  */
 
-public class DevelopmentCardTests {
+public class DevCardTests {
     static Player p;
     static Board b;
 

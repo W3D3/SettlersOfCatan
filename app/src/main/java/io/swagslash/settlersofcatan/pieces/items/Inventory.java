@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
+
 /**
  * Created by Christoph Wedenig (christoph@wedenig.org) on 23.03.18.
  */
@@ -12,7 +14,7 @@ import java.util.Set;
 public class Inventory {
 
     private Map<Resource.ResourceType, Integer> resourceHand;
-    private Map<DevelopmentCard, Integer> deploymentCardHand;
+    private Map<DevCard, Integer> deploymentCardHand;
 
     public Inventory() {
         this.resourceHand = new HashMap<>();
@@ -55,22 +57,22 @@ public class Inventory {
         return resourceHand;
     }
 
-    public Map<DevelopmentCard, Integer> getDeploymentCardHand() {
+    public Map<DevCard, Integer> getDeploymentCardHand() {
         return deploymentCardHand;
     }
 
-    public void setDeploymentCardHand(Map<DevelopmentCard, Integer> deploymentCardHand) {
+    public void setDeploymentCardHand(Map<DevCard, Integer> deploymentCardHand) {
         this.deploymentCardHand = deploymentCardHand;
     }
 
-    public void addDeploymentCardHand(DevelopmentCard developmentCard) {
-        Integer count = this.deploymentCardHand.get(developmentCard);
-        this.deploymentCardHand.put(developmentCard, count++);
+    public void addDeploymentCardHand(DevCard devCard) {
+        Integer count = this.deploymentCardHand.get(devCard);
+        this.deploymentCardHand.put(devCard, count++);
     }
 
-    public void removeDeploymentCardHand(DevelopmentCard developmentCard) {
-        Integer count = this.deploymentCardHand.get(developmentCard);
-        this.deploymentCardHand.put(developmentCard, count--);
+    public void removeDeploymentCardHand(DevCard devCard) {
+        Integer count = this.deploymentCardHand.get(devCard);
+        this.deploymentCardHand.put(devCard, count--);
     }
 
     public void randomDiscard() {

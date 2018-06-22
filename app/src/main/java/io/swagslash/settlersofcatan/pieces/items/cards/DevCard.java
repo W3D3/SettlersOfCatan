@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan.pieces.items;
+package io.swagslash.settlersofcatan.pieces.items.cards;
 
 import android.content.Context;
 
@@ -6,12 +6,13 @@ import java.util.Random;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 /**
  * Created by thoma on 09.06.2018.
  */
 
-public abstract class DevelopmentCard {
+public abstract class DevCard {
 
     String cardText;
 
@@ -30,7 +31,7 @@ public abstract class DevelopmentCard {
      */
 
     public static Player buyDeploymentCard(Player p) {
-        DevelopmentCard drawnCard = null;
+        DevCard drawnCard = null;
         if (p.getInventory().getResourceHand().get(Resource.ResourceType.ORE) >= 1 &&
                 p.getInventory().getResourceHand().get(Resource.ResourceType.WOOL) >= 1 &&
                 p.getInventory().getResourceHand().get(Resource.ResourceType.GRAIN) >= 1) {
@@ -86,6 +87,11 @@ public abstract class DevelopmentCard {
 
     public void setCardText(String cardText) {
         this.cardText = cardText;
+    }
+
+    public enum DevCardTyp {
+        KNIGHT, YEAROFPLENTY, VICTORYPOINT, MONOPOLY, ROADBUILDING
+
     }
 
 

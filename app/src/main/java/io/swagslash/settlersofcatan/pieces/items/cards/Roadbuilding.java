@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan.pieces.items;
+package io.swagslash.settlersofcatan.pieces.items.cards;
 
 import android.content.Context;
 
@@ -11,7 +11,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
  *
  */
 
-public class Roadbuilding extends DevelopmentCard {
+public class Roadbuilding extends DevCard {
 
 
     public Roadbuilding() {

@@ -9,7 +9,7 @@ import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.controller.PhaseController;
-import io.swagslash.settlersofcatan.pieces.items.ICard;
+import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexGridLayout;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -28,7 +28,7 @@ public class Board {
     private HashMap<HexPointPair, Edge> edges;
     private List<Player> players;
     private HexGridLayout gridLayout;
-    private Stack<ICard> cardStack;
+    private Stack<DevCard.DevCardTyp> cardStack;
 
     private boolean randomDiscard;
     private int winningPoints;
@@ -65,7 +65,7 @@ public class Board {
         return edges;
     }
 
-    public Stack<ICard> getCardStack() {
+    public Stack<DevCard.DevCardTyp> getCardStack() {
         return cardStack;
     }
 
@@ -105,16 +105,16 @@ public class Board {
     }
 
     public void setupBoard() {
-        setupBoard(CatanUtil.getTerrainsShuffled());
+        setupBoard(CatanUtil.getTerrainsShuffled(), CatanUtil.getDevCardsShuffled());
     }
 
-    public void setupBoard(Stack<Hex.TerrainType> terrainTypeStack) {
+    public void setupBoard(Stack<Hex.TerrainType> terrainTypeStack, Stack<DevCard.DevCardTyp> devCardStack) {
         this.gridLayout = new HexGridLayout(HexGridLayout.pointy, HexGridLayout.size_default, HexGridLayout.origin_default);
 
         List<AxialHexLocation> hexLocationList = CatanUtil.getCatanBoardHexesInStartingSequence();
         Stack<NumberToken> numberTokens = CatanUtil.getTokensInStartingSequence();
         Stack<Hex.TerrainType> terrainsShuffled = terrainTypeStack;
-
+        cardStack = devCardStack;
 
         for (AxialHexLocation location : CatanUtil.getCatanBoardHexesInStartingSequence()) {
             boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;

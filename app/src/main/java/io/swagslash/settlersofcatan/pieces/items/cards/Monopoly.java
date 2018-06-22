@@ -1,4 +1,4 @@
-package io.swagslash.settlersofcatan.pieces.items;
+package io.swagslash.settlersofcatan.pieces.items.cards;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -6,12 +6,13 @@ import android.content.DialogInterface;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.Board;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 /**
  * Created by thoma on 10.06.2018.
  */
 
-public class Monopoly extends DevelopmentCard {
+public class Monopoly extends DevCard {
 
     Resource.ResourceType resourceType;
 

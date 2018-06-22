@@ -24,6 +24,7 @@ import io.swagslash.settlersofcatan.pieces.NumberToken;
 import io.swagslash.settlersofcatan.pieces.Vertex;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
+import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.CubicHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.EdgeDirection;
@@ -135,6 +136,7 @@ public class Network {
     static public class SetupInfo {
         public List<String> playerNames;
         public Stack<Hex.TerrainType> terrainTypeStack;
+        public Stack<DevCard.DevCardTyp> devCardTypStack;
 
         public SetupInfo() {
         }
@@ -153,6 +155,14 @@ public class Network {
 
         public void setTerrainTypeStack(Stack<Hex.TerrainType> terrainTypeStack) {
             this.terrainTypeStack = terrainTypeStack;
+        }
+
+        public Stack<DevCard.DevCardTyp> getDevCardTypStack() {
+            return devCardTypStack;
+        }
+
+        public void setDevCardTypStack(Stack<DevCard.DevCardTyp> devCardTypStack) {
+            this.devCardTypStack = devCardTypStack;
         }
     }
 
