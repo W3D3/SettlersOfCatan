@@ -1,5 +1,6 @@
 package io.swagslash.settlersofcatan;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ResourceDistributionTests {
     @Test
-    public void checkSimpleDistribution() throws Exception {
+    public void checkSimpleDistribution() {
 
         List<String> players = new ArrayList<>();
         players.add("P1");
@@ -57,7 +58,8 @@ public class ResourceDistributionTests {
     }
 
     @Test
-    public void checkSimpleDistribution1() throws Exception {
+    @Ignore
+    public void checkSimpleDistribution1() {
 
         List<String> players = new ArrayList<>();
         players.add("P1");

@@ -7,30 +7,46 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.swagslash.settlersofcatan.utility.TradeHelper;
-import io.swagslash.settlersofcatan.utility.TradeOffer;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
+import io.swagslash.settlersofcatan.utility.Trade;
+import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
+import io.swagslash.settlersofcatan.utility.TradeDeclineAction;
+import io.swagslash.settlersofcatan.utility.TradeOfferAction;
+import io.swagslash.settlersofcatan.utility.TradeOfferIntent;
 
 public class TradingActivity extends AppCompatActivity {
+
+    // constants
+    public static final String TRADEOFFERINTENT = "TradeOfferIntent";
+    public static final String TRADEPENDING = "TradePendingWith";
+    public static final String UPDATEAFTERTRADE = "UpdateAfterTrade";
+    public static final int UPDATEAFTERTRADEREQUESTCODE = 42;
+    public static final String PLAYERORBANK = "PlayerOrBank";
 
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
-    private TradeOffer tradeOffer;
-    private Player offerer;
+    private TradeAcceptAction tradeAcceptAction;
+    private TradeOfferAction tradeOfferAction;
+    private TradeOfferIntent tradeOfferIntent;
+    private TradeDeclineAction tradeDeclineAction;
     private List<Player> allOtherPlayers = new ArrayList<>();
     private List<Player> selectedPlayers = new ArrayList<>();
 
     private int min = 0;
     private int max = 99;
     private boolean sendOrCreate;
+    private boolean playerOrBank;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trading);
@@ -47,53 +63,86 @@ public class TradingActivity extends AppCompatActivity {
         this.demandTextViews.add((TextView) findViewById(R.id.grain_offeree_value));
         this.demandTextViews.add((TextView) findViewById(R.id.wool_offeree_value));
 
+        // resource show
+        ArrayList<TextView> resourceVals = new ArrayList<>();
+        resourceVals.add((TextView) findViewById(R.id.wood_count));
+        resourceVals.add((TextView) findViewById(R.id.wool_count));
+        resourceVals.add((TextView) findViewById(R.id.brick_count));
+        resourceVals.add((TextView) findViewById(R.id.grain_count));
+        resourceVals.add((TextView) findViewById(R.id.ore_count));
+
         Intent i = getIntent();
-        if (i.hasExtra(MainActivity.TRADINGINTENT)) {
+        if (i.hasExtra(TRADEOFFERINTENT)) {
+            // change submit btn text
+            Button b = findViewById(R.id.send);
+            b.setText(R.string.accept_trade);
             // someone send an offer to trade
-            this.tradeOffer = (TradeOffer) i.getSerializableExtra(MainActivity.TRADINGINTENT);
-            // read values reversed (offer to demand and reverse)
+            this.tradeOfferIntent = (TradeOfferIntent) i.getSerializableExtra(TRADEOFFERINTENT);
+            this.writeValues(tradeOfferIntent);
             sendOrCreate = true;
-        } else {
-            // you are creating an offer to trade
-            RecyclerView rv = findViewById(R.id.player_trading_list);
-            rv.addOnItemTouchListener(new RecyclerItemClickListener(this, rv, new ClickListener() {
-                /**
-                 * adds currently unselected player to all selected players
-                 * or
-                 * removes currently selected player from all selected players
-                 */
-                @Override
-                public void onClick(View v, int pos) {
-                    TextView tv = v.findViewById(R.id.player_name);
-                    Player tmp = SettlerApp.board.getPlayerByName(tv.getText().toString());
-                    if (selectedPlayers.contains(tmp)) {
-                        selectedPlayers.remove(tmp);
-                        v.setBackgroundResource(android.R.drawable.editbox_dropdown_light_frame);
-                    } else {
-                        selectedPlayers.add(tmp);
-                        v.setBackgroundResource(android.R.drawable.editbox_dropdown_dark_frame);
-                    }
-                }
-
-                @Override
-                public void onLongClick(View v, int pos) {
-                    // do nothing
-                }
-            }));
-            rv.setHasFixedSize(true);
-
-            RecyclerView.LayoutManager rvl = new LinearLayoutManager(this);
-            rv.setLayoutManager(rvl);
-
-            // get all other players
-            offerer = SettlerApp.getPlayer();
-            allOtherPlayers = SettlerApp.board.getPlayers();
-            allOtherPlayers.remove(offerer);
-
-            RecyclerView.Adapter rva = new PlayerListAdapter(allOtherPlayers);
-            rv.setAdapter(rva);
-            sendOrCreate = false;
+        } else if (i.hasExtra(TRADEPENDING)) {
+            if (i.hasExtra(PLAYERORBANK)) {
+                // copy value from intent
+                playerOrBank = i.getBooleanExtra(PLAYERORBANK, false);
+            }
+            if (playerOrBank) {
+                // you are creating an offer to trade
+                List<Player> nonSelectablePlayers = Trade.createDeserializableList((List<String>) i.getSerializableExtra(TRADEPENDING));
+                createPlayerList(nonSelectablePlayers);
+                sendOrCreate = false;
+            }
         }
+    }
+
+    private void createPlayerList(List<Player> nonSelectablePlayers) {
+        RecyclerView rv = findViewById(R.id.player_trading_list);
+        rv.addOnItemTouchListener(new RecyclerItemClickListener(this, rv, new ClickListener() {
+            /**
+             * adds currently unselected player to all selected players
+             * or
+             * removes currently selected player from all selected players
+             */
+            @Override
+            public void onClick(View v, int pos) {
+                TextView tv = v.findViewById(R.id.player_name);
+                Player tmp = SettlerApp.board.getPlayerByName(tv.getText().toString());
+                if (selectedPlayers.contains(tmp)) {
+                    selectedPlayers.remove(tmp);
+                    v.setBackgroundResource(android.R.drawable.editbox_dropdown_light_frame);
+                } else {
+                    selectedPlayers.add(tmp);
+                    v.setBackgroundResource(android.R.drawable.editbox_dropdown_dark_frame);
+                }
+            }
+
+            @Override
+            public void onLongClick(View v, int pos) {
+                // do nothing
+            }
+        }));
+        rv.setHasFixedSize(true);
+
+        RecyclerView.LayoutManager rvl = new LinearLayoutManager(this);
+        rv.setLayoutManager(rvl);
+
+        // get all other players
+        allOtherPlayers = new ArrayList<>(SettlerApp.board.getPlayers());
+        allOtherPlayers.remove(SettlerApp.getPlayer());
+        // remove players to whom a trade offer was already send
+        allOtherPlayers.removeAll(nonSelectablePlayers);
+
+        if (allOtherPlayers.size() == 0) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(TradingActivity.this, "no selectable players to trade with", Toast.LENGTH_SHORT).show();
+                }
+            });
+            finish();
+        }
+
+        RecyclerView.Adapter rva = new PlayerListAdapter(allOtherPlayers);
+        rv.setAdapter(rva);
     }
 
     /**
@@ -101,24 +150,35 @@ public class TradingActivity extends AppCompatActivity {
      */
     @SuppressLint("DefaultLocale")
     public void onMinusPlusClick(View view) {
-        String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
-        TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
-        int val = Integer.parseInt(tv.getText().toString());
-        switch (tmp[2]) {
-            case "plus":
-                if (val < max) {
-                    val++;
-                }
-                break;
-            case "minus":
-                if (val > min) {
-                    val--;
-                }
-                break;
-            default:
-                break;
+        if (!sendOrCreate) {
+            String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
+            TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
+            int val = Integer.parseInt(tv.getText().toString());
+            int tmp_max;
+            switch (tmp[2]) {
+                case "plus":
+                    if (tmp[1].equals("offerer")) {
+                        tmp_max = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
+                    } else {
+                        tmp_max = max;
+                    }
+                    if (val < tmp_max) {
+                        val++;
+                    }
+                    break;
+                case "minus":
+                    if (val > min) {
+                        val--;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            tv.setText(String.format(MainActivity.FORMAT, val));
+        } else {
+            // if this is an already created offer
+            Toast.makeText(this, "can't change offer", Toast.LENGTH_SHORT).show();
         }
-        tv.setText(String.format(MainActivity.FORMAT, val));
     }
 
     /**
@@ -128,27 +188,68 @@ public class TradingActivity extends AppCompatActivity {
      */
     public void onSubmit(View view) {
         if (sendOrCreate) {
-            // send TradeAccept ?
-        } else {
-            if (!selectedPlayers.isEmpty()) {
-                SettlerApp.getManager().sendToAll(this.createTradeOffer());
+            // check if offer is possible
+            if (Trade.isTradePossible(SettlerApp.board.getPlayerByName(this.tradeOfferIntent.getOfferee()).getInventory(), tradeOfferIntent.getDemand())) {
+                // offeree has enough resources to trade
+                // send TradeAccept
+                this.tradeAcceptAction = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()), SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
+                SettlerApp.getManager().sendToAll(this.tradeAcceptAction);
+                finish();
             } else {
-                Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(TradingActivity.this, "your resources are not sufficient", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
+        } else {
+            if (playerOrBank) {
+                // trade with player
+                if (!selectedPlayers.isEmpty()) {
+                    this.tradeOfferAction = Trade.createTradeOfferAction(selectedPlayers, SettlerApp.getPlayer());
+                    if (this.readValues(this.tradeOfferAction, true) && this.readValues(this.tradeOfferAction, false)) {
+                        Toast.makeText(this, "sending ...", Toast.LENGTH_SHORT).show();
+                        SettlerApp.getManager().sendToAll(this.tradeOfferAction);
+                        Intent i = new Intent();
+                        // workaround for "not receiving your own TradeOfferAction"
+                        i.putExtra(UPDATEAFTERTRADE, Trade.createTradeUpdateIntentFromAction(this.tradeOfferAction));
+                        setResult(UPDATEAFTERTRADEREQUESTCODE, i);
+                        finish();
+                    } else {
+                        Toast.makeText(this, "please offer and demand something", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // trade with bank
+
+            }
+
         }
     }
 
-    /**
-     * helper method to create a trade offer
-     *
-     * @return the the created trade offer
-     */
-    private TradeOffer createTradeOffer() {
-        this.tradeOffer = new TradeOffer(this.offerer);
-        this.tradeOffer.setPlayers(selectedPlayers);
-        this.readValues(true);
-        this.readValues(false);
-        return tradeOffer;
+    @Override
+    public void onBackPressed() {
+        // send TradeDecline
+        if (sendOrCreate) {
+            this.tradeDeclineAction = Trade.createTradeDeclineActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()), SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
+            SettlerApp.getManager().sendToAll(this.tradeDeclineAction);
+        }
+        super.onBackPressed();
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void writeValues(TradeOfferIntent toi) {
+        for (TextView tv : this.offerTextViews) {
+            Resource.ResourceType resource = Trade.convertStringToResource(getResourceStringFromView(tv));
+            tv.setText(String.format(MainActivity.FORMAT, toi.getResource(resource, false)));
+        }
+        for (TextView tv : this.demandTextViews) {
+            Resource.ResourceType resource = Trade.convertStringToResource(getResourceStringFromView(tv));
+            tv.setText(String.format(MainActivity.FORMAT, toi.getResource(resource, true)));
+        }
     }
 
     /**
@@ -156,17 +257,14 @@ public class TradingActivity extends AppCompatActivity {
      *
      * @param offerOrDemand offer=true,demand=false
      */
-    private void readValues(boolean offerOrDemand) {
+    private boolean readValues(TradeOfferAction toa, boolean offerOrDemand) {
         ArrayList<TextView> readTextViews;
         int readValue;
-        String toastText;
 
         if (offerOrDemand) {
             readTextViews = offerTextViews;
-            toastText = "please offer something";
         } else {
             readTextViews = demandTextViews;
-            toastText = "please demand something";
         }
 
         boolean empty = true;
@@ -175,16 +273,14 @@ public class TradingActivity extends AppCompatActivity {
             if (readValue > min) {
                 empty = false;
             }
-            this.tradeOffer.addResource(TradeHelper.convertStringToResource(getResourceStringFromView(tv)), readValue, offerOrDemand);
+            toa.addResource(Trade.convertStringToResource(getResourceStringFromView(tv)), readValue, offerOrDemand);
         }
-
-        if (empty) {
-            Toast.makeText(getApplicationContext(), toastText, Toast.LENGTH_SHORT).show();
-        }
+        return !empty;
     }
 
     /**
      * Helper method to get the selected resource's string from the view's id
+     *
      * @param v view to get resource from
      * @return String to be converted to Resource.ResourceType
      */
