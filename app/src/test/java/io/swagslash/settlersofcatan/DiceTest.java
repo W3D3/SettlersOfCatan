@@ -27,9 +27,11 @@ public class DiceTest {
         for (int i = 0; i < testSize; i++) {
             tmp.add(d.roll());
         }
-        Assert.assertSame(Collections.max(tmp), 6);
-        Assert.assertNotSame(Collections.max(tmp), 7);
-        Assert.assertSame(Collections.min(tmp), 1);
-        Assert.assertNotSame(Collections.min(tmp), 0);
+        int min = Collections.min(tmp);
+        int max = Collections.max(tmp);
+        Assert.assertSame(6, max);
+        Assert.assertNotSame(7, max);
+        Assert.assertSame(1, min);
+        Assert.assertNotSame(0, max);
     }
 }
