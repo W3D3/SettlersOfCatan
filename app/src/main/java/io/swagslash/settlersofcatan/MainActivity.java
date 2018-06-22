@@ -163,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.resourceVals.add((TextView) findViewById(R.id.ore_count));
 
         this.player = SettlerApp.getPlayer();
-        this.player.getInventory().addResource(new Resource(Resource.ResourceType.GRAIN));
         updateResources();
 
         if (network.isHost()) {
