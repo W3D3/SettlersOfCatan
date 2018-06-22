@@ -1,6 +1,7 @@
 package io.swagslash.settlersofcatan;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,13 +44,15 @@ import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Dice;
 import io.swagslash.settlersofcatan.utility.DiceSix;
 import io.swagslash.settlersofcatan.utility.Trade;
 import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
-import io.swagslash.settlersofcatan.utility.TradeAcceptIntent;
 import io.swagslash.settlersofcatan.utility.TradeDeclineAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferAction;
+import io.swagslash.settlersofcatan.utility.TradeUpdateIntent;
+import io.swagslash.settlersofcatan.utility.TradeVerifyAction;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener, INetworkCallback {
 
@@ -89,14 +92,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int roll2;
 
     // trade
-    Trade t = new Trade();
+    Trade trade = new Trade();
 
     HexView hexView;
     private Board board;
     private AbstractNetworkManager network;
     Player player;
 
-    //@SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +106,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.setupHexView();
         network = SettlerApp.getManager();
         network.switchIn(this);
-
-        //setContentView(R.layout.activity_main);
 
         TabLayout tabs = findViewById(R.id.tabs);
         for (Player p : SettlerApp.board.getPlayers()) {
@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.resourceVals.add((TextView) findViewById(R.id.ore_count));
 
         this.player = SettlerApp.getPlayer();
+        this.player.getInventory().addResource(new Resource(Resource.ResourceType.GRAIN));
         updateResources();
 
         if (network.isHost()) {
@@ -310,9 +311,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Intent in2 = new Intent(this, TradingActivity.class);
 
                     // trade with player
-                    in2.putExtra(TradingActivity.TRADEPENDING, (Serializable) t.getPendingTradeWith());
+                    in2.putExtra(TradingActivity.TRADEPENDING, (Serializable) Trade.createSerializableList(trade.getPendingTradeWith()));
                     in2.putExtra(TradingActivity.PLAYERORBANK, true);
-                    startActivity(in2);
+                    // workaround for "not receiving your own TradeOfferAction"
+                    startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
 
                     // trade with bank
                     //in2.putExtra(TradingActivity.PLAYERORBANK, false);
@@ -467,30 +469,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         updateDice();
                     }
                 });
-            } else if (object instanceof TradeAcceptAction) {
-                TradeAcceptAction taa = (TradeAcceptAction) object;
-                Log.d("trade", taa.toString());
-                if (itIsYou && taa.getOfferer().equals(player) && !t.getAcceptedTrade().contains(taa.getId())) {
-                    // you are the one who created the offer and if it isn't already accepted, accept it
-                    t.getAcceptedTrade().add(taa.getId());
-                    // update offerer's resources
-                    Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(taa.getOfferer().getPlayerName()).getInventory(), taa.getDemand(), taa.getOffer());
-                    final String tmp = taa.getOfferee().getPlayerName() + " accepted your trade offer";
+            } else if (object instanceof TradeVerifyAction) {
+                TradeVerifyAction tua = (TradeVerifyAction) object;
+                if (tua.getOfferee().equals(player)) {
+                    // you are the one whose trade offer acceptance was accepted
+                    // update offeree's resource
+                    Trade.updateInventoryAfterTrade(player.getInventory(), tua.getOffer(), tua.getDemand());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // show toast
-                            Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
                             updateResources();
                         }
                     });
                 }
+            } else if (object instanceof TradeAcceptAction) {
+                TradeAcceptAction taa = (TradeAcceptAction) object;
+                // are you the one who created the offer
+                if (taa.getOfferer().equals(player)) {
+                    // was the trade offer already accepted with someone else
+                    if (!trade.getAcceptedTrade().contains(taa.getId())) {
+                        // accept the offer
+                        trade.getAcceptedTrade().add(taa.getId());
+                        // update offerer's resources
+                        Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(taa.getOfferer().getPlayerName()).getInventory(), taa.getDemand(), taa.getOffer());
+                        // notify the offeree that you verify the trade
+                        SettlerApp.getManager().sendToAll(Trade.createTradeVerifyActionFromAction(taa));
+                        // remove accepted offeree from pendingWith
+                        trade.getPendingTradeWith().remove(taa.getOfferee());
+                        String s = taa.getOfferee().getPlayerName();
+                        final String tmp = s + " accepted your trade offer";
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // show toast
+                                Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
+                                updateResources();
+                            }
+                        });
+                    } else {
+                        // someone already accepted the offer
+                        // notify player
+                        SettlerApp.getManager().sendToAll(Trade.createTradeDeclineAction(taa, taa.getOfferee()));
+                    }
+                }
             } else if (object instanceof TradeDeclineAction) {
                 TradeDeclineAction tda = (TradeDeclineAction) object;
-                if (itIsYou) {
-                    // you are the one who created the offer
+                // you are the one who created the offer
+                if (tda.getOfferer().equals(player)) {
                     // remove declining player from pendingTradeWith
-                    t.getPendingTradeWith().remove(tda.getOfferee());
+                    trade.getPendingTradeWith().remove(tda.getOfferee());
                     final String tmp = tda.getOfferee().getPlayerName() + " declined your trade offer";
                     runOnUiThread(new Runnable() {
                         @Override
@@ -498,43 +525,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
                         }
                     });
+                } else {
+                    // trade wasn't verified by offerer
+                    Toast.makeText(this, "offer isn't available anymore", Toast.LENGTH_SHORT).show();
                 }
             } else if (object instanceof TradeOfferAction) {
                 final TradeOfferAction to = (TradeOfferAction) object;
-                if (itIsYou && to.getOfferer().equals(player)) {
+                if (to.getOfferer().equals(player)) {
+
+                    // is not received!
+                    // why ... well, beats me
+
                     // you are the one who created the offer
                     // add selected offerees to pending
-                    t.getPendingTradeWith().addAll(to.getSelectedOfferees());
-                }
-                // player = offeree
-                if (to.getSelectedOfferees().contains(player)) {
-                    final AlertDialog.Builder b = new AlertDialog.Builder(this);
-                    b.setMessage(to.getOfferer().getPlayerName() + " wants to trade with you.");
-                    b.setPositiveButton(R.string.look_trade, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // start activity_trading with send offer
-                            // create TradeOfferIntent, because TradeOfferAction (because of Player
-                            // and Board and Inventory etc. etc.) isn't serializable
-                            Intent in2 = new Intent(b.getContext(), TradingActivity.class);
-                            in2.putExtra(TradingActivity.TRADEOFFERINTENT, Trade.createTradeOfferIntentFromAction(to, player));
-                            // start for result to get a return value to update resources
-                            startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
-                        }
-                    });
-                    b.setNegativeButton(R.string.decline_trade, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // send TradeDeclineAction
-                            SettlerApp.getManager().sendToAll(Trade.createTradeDeclineAction(to, player));
-                        }
-                    });
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            b.show();
-                        }
-                    });
+                    trade.getPendingTradeWith().addAll(to.getSelectedOfferees());
+                } else {
+                    // player = offeree
+                    if (to.getSelectedOfferees().contains(player)) {
+                        final AlertDialog.Builder b = new AlertDialog.Builder(this);
+                        b.setMessage(to.getOfferer().getPlayerName() + " wants to trade with you.");
+                        b.setPositiveButton(R.string.look_trade, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // start activity_trading with send offer
+                                // create TradeOfferIntent, because TradeOfferAction (because of Player
+                                // and Board and Inventory etc. etc.) isn't serializable
+                                Intent in2 = new Intent(b.getContext(), TradingActivity.class);
+                                in2.putExtra(TradingActivity.TRADEOFFERINTENT, Trade.createTradeOfferIntentFromAction(to, player));
+                                startActivity(in2);
+                                // start for result to get a return value to update resources
+                                //startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
+                            }
+                        });
+                        b.setNegativeButton(R.string.decline_trade, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // send TradeDeclineAction
+                                SettlerApp.getManager().sendToAll(Trade.createTradeDeclineAction(to, player));
+                            }
+                        });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Dialog d = b.create();
+                                d.setCanceledOnTouchOutside(false);
+                                d.show();
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -549,7 +587,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Log.d("PLAYER", "Player ended his turn. (" +  TurnController.getInstance().getCurrentPlayer() + ")");
 
         // reset Trade
-        this.t = new Trade();
+        this.trade = new Trade();
 
         TurnController.getInstance().advancePlayer();
         Log.d("PLAYER", "STARTING TURN of Player (" + TurnController.getInstance().getCurrentPlayer() + ")");
@@ -645,7 +683,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * is called to refresh you resources after you accepted an offer
+     * workaround for "not receiving your own TradeOfferAction"
      *
      * @param requestCode
      * @param resultCode
@@ -654,16 +692,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE && resultCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
-            TradeAcceptIntent tai = (TradeAcceptIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
-            if (player.equals(SettlerApp.board.getPlayerByName(tai.getOfferee()))) {
-                // update offeree's resources
-                Trade.updateInventoryAfterTrade(player.getInventory(), tai.getOffer(), tai.getDemand());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateResources();
-                    }
-                });
+            TradeUpdateIntent tai = (TradeUpdateIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
+            if (SettlerApp.board.getPlayerByName(tai.getOfferer()).equals(player)) {
+                trade.getPendingTradeWith().addAll(Trade.createDeserializableList(tai.getSelectedOfferees()));
             }
         }
     }

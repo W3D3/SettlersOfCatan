@@ -35,6 +35,7 @@ import io.swagslash.settlersofcatan.utility.Pair;
 import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
 import io.swagslash.settlersofcatan.utility.TradeDeclineAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferAction;
+import io.swagslash.settlersofcatan.utility.TradeVerifyAction;
 
 public class Network {
     //Port Numbers randomly chosen
@@ -89,6 +90,7 @@ public class Network {
         kryo.register(TradeOfferAction.class);
         kryo.register(TradeAcceptAction.class);
         kryo.register(TradeDeclineAction.class);
+        kryo.register(TradeVerifyAction.class);
         kryo.register(List.class);
     }
 

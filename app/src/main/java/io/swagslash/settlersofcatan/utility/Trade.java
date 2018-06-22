@@ -11,6 +11,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
@@ -50,33 +51,50 @@ public class Trade {
     }
 
     /**
+     * helper method to create a TradeOfferIntent
+     *
+     * @return the the created TradeOfferIntent
+     */
+    public static TradeUpdateIntent createTradeUpdateIntentFromAction(TradeOfferAction to) {
+        TradeUpdateIntent tui = new TradeUpdateIntent();
+        tui.setId(to.getId());
+        tui.setOfferer(to.getOfferer().getPlayerName());
+        tui.setSelectedOfferees(Trade.createSerializableList(to.getSelectedOfferees()));
+        tui.setOffer(to.getOffer());
+        tui.setDemand(to.getDemand());
+        return tui;
+    }
+
+    /**
      * helper method to create a TradeDeclineAction
      *
-     * @return the the created TradeDeclineAction
+     * @return the created TradeDeclineAction
      */
     public static TradeDeclineAction createTradeDeclineAction(TradeOfferAction to, Player offeree) {
         TradeDeclineAction tda = new TradeDeclineAction(to.getActor());
         tda.setId(to.getId());
         tda.setOfferee(offeree);
+        tda.setOfferer(to.getOfferer());
         return tda;
     }
 
     /**
      * helper method to create a TradeDeclineAction
      *
-     * @return the the created TradeDeclineAction
+     * @return the created TradeDeclineAction
      */
-    public static TradeDeclineAction createTradeDeclineActionFromIntent(TradeOfferIntent toi, Player offeree) {
+    public static TradeDeclineAction createTradeDeclineActionFromIntent(TradeOfferIntent toi, Player offerer, Player offeree) {
         TradeDeclineAction tda = new TradeDeclineAction(offeree);
         tda.setId(toi.getId());
         tda.setOfferee(offeree);
+        tda.setOfferer(offerer);
         return tda;
     }
 
     /**
      * helper method to create a TradeAcceptAction
      *
-     * @return the the created TradeAcceptAction
+     * @return the created TradeAcceptAction
      */
     public static TradeAcceptAction createTradeAcceptActionFromIntent(TradeOfferIntent toi, Player offerer, Player offeree) {
         TradeAcceptAction taa = new TradeAcceptAction(offerer);
@@ -89,9 +107,9 @@ public class Trade {
     }
 
     /**
-     * helper method to create a TradeOfferIntent
+     * helper method to create a TradeAcceptIntent
      *
-     * @return the the created TradeOfferIntent
+     * @return the created TradeAcceptIntent
      */
     public static TradeAcceptIntent createTradeAcceptIntentFromAction(TradeOfferAction to, Player offeree) {
         TradeAcceptIntent tai = new TradeAcceptIntent();
@@ -101,6 +119,37 @@ public class Trade {
         tai.setOffer(to.getOffer());
         tai.setDemand(to.getDemand());
         return tai;
+    }
+
+    /**
+     * helper method to create a TradeVerifyAction
+     *
+     * @return the created TradeVerifyAction
+     */
+    public static TradeVerifyAction createTradeVerifyActionFromAction(TradeAcceptAction taa) {
+        TradeVerifyAction tua = new TradeVerifyAction(taa.getOfferee());
+        tua.setId(taa.getId());
+        tua.setOfferer(taa.getOfferer());
+        tua.setOfferee(taa.getOfferee());
+        tua.setDemand(taa.getDemand());
+        tua.setOffer(taa.getOffer());
+        return tua;
+    }
+
+    public static List<String> createSerializableList(List<Player> selectedOfferees) {
+        List<String> tmp = new ArrayList<>();
+        for (Player p : selectedOfferees) {
+            tmp.add(p.getPlayerName());
+        }
+        return tmp;
+    }
+
+    public static List<Player> createDeserializableList(List<String> selectedOfferees) {
+        List<Player> tmp = new ArrayList<>();
+        for (String s : selectedOfferees) {
+            tmp.add(SettlerApp.board.getPlayerByName(s));
+        }
+        return tmp;
     }
 
     public static Resource.ResourceType convertStringToResource(String type) {
