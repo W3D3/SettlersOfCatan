@@ -44,7 +44,6 @@ import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
-import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Dice;
 import io.swagslash.settlersofcatan.utility.DiceSix;
 import io.swagslash.settlersofcatan.utility.Trade;

@@ -65,7 +65,7 @@ public class TradeTest {
         this.toa.setSelectedOfferees(selectedOfferees);
         this.toi = Trade.createTradeOfferIntentFromAction(this.toa, this.offeree);
         this.taa = Trade.createTradeAcceptActionFromIntent(this.toi, this.offerer, this.offeree);
-        this.tdaFromIntent = Trade.createTradeDeclineActionFromIntent(this.toi, this.offeree);
+        this.tdaFromIntent = Trade.createTradeDeclineActionFromIntent(this.toi, this.offerer, this.offeree);
         this.tdaFromAction = Trade.createTradeDeclineAction(this.toa, this.offeree);
         this.tai = Trade.createTradeAcceptIntentFromAction(this.toa, this.offeree);
     }
