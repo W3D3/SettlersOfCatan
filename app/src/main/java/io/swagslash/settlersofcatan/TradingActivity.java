@@ -195,7 +195,7 @@ public class TradingActivity extends AppCompatActivity {
                         tmp_max = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
                     } else {
                         tmp_max = requestableFromBank;
-                        if (requestableFromBank < checkRequestableFromBank()) {
+                        if (requestableFromBank <= checkRequestableFromBank()) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
