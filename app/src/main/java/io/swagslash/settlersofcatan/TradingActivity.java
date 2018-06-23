@@ -20,6 +20,7 @@ import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
 import io.swagslash.settlersofcatan.utility.TradeDeclineAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferIntent;
+import io.swagslash.settlersofcatan.utility.TradeUpdateIntent;
 
 public class TradingActivity extends AppCompatActivity {
 
@@ -29,6 +30,7 @@ public class TradingActivity extends AppCompatActivity {
     public static final String UPDATEAFTERTRADE = "UpdateAfterTrade";
     public static final int UPDATEAFTERTRADEREQUESTCODE = 42;
     public static final String PLAYERORBANK = "PlayerOrBank";
+    public static final String BANK = "Bank";
 
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
@@ -44,6 +46,8 @@ public class TradingActivity extends AppCompatActivity {
     private int max = 99;
     private boolean sendOrCreate;
     private boolean playerOrBank;
+
+    private int requestableFromBank;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -80,11 +84,14 @@ public class TradingActivity extends AppCompatActivity {
             this.tradeOfferIntent = (TradeOfferIntent) i.getSerializableExtra(TRADEOFFERINTENT);
             this.writeValues(tradeOfferIntent);
             sendOrCreate = true;
-        } else if (i.hasExtra(TRADEPENDING)) {
-            if (i.hasExtra(PLAYERORBANK)) {
-                // copy value from intent
-                playerOrBank = i.getBooleanExtra(PLAYERORBANK, false);
-            }
+        }
+
+        if (i.hasExtra(PLAYERORBANK)) {
+            // copy value from intent
+            playerOrBank = i.getBooleanExtra(PLAYERORBANK, false);
+        }
+
+        if (i.hasExtra(TRADEPENDING)) {
             if (playerOrBank) {
                 // you are creating an offer to trade
                 List<Player> nonSelectablePlayers = Trade.createDeserializableList((List<String>) i.getSerializableExtra(TRADEPENDING));
@@ -150,24 +157,83 @@ public class TradingActivity extends AppCompatActivity {
      */
     @SuppressLint("DefaultLocale")
     public void onMinusPlusClick(View view) {
-        if (!sendOrCreate) {
-            String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
-            TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
-            int val = Integer.parseInt(tv.getText().toString());
+        String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
+        TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
+        int val = Integer.parseInt(tv.getText().toString());
+        if (playerOrBank) {
+            if (!sendOrCreate) {
+                int tmp_max;
+                switch (tmp[2]) {
+                    case "plus":
+                        if (tmp[1].equals("offerer")) {
+                            tmp_max = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
+                        } else {
+                            tmp_max = max;
+                        }
+                        if (val < tmp_max) {
+                            val++;
+                        }
+                        break;
+                    case "minus":
+                        if (val > min) {
+                            val--;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                tv.setText(String.format(MainActivity.FORMAT, val));
+            } else {
+                // if this is an already created offer
+                Toast.makeText(this, "can't change offer", Toast.LENGTH_SHORT).show();
+            }
+        } else {
             int tmp_max;
             switch (tmp[2]) {
                 case "plus":
                     if (tmp[1].equals("offerer")) {
                         tmp_max = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
                     } else {
-                        tmp_max = max;
+                        tmp_max = requestableFromBank;
+                        if (requestableFromBank <= checkRequestableFromBank()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(TradingActivity.this, "You already requested the maximum amount!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            return;
+                        }
                     }
+
                     if (val < tmp_max) {
                         val++;
+                        if (tmp[1].equals("offerer")) {
+                            if (val > 0 && val % Trade.TRADEWITHBANK == 0) {
+                                requestableFromBank++;
+                            }
+                        }
                     }
                     break;
                 case "minus":
                     if (val > min) {
+                        if (tmp[1].equals("offerer")) {
+                            if (val > 0 && val % Trade.TRADEWITHBANK == 0) {
+                                requestableFromBank--;
+                                if (requestableFromBank < checkRequestableFromBank()) {
+                                    requestableFromBank++;
+                                    // return cause stuff isn't met
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(TradingActivity.this, "You have to 'dis-demand' something first", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    return;
+                                }
+                            }
+                        }
+
                         val--;
                     }
                     break;
@@ -175,10 +241,15 @@ public class TradingActivity extends AppCompatActivity {
                     break;
             }
             tv.setText(String.format(MainActivity.FORMAT, val));
-        } else {
-            // if this is an already created offer
-            Toast.makeText(this, "can't change offer", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private int checkRequestableFromBank() {
+        int temp = 0;
+        for (TextView tv : this.demandTextViews) {
+            temp += Integer.parseInt(tv.getText().toString());
+        }
+        return temp;
     }
 
     /**
@@ -224,6 +295,18 @@ public class TradingActivity extends AppCompatActivity {
                 }
             } else {
                 // trade with bank
+                TradeOfferAction toa = new TradeOfferAction();
+                if (this.readValues(toa, true) && this.readValues(toa, false)) {
+                    Intent intent = new Intent();
+                    TradeUpdateIntent tui = new TradeUpdateIntent();
+                    tui.setOfferer(SettlerApp.getPlayer().getPlayerName());
+                    tui.setOfferee(BANK);
+                    tui.setOffer(toa.getOffer());
+                    tui.setDemand(toa.getDemand());
+                    intent.putExtra(UPDATEAFTERTRADE, tui);
+                    setResult(UPDATEAFTERTRADEREQUESTCODE, intent);
+                    finish();
+                }
 
             }
 

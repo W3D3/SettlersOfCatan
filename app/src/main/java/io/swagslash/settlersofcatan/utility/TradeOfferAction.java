@@ -16,7 +16,7 @@ public class TradeOfferAction extends GameAction {
     private HashMap<Resource.ResourceType, Integer> offer = new HashMap<>();
     private HashMap<Resource.ResourceType, Integer> demand = new HashMap<>();
 
-    TradeOfferAction() {
+    public TradeOfferAction() {
 
     }
 

@@ -17,7 +17,7 @@ public class Monopoly extends DevelopmentCard {
 
     public Monopoly() {
         this.resourceType = Resource.ResourceType.NOTHING;
-        this.cardText = "Wenn Sie diese Karte ausspielen wählen Sie einen Rohstoff. Alles Spieler müssen Ihnen von diesem Rohstoff alle Karten geben die Sie besitzeb";
+        this.cardText = "Wenn du diese Karte ausspielst, wählst du einen Rohstoff. Alle Spieler müssen dir von diesem Rohstoff alle Karten geben, die sie besitzen";
     }
 
     @Override

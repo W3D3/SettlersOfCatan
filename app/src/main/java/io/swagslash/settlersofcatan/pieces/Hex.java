@@ -168,7 +168,7 @@ public class Hex {
             case DESERT:
                 return Color.parseColor("#feffe5"); // desert color
             case PASTURE:
-                return Color.parseColor("#bbcb77"); // wool/sheep
+                return Color.parseColor("#a3da9f"); // wool/sheep
         }
         return 0;
     }

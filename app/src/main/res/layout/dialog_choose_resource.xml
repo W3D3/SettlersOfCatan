@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/choose_resource_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
+        android:text="@string/choose_resource"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.047"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/choose_brick"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_resource_title"
+        app:srcCompat="@drawable/brick" />
+
+    <ImageView
+        android:id="@+id/choose_wool"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_brick"
+        app:srcCompat="@drawable/wool" />
+
+    <ImageView
+        android:id="@+id/choose_wood"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_wool"
+        app:srcCompat="@drawable/wood" />
+
+    <ImageView
+        android:id="@+id/choose_ore"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_wood"
+        app:srcCompat="@drawable/ore" />
+
+    <ImageView
+        android:id="@+id/choose_grain"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_ore"
+        app:srcCompat="@drawable/grain" />
+
+    <ImageButton
+        android:id="@+id/brick_deduction"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toEndOf="@+id/choose_brick"
+        app:layout_constraintTop_toBottomOf="@+id/choose_resource_title"
+        app:srcCompat="@drawable/ic_minus" />
+
+    <ImageButton
+        android:id="@+id/wool_deduction"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/choose_wool"
+        app:layout_constraintTop_toBottomOf="@+id/brick_deduction"
+        app:srcCompat="@drawable/ic_minus" />
+
+    <ImageButton
+        android:id="@+id/wood_deduction"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/choose_wood"
+        app:layout_constraintTop_toBottomOf="@+id/wool_deduction"
+        app:srcCompat="@drawable/ic_minus" />
+
+    <ImageButton
+        android:id="@+id/ore_deduction"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/choose_ore"
+        app:layout_constraintTop_toBottomOf="@+id/wood_deduction"
+        app:srcCompat="@drawable/ic_minus" />
+
+    <ImageButton
+        android:id="@+id/grain_deduction"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/choose_grain"
+        app:layout_constraintTop_toBottomOf="@+id/ore_deduction"
+        app:srcCompat="@drawable/ic_minus" />
+
+    <TextView
+        android:id="@+id/brick_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="38dp"
+        android:text="00"
+        app:layout_constraintStart_toEndOf="@+id/brick_deduction"
+        app:layout_constraintTop_toBottomOf="@+id/choose_resource_title" />
+
+    <TextView
+        android:id="@+id/wool_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="48dp"
+        android:text="00"
+        app:layout_constraintStart_toEndOf="@+id/wool_deduction"
+        app:layout_constraintTop_toBottomOf="@+id/brick_value" />
+
+    <TextView
+        android:id="@+id/wood_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="48dp"
+        android:text="00"
+        app:layout_constraintStart_toEndOf="@+id/wood_deduction"
+        app:layout_constraintTop_toBottomOf="@+id/wool_value" />
+
+    <TextView
+        android:id="@+id/ore_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="48dp"
+        android:text="00"
+        app:layout_constraintStart_toEndOf="@+id/ore_deduction"
+        app:layout_constraintTop_toBottomOf="@+id/wood_value" />
+
+    <TextView
+        android:id="@+id/grain_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="48dp"
+        android:text="00"
+        app:layout_constraintStart_toEndOf="@+id/grain_deduction"
+        app:layout_constraintTop_toBottomOf="@+id/ore_value" />
+
+
+    <ImageButton
+        android:id="@+id/brick_increment"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toEndOf="@+id/brick_value"
+        app:layout_constraintTop_toBottomOf="@+id/choose_resource_title"
+        app:srcCompat="@drawable/ic_plus" />
+
+    <ImageButton
+        android:id="@+id/wool_increment"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/wool_value"
+        app:layout_constraintTop_toBottomOf="@+id/brick_increment"
+        app:srcCompat="@drawable/ic_plus" />
+
+    <ImageButton
+        android:id="@+id/wood_increment"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/wood_value"
+        app:layout_constraintTop_toBottomOf="@+id/wool_increment"
+        app:srcCompat="@drawable/ic_plus" />
+
+    <ImageButton
+        android:id="@+id/ore_increment"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/ore_value"
+        app:layout_constraintTop_toBottomOf="@+id/wood_increment"
+        app:srcCompat="@drawable/ic_plus" />
+
+    <ImageButton
+        android:id="@+id/grain_increment"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/grain_value"
+        app:layout_constraintTop_toBottomOf="@+id/ore_increment"
+        app:srcCompat="@drawable/ic_plus" />
+
+    <Button
+        android:id="@+id/btnFinish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/btn_finish_choosing"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_grain"
+        app:layout_constraintVertical_bias="0.147" />
+
+</android.support.constraint.ConstraintLayout>
