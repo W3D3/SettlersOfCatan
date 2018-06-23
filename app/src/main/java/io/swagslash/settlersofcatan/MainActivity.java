@@ -306,37 +306,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.trading:
                 if (itsMyTurn()) {
-                    final Intent in2 = new Intent(this, TradingActivity.class);
+                    if (this.trade.getPendingTradeWith().size() == 0) {
+                        final Intent in2 = new Intent(this, TradingActivity.class);
 
-                    final AlertDialog.Builder b = new AlertDialog.Builder(this);
-                    b.setMessage("Do you want to trade with the bank or other players?");
-                    b.setPositiveButton(R.string.trade_bank, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // trade with bank
-                            in2.putExtra(TradingActivity.PLAYERORBANK, false);
-                            startActivity(in2);
-                        }
-                    });
-                    b.setNegativeButton(R.string.trade_player, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // trade with player
-                            in2.putExtra(TradingActivity.TRADEPENDING, (Serializable) Trade.createSerializableList(trade.getPendingTradeWith()));
-                            in2.putExtra(TradingActivity.PLAYERORBANK, true);
-                            // workaround for "not receiving your own TradeOfferAction"
-                            startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
+                        final AlertDialog.Builder b = new AlertDialog.Builder(this);
+                        b.setMessage("Do you want to trade with the bank or other players?");
+                        b.setPositiveButton(R.string.trade_bank, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // trade with bank
+                                in2.putExtra(TradingActivity.PLAYERORBANK, false);
+                                startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
+                            }
+                        });
+                        b.setNegativeButton(R.string.trade_player, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // trade with player
+                                in2.putExtra(TradingActivity.TRADEPENDING, (Serializable) Trade.createSerializableList(trade.getPendingTradeWith()));
+                                in2.putExtra(TradingActivity.PLAYERORBANK, true);
+                                // workaround for "not receiving your own TradeOfferAction"
+                                startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
 
-                        }
-                    });
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Dialog d = b.create();
-                            d.setCanceledOnTouchOutside(false);
-                            d.show();
-                        }
-                    });
+                            }
+                        });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Dialog d = b.create();
+                                d.setCanceledOnTouchOutside(false);
+                                d.show();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "some trading still pending...", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
 
 
                 } else {
@@ -572,6 +582,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 // and Board and Inventory etc. etc.) isn't serializable
                                 Intent in2 = new Intent(b.getContext(), TradingActivity.class);
                                 in2.putExtra(TradingActivity.TRADEOFFERINTENT, Trade.createTradeOfferIntentFromAction(to, player));
+                                in2.putExtra(TradingActivity.PLAYERORBANK, true);
                                 startActivity(in2);
                                 // start for result to get a return value to update resources
                                 //startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
@@ -713,8 +724,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE && resultCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
             TradeUpdateIntent tai = (TradeUpdateIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
-            if (tai.getOfferer() == null) {
-                // trade with bank
+            if (tai.getSelectedOfferees().size() == 0) {
+                // empty offerees = trade with bank
                 Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(tai.getOfferer()).getInventory(), tai.getDemand(), tai.getOffer());
                 runOnUiThread(new Runnable() {
                     @Override

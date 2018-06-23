@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
@@ -31,6 +30,7 @@ public class TradingActivity extends AppCompatActivity {
     public static final String UPDATEAFTERTRADE = "UpdateAfterTrade";
     public static final int UPDATEAFTERTRADEREQUESTCODE = 42;
     public static final String PLAYERORBANK = "PlayerOrBank";
+    public static final String BANK = "Bank";
 
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
@@ -47,7 +47,6 @@ public class TradingActivity extends AppCompatActivity {
     private boolean sendOrCreate;
     private boolean playerOrBank;
 
-    private HashMap<Resource.ResourceType, Integer> countRequestedFromBank;
     private int requestableFromBank;
 
     @Override
@@ -85,22 +84,19 @@ public class TradingActivity extends AppCompatActivity {
             this.tradeOfferIntent = (TradeOfferIntent) i.getSerializableExtra(TRADEOFFERINTENT);
             this.writeValues(tradeOfferIntent);
             sendOrCreate = true;
-        } else if (i.hasExtra(TRADEPENDING)) {
-            if (i.hasExtra(PLAYERORBANK)) {
-                // copy value from intent
-                playerOrBank = i.getBooleanExtra(PLAYERORBANK, false);
-            }
+        }
+
+        if (i.hasExtra(PLAYERORBANK)) {
+            // copy value from intent
+            playerOrBank = i.getBooleanExtra(PLAYERORBANK, false);
+        }
+
+        if (i.hasExtra(TRADEPENDING)) {
             if (playerOrBank) {
                 // you are creating an offer to trade
                 List<Player> nonSelectablePlayers = Trade.createDeserializableList((List<String>) i.getSerializableExtra(TRADEPENDING));
                 createPlayerList(nonSelectablePlayers);
                 sendOrCreate = false;
-            } else {
-                countRequestedFromBank = new HashMap<>();
-                for (Resource.ResourceType tmp : Resource.ResourceType.values()) {
-                    countRequestedFromBank.put(tmp, 0);
-                }
-                countRequestedFromBank.remove(Resource.ResourceType.NOTHING);
             }
         }
     }
@@ -161,11 +157,11 @@ public class TradingActivity extends AppCompatActivity {
      */
     @SuppressLint("DefaultLocale")
     public void onMinusPlusClick(View view) {
+        String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
+        TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
+        int val = Integer.parseInt(tv.getText().toString());
         if (playerOrBank) {
             if (!sendOrCreate) {
-                String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
-                TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
-                int val = Integer.parseInt(tv.getText().toString());
                 int tmp_max;
                 switch (tmp[2]) {
                     case "plus":
@@ -192,9 +188,6 @@ public class TradingActivity extends AppCompatActivity {
                 Toast.makeText(this, "can't change offer", Toast.LENGTH_SHORT).show();
             }
         } else {
-            String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
-            TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
-            int val = Integer.parseInt(tv.getText().toString());
             int tmp_max;
             switch (tmp[2]) {
                 case "plus":
@@ -215,7 +208,6 @@ public class TradingActivity extends AppCompatActivity {
 
                     if (val < tmp_max) {
                         val++;
-
                         if (tmp[1].equals("offerer")) {
                             if (val > 0 && val % Trade.TRADEWITHBANK == 0) {
                                 requestableFromBank++;
@@ -228,8 +220,16 @@ public class TradingActivity extends AppCompatActivity {
                         if (tmp[1].equals("offerer")) {
                             if (val > 0 && val % Trade.TRADEWITHBANK == 0) {
                                 requestableFromBank--;
-                                if(checkRequestableFromBank() > requestableFromBank){
+                                if (requestableFromBank < checkRequestableFromBank()) {
                                     requestableFromBank++;
+                                    // return cause stuff isn't met
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(TradingActivity.this, "You have to 'dis-demand' something first", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    return;
                                 }
                             }
                         }
@@ -246,8 +246,8 @@ public class TradingActivity extends AppCompatActivity {
 
     private int checkRequestableFromBank() {
         int temp = 0;
-        for (Integer i : countRequestedFromBank.values()) {
-            temp += i;
+        for (TextView tv : this.demandTextViews) {
+            temp += Integer.parseInt(tv.getText().toString());
         }
         return temp;
     }
@@ -300,6 +300,7 @@ public class TradingActivity extends AppCompatActivity {
                     Intent intent = new Intent();
                     TradeUpdateIntent tui = new TradeUpdateIntent();
                     tui.setOfferer(SettlerApp.getPlayer().getPlayerName());
+                    tui.setOfferee(BANK);
                     tui.setOffer(toa.getOffer());
                     tui.setDemand(toa.getDemand());
                     intent.putExtra(UPDATEAFTERTRADE, tui);
