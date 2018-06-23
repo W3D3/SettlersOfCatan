@@ -26,6 +26,8 @@
     <string name="look_trade">View Offer</string>
     <string name="accept_trade">Accept Offer</string>
     <string name="decline_trade">Decline to trade</string>
+    <string name="trade_bank">Bank</string>
+    <string name="trade_player">Player</string>
     <!-- Cards -->
     <string name="cards_header">Your Cards</string>
     <string name="cards_submit">Use Cards</string>
@@ -117,4 +119,5 @@
     <string name="btn_discover">Discover Lobbies</string>
     <string name="btn_create_lobby">Create Lobby</string>
     <string name="btn_finish_choosing">Finish</string>
+    <string name="chooseOneOrMoreResources">Wähle 1 oder mehrere Ressourcen:</string>
 </resources>

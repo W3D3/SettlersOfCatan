@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
@@ -20,6 +21,7 @@ import io.swagslash.settlersofcatan.utility.TradeAcceptAction;
 import io.swagslash.settlersofcatan.utility.TradeDeclineAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferIntent;
+import io.swagslash.settlersofcatan.utility.TradeUpdateIntent;
 
 public class TradingActivity extends AppCompatActivity {
 
@@ -44,6 +46,9 @@ public class TradingActivity extends AppCompatActivity {
     private int max = 99;
     private boolean sendOrCreate;
     private boolean playerOrBank;
+
+    private HashMap<Resource.ResourceType, Integer> countRequestedFromBank;
+    private int requestableFromBank;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -90,6 +95,12 @@ public class TradingActivity extends AppCompatActivity {
                 List<Player> nonSelectablePlayers = Trade.createDeserializableList((List<String>) i.getSerializableExtra(TRADEPENDING));
                 createPlayerList(nonSelectablePlayers);
                 sendOrCreate = false;
+            } else {
+                countRequestedFromBank = new HashMap<>();
+                for (Resource.ResourceType tmp : Resource.ResourceType.values()) {
+                    countRequestedFromBank.put(tmp, 0);
+                }
+                countRequestedFromBank.remove(Resource.ResourceType.NOTHING);
             }
         }
     }
@@ -150,7 +161,37 @@ public class TradingActivity extends AppCompatActivity {
      */
     @SuppressLint("DefaultLocale")
     public void onMinusPlusClick(View view) {
-        if (!sendOrCreate) {
+        if (playerOrBank) {
+            if (!sendOrCreate) {
+                String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
+                TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
+                int val = Integer.parseInt(tv.getText().toString());
+                int tmp_max;
+                switch (tmp[2]) {
+                    case "plus":
+                        if (tmp[1].equals("offerer")) {
+                            tmp_max = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
+                        } else {
+                            tmp_max = max;
+                        }
+                        if (val < tmp_max) {
+                            val++;
+                        }
+                        break;
+                    case "minus":
+                        if (val > min) {
+                            val--;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                tv.setText(String.format(MainActivity.FORMAT, val));
+            } else {
+                // if this is an already created offer
+                Toast.makeText(this, "can't change offer", Toast.LENGTH_SHORT).show();
+            }
+        } else {
             String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
             TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
             int val = Integer.parseInt(tv.getText().toString());
@@ -160,14 +201,39 @@ public class TradingActivity extends AppCompatActivity {
                     if (tmp[1].equals("offerer")) {
                         tmp_max = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
                     } else {
-                        tmp_max = max;
+                        tmp_max = requestableFromBank;
+                        if (requestableFromBank < checkRequestableFromBank()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(TradingActivity.this, "You already requested the maximum amount!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            return;
+                        }
                     }
+
                     if (val < tmp_max) {
                         val++;
+
+                        if (tmp[1].equals("offerer")) {
+                            if (val > 0 && val % Trade.TRADEWITHBANK == 0) {
+                                requestableFromBank++;
+                            }
+                        }
                     }
                     break;
                 case "minus":
                     if (val > min) {
+                        if (tmp[1].equals("offerer")) {
+                            if (val > 0 && val % Trade.TRADEWITHBANK == 0) {
+                                requestableFromBank--;
+                                if(checkRequestableFromBank() > requestableFromBank){
+                                    requestableFromBank++;
+                                }
+                            }
+                        }
+
                         val--;
                     }
                     break;
@@ -175,10 +241,15 @@ public class TradingActivity extends AppCompatActivity {
                     break;
             }
             tv.setText(String.format(MainActivity.FORMAT, val));
-        } else {
-            // if this is an already created offer
-            Toast.makeText(this, "can't change offer", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private int checkRequestableFromBank() {
+        int temp = 0;
+        for (Integer i : countRequestedFromBank.values()) {
+            temp += i;
+        }
+        return temp;
     }
 
     /**
@@ -224,6 +295,17 @@ public class TradingActivity extends AppCompatActivity {
                 }
             } else {
                 // trade with bank
+                TradeOfferAction toa = new TradeOfferAction();
+                if (this.readValues(toa, true) && this.readValues(toa, false)) {
+                    Intent intent = new Intent();
+                    TradeUpdateIntent tui = new TradeUpdateIntent();
+                    tui.setOfferer(SettlerApp.getPlayer().getPlayerName());
+                    tui.setOffer(toa.getOffer());
+                    tui.setDemand(toa.getDemand());
+                    intent.putExtra(UPDATEAFTERTRADE, tui);
+                    setResult(UPDATEAFTERTRADEREQUESTCODE, intent);
+                    finish();
+                }
 
             }
 

@@ -306,17 +306,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.trading:
                 if (itsMyTurn()) {
-                    Intent in2 = new Intent(this, TradingActivity.class);
+                    final Intent in2 = new Intent(this, TradingActivity.class);
 
-                    // trade with player
-                    in2.putExtra(TradingActivity.TRADEPENDING, (Serializable) Trade.createSerializableList(trade.getPendingTradeWith()));
-                    in2.putExtra(TradingActivity.PLAYERORBANK, true);
-                    // workaround for "not receiving your own TradeOfferAction"
-                    startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
+                    final AlertDialog.Builder b = new AlertDialog.Builder(this);
+                    b.setMessage("Do you want to trade with the bank or other players?");
+                    b.setPositiveButton(R.string.trade_bank, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // trade with bank
+                            in2.putExtra(TradingActivity.PLAYERORBANK, false);
+                            startActivity(in2);
+                        }
+                    });
+                    b.setNegativeButton(R.string.trade_player, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // trade with player
+                            in2.putExtra(TradingActivity.TRADEPENDING, (Serializable) Trade.createSerializableList(trade.getPendingTradeWith()));
+                            in2.putExtra(TradingActivity.PLAYERORBANK, true);
+                            // workaround for "not receiving your own TradeOfferAction"
+                            startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
 
-                    // trade with bank
-                    //in2.putExtra(TradingActivity.PLAYERORBANK, false);
-                    //startActivity(in2);
+                        }
+                    });
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Dialog d = b.create();
+                            d.setCanceledOnTouchOutside(false);
+                            d.show();
+                        }
+                    });
+
+
                 } else {
                     Toast.makeText(getApplicationContext(), "It is not your turn!", Toast.LENGTH_LONG).show();
                 }
@@ -691,8 +713,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE && resultCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
             TradeUpdateIntent tai = (TradeUpdateIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
-            if (SettlerApp.board.getPlayerByName(tai.getOfferer()).equals(player)) {
-                trade.getPendingTradeWith().addAll(Trade.createDeserializableList(tai.getSelectedOfferees()));
+            if (tai.getOfferer() == null) {
+                // trade with bank
+                Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(tai.getOfferer()).getInventory(), tai.getDemand(), tai.getOffer());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateResources();
+                    }
+                });
+            } else {
+                // trade with player; update pendingTradeWith
+                if (SettlerApp.board.getPlayerByName(tai.getOfferer()).equals(player)) {
+                    trade.getPendingTradeWith().addAll(Trade.createDeserializableList(tai.getSelectedOfferees()));
+                }
             }
         }
     }
