@@ -1,24 +1,22 @@
 package io.swagslash.settlersofcatan.utility;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import io.swagslash.settlersofcatan.Player;
-import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
 public class Trade {
 
     private List<Player> pendingTradeWith = new ArrayList<>();
-    private Vector<Integer> acceptedTrade = new Vector<>();
+    private List<Integer> acceptedTrade = new ArrayList<>();
     public static final int TRADEWITHBANK = 4;
     public static final int TRADEWITHHARBOR = 3;
 
@@ -144,10 +142,10 @@ public class Trade {
         return tmp;
     }
 
-    public static List<Player> createDeserializableList(List<String> selectedOfferees) {
+    public static List<Player> createDeserializableList(List<String> selectedOfferees, Board b) {
         List<Player> tmp = new ArrayList<>();
         for (String s : selectedOfferees) {
-            tmp.add(SettlerApp.board.getPlayerByName(s));
+            tmp.add(b.getPlayerByName(s));
         }
         return tmp;
     }
@@ -162,35 +160,35 @@ public class Trade {
         return tmp;
     }
 
-    private static void addResources(Inventory inv, HashMap<Resource.ResourceType, Integer> hm) {
+    private static void addResources(Inventory inv, Map<Resource.ResourceType, Integer> hm) {
         Resource res;
-        for (Resource.ResourceType r : hm.keySet()) {
-            res = new Resource(r);
-            for (int i = 0; i < hm.get(r); i++) {
+        for (Map.Entry<Resource.ResourceType, Integer> entry : hm.entrySet()) {
+            res = new Resource(entry.getKey());
+            for (int i = 0; i < entry.getValue(); i++) {
                 inv.addResource(res);
             }
         }
     }
 
-    private static void subResources(Inventory inv, HashMap<Resource.ResourceType, Integer> hm) {
+    private static void subResources(Inventory inv, Map<Resource.ResourceType, Integer> hm) {
         Resource res;
-        for (Resource.ResourceType r : hm.keySet()) {
-            res = new Resource(r);
-            for (int i = 0; i < hm.get(r); i++) {
+        for (Map.Entry<Resource.ResourceType, Integer> entry : hm.entrySet()) {
+            res = new Resource(entry.getKey());
+            for (int i = 0; i < entry.getValue(); i++) {
                 inv.removeResource(res);
             }
         }
     }
 
-    public static void updateInventoryAfterTrade(Inventory inv, HashMap<Resource.ResourceType, Integer> add, HashMap<Resource.ResourceType, Integer> sub) {
+    public static void updateInventoryAfterTrade(Inventory inv, Map<Resource.ResourceType, Integer> add, Map<Resource.ResourceType, Integer> sub) {
         Trade.addResources(inv, add);
         Trade.subResources(inv, sub);
     }
 
-    public static boolean isTradePossible(Inventory inv, HashMap<Resource.ResourceType, Integer> toCheck) {
+    public static boolean isTradePossible(Inventory inv, Map<Resource.ResourceType, Integer> toCheck) {
         Map<Resource.ResourceType, Integer> resources = inv.getResourceHand();
-        for (Resource.ResourceType r : toCheck.keySet()) {
-            if (resources.get(r) < toCheck.get(r)) {
+        for (Map.Entry<Resource.ResourceType, Integer> entry : toCheck.entrySet()) {
+            if (resources.get(entry.getKey()) < entry.getValue()) {
                 return false;
             }
         }
@@ -205,11 +203,11 @@ public class Trade {
         this.pendingTradeWith = pendingTradeWith;
     }
 
-    public Vector<Integer> getAcceptedTrade() {
+    public List<Integer> getAcceptedTrade() {
         return acceptedTrade;
     }
 
-    public void setAcceptedTrade(Vector<Integer> acceptedTrade) {
+    public void setAcceptedTrade(List<Integer> acceptedTrade) {
         this.acceptedTrade = acceptedTrade;
     }
 }

@@ -25,20 +25,17 @@ import io.swagslash.settlersofcatan.utility.TradeUpdateIntent;
 public class TradingActivity extends AppCompatActivity {
 
     // constants
-    public static final String TRADEOFFERINTENT = "TradeOfferIntent";
+    public static final String TRADEOFFERINTENTEXTRA = "TradeOfferIntent";
     public static final String TRADEPENDING = "TradePendingWith";
     public static final String UPDATEAFTERTRADE = "UpdateAfterTrade";
     public static final int UPDATEAFTERTRADEREQUESTCODE = 42;
-    public static final String PLAYERORBANK = "PlayerOrBank";
+    public static final String PLAYERORBANKEXTRA = "PlayerOrBank";
+    private final String SPLITOFFERER = "offerer";
 
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
-    private TradeAcceptAction tradeAcceptAction;
-    private TradeOfferAction tradeOfferAction;
     private TradeOfferIntent tradeOfferIntent;
-    private TradeDeclineAction tradeDeclineAction;
-    private List<Player> allOtherPlayers = new ArrayList<>();
     private List<Player> selectedPlayers = new ArrayList<>();
 
     private int min = 0;
@@ -75,28 +72,26 @@ public class TradingActivity extends AppCompatActivity {
         resourceVals.add((TextView) findViewById(R.id.ore_count));
 
         Intent i = getIntent();
-        if (i.hasExtra(TRADEOFFERINTENT)) {
+        if (i.hasExtra(TRADEOFFERINTENTEXTRA)) {
             // change submit btn text
             Button b = findViewById(R.id.send);
             b.setText(R.string.accept_trade);
             // someone send an offer to trade
-            this.tradeOfferIntent = (TradeOfferIntent) i.getSerializableExtra(TRADEOFFERINTENT);
+            this.tradeOfferIntent = (TradeOfferIntent) i.getSerializableExtra(TRADEOFFERINTENTEXTRA);
             this.writeValues(tradeOfferIntent);
             sendOrCreate = true;
         }
 
-        if (i.hasExtra(PLAYERORBANK)) {
+        if (i.hasExtra(PLAYERORBANKEXTRA)) {
             // copy value from intent
-            playerOrBank = i.getBooleanExtra(PLAYERORBANK, false);
+            playerOrBank = i.getBooleanExtra(PLAYERORBANKEXTRA, false);
         }
 
-        if (i.hasExtra(TRADEPENDING)) {
-            if (playerOrBank) {
-                // you are creating an offer to trade
-                List<Player> nonSelectablePlayers = Trade.createDeserializableList((List<String>) i.getSerializableExtra(TRADEPENDING));
-                createPlayerList(nonSelectablePlayers);
-                sendOrCreate = false;
-            }
+        if (i.hasExtra(TRADEPENDING) && playerOrBank) {
+            // you are creating an offer to trade
+            List<Player> nonSelectablePlayers = Trade.createDeserializableList((List<String>) i.getSerializableExtra(TRADEPENDING), SettlerApp.board);
+            createPlayerList(nonSelectablePlayers);
+            sendOrCreate = false;
         }
     }
 
@@ -132,12 +127,12 @@ public class TradingActivity extends AppCompatActivity {
         rv.setLayoutManager(rvl);
 
         // get all other players
-        allOtherPlayers = new ArrayList<>(SettlerApp.board.getPlayers());
+        List<Player> allOtherPlayers = new ArrayList<>(SettlerApp.board.getPlayers());
         allOtherPlayers.remove(SettlerApp.getPlayer());
         // remove players to whom a trade offer was already send
         allOtherPlayers.removeAll(nonSelectablePlayers);
 
-        if (allOtherPlayers.size() == 0) {
+        if (allOtherPlayers.isEmpty()) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -159,17 +154,17 @@ public class TradingActivity extends AppCompatActivity {
         String[] tmp = getResources().getResourceEntryName(view.getId()).split("_");
         TextView tv = findViewById(getResources().getIdentifier(tmp[0] + "_" + tmp[1] + "_value", "id", getPackageName()));
         int val = Integer.parseInt(tv.getText().toString());
+        int tmpMax;
         if (playerOrBank) {
             if (!sendOrCreate) {
-                int tmp_max;
                 switch (tmp[2]) {
                     case "plus":
-                        if (tmp[1].equals("offerer")) {
-                            tmp_max = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
+                        if (tmp[1].equals(SPLITOFFERER)) {
+                            tmpMax = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
                         } else {
-                            tmp_max = max;
+                            tmpMax = max;
                         }
-                        if (val < tmp_max) {
+                        if (val < tmpMax) {
                             val++;
                         }
                         break;
@@ -187,13 +182,12 @@ public class TradingActivity extends AppCompatActivity {
                 Toast.makeText(this, "can't change offer", Toast.LENGTH_SHORT).show();
             }
         } else {
-            int tmp_max;
             switch (tmp[2]) {
                 case "plus":
-                    if (tmp[1].equals("offerer")) {
-                        tmp_max = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
+                    if (tmp[1].equals(SPLITOFFERER)) {
+                        tmpMax = SettlerApp.getPlayer().getInventory().countResource(Trade.convertStringToResource(tmp[0]));
                     } else {
-                        tmp_max = requestableFromBank;
+                        tmpMax = requestableFromBank;
                         if (requestableFromBank <= checkRequestableFromBank()) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -204,31 +198,27 @@ public class TradingActivity extends AppCompatActivity {
                             return;
                         }
                     }
-                    if (val < tmp_max) {
+                    if (val < tmpMax) {
                         val++;
-                        if (tmp[1].equals("offerer")) {
-                            if (val > 0 && val % Trade.TRADEWITHBANK == 0) {
-                                requestableFromBank++;
-                            }
+                        if (tmp[1].equals(SPLITOFFERER) && val > 0 && val % Trade.TRADEWITHBANK == 0) {
+                            requestableFromBank++;
                         }
                     }
                     break;
                 case "minus":
                     if (val > min) {
-                        if (tmp[1].equals("offerer")) {
-                            if (val > 0 && val % Trade.TRADEWITHBANK == 0) {
-                                requestableFromBank--;
-                                if (requestableFromBank < checkRequestableFromBank()) {
-                                    requestableFromBank++;
-                                    // return cause stuff isn't met
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(TradingActivity.this, "You have to 'dis-demand' something first", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    return;
-                                }
+                        if (tmp[1].equals(SPLITOFFERER) && val > 0 && val % Trade.TRADEWITHBANK == 0) {
+                            requestableFromBank--;
+                            if (requestableFromBank < checkRequestableFromBank()) {
+                                requestableFromBank++;
+                                // return cause stuff isn't met
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(TradingActivity.this, "You have to 'dis-demand' something first", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                return;
                             }
                         }
                         val--;
@@ -260,8 +250,8 @@ public class TradingActivity extends AppCompatActivity {
             if (Trade.isTradePossible(SettlerApp.board.getPlayerByName(this.tradeOfferIntent.getOfferee()).getInventory(), tradeOfferIntent.getDemand())) {
                 // offeree has enough resources to trade
                 // send TradeAccept
-                this.tradeAcceptAction = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()), SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
-                SettlerApp.getManager().sendToAll(this.tradeAcceptAction);
+                TradeAcceptAction taa = Trade.createTradeAcceptActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()), SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
+                SettlerApp.getManager().sendToAll(taa);
                 finish();
             } else {
                 runOnUiThread(new Runnable() {
@@ -275,13 +265,13 @@ public class TradingActivity extends AppCompatActivity {
             if (playerOrBank) {
                 // trade with player
                 if (!selectedPlayers.isEmpty()) {
-                    this.tradeOfferAction = Trade.createTradeOfferAction(selectedPlayers, SettlerApp.getPlayer());
-                    if (this.readValues(this.tradeOfferAction, true) && this.readValues(this.tradeOfferAction, false)) {
+                    TradeOfferAction toa = Trade.createTradeOfferAction(selectedPlayers, SettlerApp.getPlayer());
+                    if (this.readValues(toa, true) && this.readValues(toa, false)) {
                         Toast.makeText(this, "sending ...", Toast.LENGTH_SHORT).show();
-                        SettlerApp.getManager().sendToAll(this.tradeOfferAction);
+                        SettlerApp.getManager().sendToAll(toa);
                         Intent i = new Intent();
                         // workaround for "not receiving your own TradeOfferAction"
-                        i.putExtra(UPDATEAFTERTRADE, Trade.createTradeUpdateIntentFromAction(this.tradeOfferAction));
+                        i.putExtra(UPDATEAFTERTRADE, Trade.createTradeUpdateIntentFromAction(toa));
                         setResult(UPDATEAFTERTRADEREQUESTCODE, i);
                         finish();
                     } else {
@@ -311,8 +301,8 @@ public class TradingActivity extends AppCompatActivity {
     public void onBackPressed() {
         // send TradeDecline
         if (sendOrCreate) {
-            this.tradeDeclineAction = Trade.createTradeDeclineActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()), SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
-            SettlerApp.getManager().sendToAll(this.tradeDeclineAction);
+            TradeDeclineAction tda = Trade.createTradeDeclineActionFromIntent(this.tradeOfferIntent, SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferer()), SettlerApp.board.getPlayerByName(tradeOfferIntent.getOfferee()));
+            SettlerApp.getManager().sendToAll(tda);
         }
         super.onBackPressed();
     }

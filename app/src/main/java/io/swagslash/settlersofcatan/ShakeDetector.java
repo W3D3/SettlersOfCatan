@@ -36,7 +36,6 @@ public class ShakeDetector implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-//        throw new UnsupportedOperationException();
         // do nothing
     }
 }
