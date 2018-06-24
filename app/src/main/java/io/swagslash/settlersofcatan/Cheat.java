@@ -12,12 +12,12 @@ import io.swagslash.settlersofcatan.pieces.items.Resource;
  */
 
 public class Cheat {
-    boolean wasCheated;
+    boolean wasAlreadyCheated;
     int cheaterID = -1;
     Resource.ResourceType lastStolenType;
 
     public Cheat() {
-        this.wasCheated = false;
+        this.wasAlreadyCheated = false;
     }
 
 
@@ -28,7 +28,7 @@ public class Cheat {
     public void cheat(Player cheater, Player victim) {
 
         //if someone is already cheating: return
-        if (wasCheated) {
+        if (wasAlreadyCheated) {
             return;
         }
 
@@ -63,7 +63,7 @@ public class Cheat {
             victim.getInventory().getResourceHand().put(Resource.ResourceType.GRAIN, victim.getInventory().getResourceHand().get(Resource.ResourceType.GRAIN) - 1);
             lastStolenType = Resource.ResourceType.GRAIN;
         }
-        this.wasCheated = true;
+        this.wasAlreadyCheated = true;
         this.cheaterID = cheater.getPlayerNumber();
     }
 
@@ -72,34 +72,33 @@ public class Cheat {
         -if nobody was cheating: Nothing will happen
         -if there was a cheat: the cheater Victim gets his Resource back and
         the Cheater will loose all of the resource of the stolen type
-
-        
+        Player identify by Player ID
      */
 
-    public void detectCheater(Board board, Player victim) {
-        if (!wasCheated) {
+    public void reportCheating(Board board, Player victim) {
+        if (!wasAlreadyCheated) {
             return;
         } else {
-            victim.getInventory().addResource(new Resource(this.lastStolenType));
             if (this.cheaterID == -1) {
                 //Error not tested
                 return;
             }
+            victim.getInventory().addResource(new Resource(this.lastStolenType));
             board.getPlayerById(this.cheaterID).getInventory().getResourceHand().put(this.lastStolenType, 0);
-
+            resetCheated();
         }
     }
 
 
-    public boolean getWasCheated() {
-        return wasCheated;
+    public boolean getWasAlreadyCheated() {
+        return wasAlreadyCheated;
     }
 
     /*
     After each turn cheat will be confirm and the Cheater Class musst be reseted
      */
-    public void resetWasCheated() {
-        this.wasCheated = false;
+    public void resetCheated() {
+        this.wasAlreadyCheated = false;
         this.cheaterID = -1;
     }
 }
