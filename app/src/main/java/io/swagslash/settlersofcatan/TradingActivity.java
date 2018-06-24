@@ -30,7 +30,6 @@ public class TradingActivity extends AppCompatActivity {
     public static final String UPDATEAFTERTRADE = "UpdateAfterTrade";
     public static final int UPDATEAFTERTRADEREQUESTCODE = 42;
     public static final String PLAYERORBANK = "PlayerOrBank";
-    public static final String BANK = "Bank";
 
     private ArrayList<TextView> offerTextViews = new ArrayList<>();
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
@@ -205,7 +204,6 @@ public class TradingActivity extends AppCompatActivity {
                             return;
                         }
                     }
-
                     if (val < tmp_max) {
                         val++;
                         if (tmp[1].equals("offerer")) {
@@ -233,7 +231,6 @@ public class TradingActivity extends AppCompatActivity {
                                 }
                             }
                         }
-
                         val--;
                     }
                     break;
@@ -300,16 +297,13 @@ public class TradingActivity extends AppCompatActivity {
                     Intent intent = new Intent();
                     TradeUpdateIntent tui = new TradeUpdateIntent();
                     tui.setOfferer(SettlerApp.getPlayer().getPlayerName());
-                    tui.setOfferee(BANK);
                     tui.setOffer(toa.getOffer());
                     tui.setDemand(toa.getDemand());
                     intent.putExtra(UPDATEAFTERTRADE, tui);
                     setResult(UPDATEAFTERTRADEREQUESTCODE, intent);
                     finish();
                 }
-
             }
-
         }
     }
 

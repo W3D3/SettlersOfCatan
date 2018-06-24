@@ -296,8 +296,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("PLAYER", "Turn of Player:" + TurnController.getInstance().getCurrentPlayer());
                     return;
                 }
+                if (trade.getPendingTradeWith().size() != 0) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "can't end turn, some trading still pending...", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    return;
+                }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     // end my own turn and tell all others my turn is over
+                    // reset trade
+                    trade = new Trade();
                     advanceTurn();
                     SettlerApp.getManager().sendToAll(new TurnAction(SettlerApp.getPlayer()));
                 } else {
@@ -562,7 +573,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (object instanceof TradeOfferAction) {
                 final TradeOfferAction to = (TradeOfferAction) object;
                 if (to.getOfferer().equals(player)) {
-
                     // is not received!
                     // why ... well, beats me
 
@@ -616,9 +626,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void advanceTurn() {
         //Log.d("PLAYER", "Player ended his turn. (" +  TurnController.getInstance().getCurrentPlayer() + ")");
-
-        // reset Trade
-        this.trade = new Trade();
 
         TurnController.getInstance().advancePlayer();
         Log.d("PLAYER", "STARTING TURN of Player (" + TurnController.getInstance().getCurrentPlayer() + ")");
