@@ -28,12 +28,12 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/btnDiscover"
+            android:id="@+id/btnDirectConnect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="onClick"
-            android:text="@string/btn_discover" />
+            android:text="@string/btn_direct_connect" />
 
         <Button
             android:id="@+id/btnCreateLobby"
@@ -48,7 +48,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.746"
-            app:layout_constraintStart_toEndOf="@+id/btnDiscover" />
+            app:layout_constraintStart_toEndOf="@+id/btnDirectConnect" />
     </LinearLayout>
 
     <fragment

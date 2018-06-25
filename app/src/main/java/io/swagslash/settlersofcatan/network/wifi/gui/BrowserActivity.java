@@ -1,12 +1,17 @@
 package io.swagslash.settlersofcatan.network.wifi.gui;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -54,7 +59,13 @@ public class BrowserActivity extends AppCompatActivity implements MyLobbyService
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                lobbies.setLobbies(foundLobbies);
+                                if(foundLobbies.size() == 0){
+                                    Toast.makeText(BrowserActivity.this, "No lobbies found", Toast.LENGTH_LONG).show();
+                                    lobbies.setLobbies(new ArrayList<NetworkDevice>());
+                                }else{
+                                    lobbies.setLobbies(foundLobbies);
+                                }
+
                             }
                         });
                     }
@@ -80,7 +91,33 @@ public class BrowserActivity extends AppCompatActivity implements MyLobbyService
             case R.id.btnCreateLobby:
                 createLobby();
                 break;
-            case R.id.btnDiscover:
+            case R.id.btnDirectConnect:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Enter Host Address");
+
+
+                final EditText input = new EditText(this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+                builder.setView(input);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            new EstablishConnection(InetAddress.getByName(input.getText().toString())).execute();
+                        } catch (Exception e){
+                            Log.d(TAG,"Unable to connect to host with address"+ input.getText().toString());
+                            dialog.cancel();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
                 break;
                    }
     }

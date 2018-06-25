@@ -5,17 +5,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -31,12 +28,14 @@ import com.otaliastudios.zoom.ZoomLayout;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
+import io.swagslash.settlersofcatan.controller.actions.RobAction;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
 import io.swagslash.settlersofcatan.grid.HexView;
@@ -76,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected Animation openMenu;
     protected Animation closeMenu;
     protected boolean fabOpen;
+    protected TextView winPoints;
 
     // sensor
     protected SensorManager sensorManager;
@@ -86,14 +86,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected ArrayList<TextView> resourceVals;
     // trade
     Trade trade = new Trade();
-    HexView hexView;
+   
    
     Cheat cheat;
     // dice vals
     private int roll1;
     private int roll2;
-    private Board board;
 
+   
+      
+
+    HexView hexView;
+    private Board board;
     private AbstractNetworkManager network;
 
     Player player;
@@ -103,9 +107,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.setupHexView();
-        AbstractNetworkManager network = SettlerApp.getManager();
+        board = SettlerApp.board;
+        network = SettlerApp.getManager();
         network.switchIn(this);
+        this.setupHexView();
 
         TabLayout tabs = findViewById(R.id.tabs);
         for (Player p : SettlerApp.board.getPlayers()) {
@@ -144,6 +149,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.diceTwo = findViewById(R.id.dice_2);
         this.endOfTurn = findViewById(R.id.end_of_turn);
         this.trading = findViewById(R.id.trading);
+        //victory_points_count
+        this.winPoints = findViewById(R.id.victory_points_count);
 
         // listeners
         this.fab.setOnClickListener(this);
@@ -161,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.resourceVals.add((TextView) findViewById(R.id.brick_count));
         this.resourceVals.add((TextView) findViewById(R.id.grain_count));
         this.resourceVals.add((TextView) findViewById(R.id.ore_count));
+
 
         this.player = SettlerApp.getPlayer();
         cheat = new Cheat();
@@ -230,10 +238,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT).show();
 
+        Log.d("ROLLED", "Rolled a :" + shakeValue);
+        Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
+        t.show();
         DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), roll1, roll2);
-        GameController.getInstance().handleDiceRolls(roll1, roll2);
         SettlerApp.getManager().sendToAll(roll);
-        SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+        if (GameController.getInstance().handleDiceRolls(roll1, roll2)) {
+            SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+        }
+        //discardExtraRessources();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -276,16 +289,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.toogleFabMenu();
                 break;
             case R.id.fab_settlement:
-                if (!itsMyTurn()) {
+                if(!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build settlement.");
                     return;
                 }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_SETTLEMENT);
-                    hexView.showFreeSettlements();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateVerticePaths();
+                            hexView.redraw();
+                        }
+                    });
                 } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_SETTLEMENT) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
-                    hexView.showFreeSettlements();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateVerticePaths();
+                            hexView.redraw();
+                        }
+                    });
                 }
 
                 break;
@@ -293,6 +318,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build city.");
                     return;
+                }
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_CITY);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateEdgePaths();
+                            hexView.redraw();
+                        }
+                    });
+                } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateEdgePaths();
+                            hexView.redraw();
+                        }
+                    });
                 }
                 break;
             case R.id.fab_street:
@@ -303,10 +347,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.SETUP_ROAD);
-                    hexView.showFreeSettlements();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateEdgePaths();
+                            hexView.redraw();
+                        }
+                    });
                 } else if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_ROAD) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
-                    hexView.showFreeSettlements();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            hexView.generateEdgePaths();
+                            hexView.redraw();
+                        }
+                    });
                 }
                 break;
             case R.id.fab_cards:
@@ -392,7 +448,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
 
-
                 } else {
                     Toast.makeText(getApplicationContext(), "It is not your turn!", Toast.LENGTH_LONG).show();
                 }
@@ -405,6 +460,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * toogles the animation of fabs
      */
+    public void choosePlayerToRob(final List<Player> players) {
+
+        if (players.size() == 0) return;
+        if (players.size() == 1) {
+            GameController.getInstance().rob(players.get(0));
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Choose a player");
+
+
+        List<String> playerNames = new ArrayList<>();
+        for (Player player : players) {
+            playerNames.add(player.getPlayerName());
+        }
+        final String[] arr = playerNames.toArray(new String[playerNames.size()]);
+
+
+        builder.setItems(arr, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("SELECTED TO ROB", players.get(which) + " will be robbed.");
+                GameController.getInstance().rob(players.get(which));
+            }
+        });
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
     private void toogleFabMenu() {
         if (this.fabOpen) {
             this.layoutCards.startAnimation(closeMenu);
@@ -432,14 +519,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupHexView() {
-        hexView = new HexView(getApplicationContext());
+        hexView = new HexView(this);
 
-        if (BuildConfig.DEBUG) {
-            // do something for a debug build
-            //String[] array ={"P1", "P2"};
-            //SettlerApp.generateBoard(new ArrayList<>(Arrays.asList(array)));
-        }
-        board = SettlerApp.board;
 
         hexView.setBoard(board);
         hexView.setManager(getWindowManager());
@@ -448,22 +529,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final ZoomLayout zl = findViewById(R.id.zoomContainer);
         final LinearLayout container = findViewById(R.id.gridContainer);
-        //Button btn = (Button) findViewById(R.id.button);
-        zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
-        Display mdisp = getWindowManager().getDefaultDisplay();
-        Point mdispSize = new Point();
-        mdisp.getSize(mdispSize);
 
-        System.out.println(android.os.Build.VERSION.SDK_INT);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || true) {
-            hexView.setZoomLayout(zl);
-            hexView.prepare();
-            zl.addView(hexView);
-        } else {
-            hexView.prepare();
-            container.removeView(zl);
-            container.addView(hexView);
-        }
+        zl.getEngine().setMinZoom(1, ZoomEngine.TYPE_REAL_ZOOM);
+        hexView.setZoomLayout(zl);
+        hexView.prepare();
+        zl.addView(hexView);
     }
 
     @Override
@@ -663,9 +733,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         });
                     }
                 }
-            }
-        }
 
+            } else if (object instanceof RobAction) {
+                GameController.getInstance().remoteRob((RobAction) object);
+            }
+
+        }
     }
 
     private boolean itsMyTurn() {
@@ -718,6 +791,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void normalTurn() {
+        GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer());
         SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PRODUCTION);
 
         runOnUiThread(new Runnable() {
@@ -725,6 +799,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 Toast.makeText(getApplicationContext(), "YOUR TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
                         Toast.LENGTH_LONG).show();
+
             }
         });
     }
@@ -738,6 +813,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (TextView tv : resourceVals) {
             tv.setText(String.format(FORMAT, inv.countResource(Trade.convertStringToResource(getResourceStringFromView(tv)))));
         }
+//        winPoints.setText(GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer()));
     }
 
     /**
@@ -794,6 +870,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     trade.getPendingTradeWith().addAll(Trade.createDeserializableList(tui.getSelectedOfferees(), SettlerApp.board));
                 }
             }
+        }
+    }
+
+    private void discardExtraRessources() {
+        if (this.player.getInventory().size() > 7) {
+            Intent i = new Intent(getApplicationContext(), ResourceDiscardActivity.class);
+            startActivity(i);
         }
     }
 }

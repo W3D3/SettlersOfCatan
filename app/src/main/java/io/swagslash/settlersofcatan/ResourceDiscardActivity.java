@@ -225,8 +225,7 @@ public class ResourceDiscardActivity extends AppCompatActivity {
 
         }
 
-        // TO-DO Remove Cards from Players Hand
-
+        // TODO Remove Cards from Players Hand
     }
 
     /**

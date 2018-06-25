@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.esotericsoftware.kryonet.Connection;
 
@@ -22,6 +24,7 @@ import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.LobbyMemberFragment;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
+import io.swagslash.settlersofcatan.network.wifi.NoNetwork;
 
 public class HostLobbyActivity extends AppCompatActivity implements INetworkCallback {
 
@@ -42,21 +45,36 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
 
         network.init(this);
         frag = (LobbyMemberFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_lobby);
+        NetworkDevice self = new NetworkDevice(SettlerApp.playerName, network.getIp());
+        frag.addMember(self);
+        network.addMember(self);
+
+
+        TextView tv = findViewById(R.id.tvHostIP);
+        tv.setText("Your Ip: " + network.getIp().toString());
 
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStartGame:
-                List<String> players = new ArrayList<>();
-                players.add(SettlerApp.playerName);
-                for (NetworkDevice nd : network.getDevices()) {
-                    players.add(nd.getDeviceName());
+                if (network.getDevices().size() > 0) {
+                    List<String> players = new ArrayList<>();
+                    for (NetworkDevice nd : network.getDevices()) {
+                        players.add(nd.getDeviceName());
+                    }
+                    SettlerApp.generateBoard(players);
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    if (players.size() == 1) network = new NoNetwork();
+                    network.switchOut();
+                    startActivity(i);
+                } else {
+                    if (network.getDevices().size() > 4) {
+                        Toast.makeText(this, "More than 4 Players are not allowed", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "You need at least 2 Players to start a game", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                SettlerApp.generateBoard(players);
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                network.switchOut();
-                startActivity(i);
                 break;
             case R.id.btnCloseLobby:
                 closeLobby();
@@ -70,7 +88,8 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
             SettlerApp.getManager().destroy();
             SettlerApp.setNetwork(new GameClient());
 
-            super.onBackPressed();
+            Intent i = new Intent(getApplicationContext(), BrowserActivity.class);
+            startActivity(i);
         }
         else{
             super.onBackPressed();
@@ -106,6 +125,7 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
                     public void run() {
                         network.addMember(new NetworkDevice(conname, address));
                         updateMember();
+
                         frag.setMember(network.getDevices());
                     }
                 });
