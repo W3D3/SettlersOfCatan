@@ -2,6 +2,7 @@ package io.swagslash.settlersofcatan.utility;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 
@@ -10,10 +11,10 @@ public class TradeOfferIntent implements Serializable {
     private int id;
     private String offerer;
     private String offeree;
-    private HashMap<Resource.ResourceType, Integer> offer = new HashMap<>();
-    private HashMap<Resource.ResourceType, Integer> demand = new HashMap<>();
+    private Map<Resource.ResourceType, Integer> offer = new HashMap<>();
+    private Map<Resource.ResourceType, Integer> demand = new HashMap<>();
 
-    TradeOfferIntent() {
+    public TradeOfferIntent() {
 
     }
 
@@ -33,19 +34,19 @@ public class TradeOfferIntent implements Serializable {
         this.offeree = offeree;
     }
 
-    public HashMap<Resource.ResourceType, Integer> getOffer() {
+    public Map<Resource.ResourceType, Integer> getOffer() {
         return offer;
     }
 
-    public void setOffer(HashMap<Resource.ResourceType, Integer> offer) {
+    public void setOffer(Map<Resource.ResourceType, Integer> offer) {
         this.offer = offer;
     }
 
-    public HashMap<Resource.ResourceType, Integer> getDemand() {
+    public Map<Resource.ResourceType, Integer> getDemand() {
         return demand;
     }
 
-    public void setDemand(HashMap<Resource.ResourceType, Integer> demand) {
+    public void setDemand(Map<Resource.ResourceType, Integer> demand) {
         this.demand = demand;
     }
 

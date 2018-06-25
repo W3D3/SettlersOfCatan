@@ -4,9 +4,7 @@ import io.swagslash.settlersofcatan.Player;
 
 public class TradeAcceptAction extends TradeResponseAction {
 
-    private Player offeree;
-
-    TradeAcceptAction() {
+    public TradeAcceptAction() {
 
     }
 

@@ -6,22 +6,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+
+import io.swagslash.settlersofcatan.pieces.items.DevelopmentCard;
 
 public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHolder> {
 
-    private List<String> cards;
+    private Map<DevelopmentCard, Integer> cards;
+    private ArrayList<DevelopmentCard> displayedCards;
+    private DevelopmentCard selectedCard = null;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
-        View v;
-        ViewHolder(View itemView) {
-            super(itemView);
-            v = itemView;
+    CardListAdapter(Map<DevelopmentCard, Integer> input) {
+        cards = input;
+        for (DevelopmentCard dc : input.keySet()) {
+            int cnt = input.get(dc);
+            for (int i = 0; i < cnt; i++) {
+                displayedCards.add(dc);
+            }
         }
     }
 
-    CardListAdapter(List<String> input) {
-        cards = input;
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        TextView cardDesc = holder.v.findViewById(R.id.card_desc);
+        cardDesc.setText(displayedCards.get(position).getCardText());
     }
 
     @Override
@@ -33,13 +42,28 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        TextView cardDesc = holder.v.findViewById(R.id.card_desc);
-        cardDesc.setText(cards.get(position));
+    public int getItemCount() {
+        return displayedCards.size();
     }
 
-    @Override
-    public int getItemCount() {
-        return cards.size();
+    public ArrayList<DevelopmentCard> getDisplayedCards() {
+        return displayedCards;
+    }
+
+    public DevelopmentCard getSelectedCard() {
+        return selectedCard;
+    }
+
+    public void setSelectedCard(DevelopmentCard selectedCard) {
+        this.selectedCard = selectedCard;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        View v;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            v = itemView;
+        }
     }
 }
