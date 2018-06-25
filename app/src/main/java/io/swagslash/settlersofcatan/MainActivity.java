@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     HexView hexView;
     private Board board;
-    private AbstractNetworkManager network;
     Player player;
 
     @Override
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
 
         this.setupHexView();
-        network = SettlerApp.getManager();
+        AbstractNetworkManager network = SettlerApp.getManager();
         network.switchIn(this);
 
         TabLayout tabs = findViewById(R.id.tabs);
@@ -286,8 +285,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.fab_cards:
-                Intent in = new Intent(this, DisplayCardsActivity.class);
-                startActivity(in);
+                if (!SettlerApp.getPlayer().getInventory().getDeploymentCardHand().isEmpty()) {
+                    Intent in = new Intent(this, DisplayCardsActivity.class);
+                    startActivity(in);
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "no cards to choose from", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 break;
             case R.id.end_of_turn:
                 if (!itsMyTurn()) {
@@ -296,8 +304,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("PLAYER", "Turn of Player:" + TurnController.getInstance().getCurrentPlayer());
                     return;
                 }
+                if (trade.getPendingTradeWith().size() != 0) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "can't end turn, some trading still pending...", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    return;
+                }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
                     // end my own turn and tell all others my turn is over
+                    // reset trade
+                    trade = new Trade();
                     advanceTurn();
                     SettlerApp.getManager().sendToAll(new TurnAction(SettlerApp.getPlayer()));
                 } else {
@@ -306,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.trading:
                 if (itsMyTurn()) {
-                    if (this.trade.getPendingTradeWith().size() == 0) {
+                    if (this.trade.getPendingTradeWith().isEmpty()) {
                         final Intent in2 = new Intent(this, TradingActivity.class);
 
                         final AlertDialog.Builder b = new AlertDialog.Builder(this);
@@ -315,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // trade with bank
-                                in2.putExtra(TradingActivity.PLAYERORBANK, false);
+                                in2.putExtra(TradingActivity.PLAYERORBANKEXTRA, false);
                                 startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
                             }
                         });
@@ -324,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // trade with player
                                 in2.putExtra(TradingActivity.TRADEPENDING, (Serializable) Trade.createSerializableList(trade.getPendingTradeWith()));
-                                in2.putExtra(TradingActivity.PLAYERORBANK, true);
+                                in2.putExtra(TradingActivity.PLAYERORBANKEXTRA, true);
                                 // workaround for "not receiving your own TradeOfferAction"
                                 startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
 
@@ -423,13 +442,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onBackPressed() {
-        //TODO: maybe dialog option to exit?
+        final AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setMessage(R.string.close_msg);
+        b.setPositiveButton(R.string.close_yay, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // close app
+                finish();
+            }
+        });
+        b.setNegativeButton(R.string.close_nay, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // continue
+            }
+        });
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                b.show();
+            }
+        });
     }
 
     @Override
@@ -562,7 +596,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (object instanceof TradeOfferAction) {
                 final TradeOfferAction to = (TradeOfferAction) object;
                 if (to.getOfferer().equals(player)) {
-
                     // is not received!
                     // why ... well, beats me
 
@@ -581,8 +614,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 // create TradeOfferIntent, because TradeOfferAction (because of Player
                                 // and Board and Inventory etc. etc.) isn't serializable
                                 Intent in2 = new Intent(b.getContext(), TradingActivity.class);
-                                in2.putExtra(TradingActivity.TRADEOFFERINTENT, Trade.createTradeOfferIntentFromAction(to, player));
-                                in2.putExtra(TradingActivity.PLAYERORBANK, true);
+                                in2.putExtra(TradingActivity.TRADEOFFERINTENTEXTRA, Trade.createTradeOfferIntentFromAction(to, player));
+                                in2.putExtra(TradingActivity.PLAYERORBANKEXTRA, true);
                                 startActivity(in2);
                                 // start for result to get a return value to update resources
                                 //startActivityForResult(in2, TradingActivity.UPDATEAFTERTRADEREQUESTCODE);
@@ -616,9 +649,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void advanceTurn() {
         //Log.d("PLAYER", "Player ended his turn. (" +  TurnController.getInstance().getCurrentPlayer() + ")");
-
-        // reset Trade
-        this.trade = new Trade();
 
         TurnController.getInstance().advancePlayer();
         Log.d("PLAYER", "STARTING TURN of Player (" + TurnController.getInstance().getCurrentPlayer() + ")");
@@ -723,10 +753,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE && resultCode == TradingActivity.UPDATEAFTERTRADEREQUESTCODE) {
-            TradeUpdateIntent tai = (TradeUpdateIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
-            if (tai.getSelectedOfferees().size() == 0) {
+            TradeUpdateIntent tui = (TradeUpdateIntent) data.getSerializableExtra(TradingActivity.UPDATEAFTERTRADE);
+            if (tui.getSelectedOfferees().isEmpty()) {
                 // empty offerees = trade with bank
-                Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(tai.getOfferer()).getInventory(), tai.getDemand(), tai.getOffer());
+                Trade.updateInventoryAfterTrade(SettlerApp.board.getPlayerByName(tui.getOfferer()).getInventory(), tui.getDemand(), tui.getOffer());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -735,8 +765,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
             } else {
                 // trade with player; update pendingTradeWith
-                if (SettlerApp.board.getPlayerByName(tai.getOfferer()).equals(player)) {
-                    trade.getPendingTradeWith().addAll(Trade.createDeserializableList(tai.getSelectedOfferees()));
+                if (SettlerApp.board.getPlayerByName(tui.getOfferer()).equals(player)) {
+                    trade.getPendingTradeWith().addAll(Trade.createDeserializableList(tui.getSelectedOfferees(), SettlerApp.board));
                 }
             }
         }

@@ -3,6 +3,7 @@ package io.swagslash.settlersofcatan.utility;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
@@ -62,11 +63,11 @@ public class TradeOfferAction extends GameAction {
         this.selectedOfferees = selectedOfferees;
     }
 
-    public HashMap<Resource.ResourceType, Integer> getOffer() {
+    public Map<Resource.ResourceType, Integer> getOffer() {
         return offer;
     }
 
-    public void setOffer(HashMap<Resource.ResourceType, Integer> offer) {
+    public void setOffer(Map<Resource.ResourceType, Integer> offer) {
         for (Resource.ResourceType r : this.offer.keySet()) {
             if (offer.containsKey(r)) {
                 this.addResource(r, offer.get(r), true);
@@ -74,11 +75,11 @@ public class TradeOfferAction extends GameAction {
         }
     }
 
-    public HashMap<Resource.ResourceType, Integer> getDemand() {
+    public Map<Resource.ResourceType, Integer> getDemand() {
         return demand;
     }
 
-    public void setDemand(HashMap<Resource.ResourceType, Integer> demand) {
+    public void setDemand(Map<Resource.ResourceType, Integer> demand) {
         for (Resource.ResourceType r : this.demand.keySet()) {
             if (demand.containsKey(r)) {
                 this.addResource(r, demand.get(r), false);

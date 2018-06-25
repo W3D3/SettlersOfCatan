@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.Inventory;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.utility.Trade;
@@ -17,6 +18,9 @@ import io.swagslash.settlersofcatan.utility.TradeAcceptIntent;
 import io.swagslash.settlersofcatan.utility.TradeDeclineAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferAction;
 import io.swagslash.settlersofcatan.utility.TradeOfferIntent;
+import io.swagslash.settlersofcatan.utility.TradeResponseAction;
+import io.swagslash.settlersofcatan.utility.TradeUpdateIntent;
+import io.swagslash.settlersofcatan.utility.TradeVerifyAction;
 
 public class TradeTest {
 
@@ -26,6 +30,8 @@ public class TradeTest {
     private TradeAcceptIntent tai;
     private TradeDeclineAction tdaFromIntent;
     private TradeDeclineAction tdaFromAction;
+    private TradeUpdateIntent tui;
+    private TradeVerifyAction tva;
     private Trade t;
 
     private Player offerer;
@@ -39,7 +45,9 @@ public class TradeTest {
     private int initDemandVal = 4;
 
     private int offset = 2;
+    private Board b;
 
+    private List<String> allPlayers = new ArrayList<>();
     private List<Player> selectedOfferees = new ArrayList<>();
     private Vector<Integer> acceptedTrade = new Vector<>();
 
@@ -47,10 +55,12 @@ public class TradeTest {
     public void init() {
         this.t = new Trade();
         this.offerer = new Player(null, 0, 0, "A");
+        allPlayers.add(this.offerer.getPlayerName());
         for (int x = initOfferVal; x > 0; x--) {
             this.offerer.getInventory().addResource(new Resource(initOfferResource));
         }
         this.offeree = new Player(null, 1, 0, "B");
+        allPlayers.add(this.offeree.getPlayerName());
         for (int x = initDemandVal; x > 0; x--) {
             this.offeree.getInventory().addResource(new Resource(initDemandResource));
         }
@@ -68,6 +78,25 @@ public class TradeTest {
         this.tdaFromIntent = Trade.createTradeDeclineActionFromIntent(this.toi, this.offerer, this.offeree);
         this.tdaFromAction = Trade.createTradeDeclineAction(this.toa, this.offeree);
         this.tai = Trade.createTradeAcceptIntentFromAction(this.toa, this.offeree);
+        this.tui = Trade.createTradeUpdateIntentFromAction(toa);
+        this.tva = Trade.createTradeVerifyActionFromAction(taa);
+
+        b = new Board(allPlayers, false, 10);
+    }
+
+    @Test
+    public void testEmptyConstructor() {
+        // reasons why
+        // 1. test coverage
+        // 2. no "could be made package-private" anymore
+        TradeAcceptAction taa = new TradeAcceptAction();
+        TradeAcceptIntent tai = new TradeAcceptIntent();
+        TradeDeclineAction tda = new TradeDeclineAction();
+        TradeOfferAction toa = new TradeOfferAction();
+        TradeOfferIntent toi = new TradeOfferIntent();
+        TradeResponseAction tra = new TradeAcceptAction();
+        TradeUpdateIntent tui = new TradeUpdateIntent();
+        TradeVerifyAction tva = new TradeVerifyAction();
     }
 
     @Test
@@ -105,6 +134,7 @@ public class TradeTest {
         Inventory initOfferer = this.offerer.getInventory();
         Inventory initOfferee = this.offeree.getInventory();
         Assert.assertEquals(true, Trade.isTradePossible(this.offeree.getInventory(), this.demand));
+        Assert.assertEquals(false, Trade.isTradePossible(this.offeree.getInventory(), this.offer));
         this.t.setPendingTradeWith(selectedOfferees);
         Assert.assertEquals(this.selectedOfferees, this.t.getPendingTradeWith());
         this.acceptedTrade.add(this.toa.getId());
@@ -115,12 +145,23 @@ public class TradeTest {
     }
 
     @Test
-    public void addResourceToTradeOffer() {
+    public void addResourceToTradeOfferAction() {
         int val = 5;
         this.toa.addResource(Resource.ResourceType.GRAIN, val, true);
         Assert.assertSame(val, this.toa.getResource(Resource.ResourceType.GRAIN, true));
         this.toa.addResource(Resource.ResourceType.ORE, val, false);
         Assert.assertSame(val, this.toa.getResource(Resource.ResourceType.ORE, false));
+
+        Assert.assertEquals(this.toa.getResource(Resource.ResourceType.BRICK, true), this.toi.getResource(Resource.ResourceType.BRICK, true));
+    }
+
+    @Test
+    public void addResourceToTradeOfferIntent() {
+        int val = 5;
+        this.toi.addResource(Resource.ResourceType.GRAIN, val, true);
+        Assert.assertSame(val, this.toi.getResource(Resource.ResourceType.GRAIN, true));
+        this.toi.addResource(Resource.ResourceType.ORE, val, false);
+        Assert.assertSame(val, this.toi.getResource(Resource.ResourceType.ORE, false));
 
         Assert.assertEquals(this.toa.getResource(Resource.ResourceType.BRICK, true), this.toi.getResource(Resource.ResourceType.BRICK, true));
     }
@@ -156,6 +197,7 @@ public class TradeTest {
         Assert.assertEquals(this.offeree.getPlayerName(), this.toi.getOfferee());
         Assert.assertEquals(this.offerer.getPlayerName(), this.toi.getOfferer());
         Assert.assertEquals(this.selectedOfferees, this.toa.getSelectedOfferees());
+        Assert.assertEquals(this.selectedOfferees, Trade.createDeserializableList(this.tui.getSelectedOfferees(), this.b));
     }
 
     @Test
@@ -169,6 +211,11 @@ public class TradeTest {
 
         Assert.assertEquals(Resource.ResourceType.NOTHING, Trade.convertStringToResource("kiahsfd"));
         Assert.assertEquals(Resource.ResourceType.NOTHING, Trade.convertStringToResource("235"));
+    }
+
+    @Test
+    public void checkListSerialization() {
+        Assert.assertEquals(this.selectedOfferees, Trade.createDeserializableList(Trade.createSerializableList(this.selectedOfferees), this.b));
     }
 
     @Test

@@ -6,6 +6,9 @@
     <string name="build_street">Build Street</string>
     <string name="show_cards">Show Cards</string>
     <string name="victory_points">VP:</string>
+    <string name="close_msg">Do you really want to exit?</string>
+    <string name="close_yay">Exit Game</string>
+    <string name="close_nay">Continue</string>
     <!-- Resources -->
     <string name="resource_ore">Ore</string>
     <string name="resource_wood">Wood</string>
