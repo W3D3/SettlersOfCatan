@@ -54,10 +54,9 @@ import io.swagslash.settlersofcatan.utility.TradeVerifyAction;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener, INetworkCallback {
 
+    public static final String FORMAT = "%02d";
     // constants
     private static final int FABMENUDISTANCE = 160;
-    public static final String FORMAT = "%02d";
-
     // views
     protected Button cards;
     protected ImageButton diceOne;
@@ -85,18 +84,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected ShakeListener shakeListener;
     protected Object shakeValue;
     protected ArrayList<TextView> resourceVals;
-
+    // trade
+    Trade trade = new Trade();
+   
+   
+    Cheat cheat;
     // dice vals
     private int roll1;
     private int roll2;
 
-    // trade
-    Trade trade = new Trade();
+   
+      
 
     HexView hexView;
     private Board board;
     private AbstractNetworkManager network;
+
     Player player;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         this.player = SettlerApp.getPlayer();
+        cheat = new Cheat();
         updateResources();
 
         if (network.isHost()) {
@@ -194,12 +200,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /*
+    *Cheating Action after shaking
+    * available for all Players except the currentPlayer
+     */
+    public void cheatAction() {
+        cheat.resetCheated();
+        cheat.cheat(player, TurnController.getInstance().getCurrentPlayer());
+    }
+
+    /*
+    *Report Cheating Action after shaking
+    * available for the currentPlayer
+     */
+    public void detectCheatAction() {
+        cheat.reportCheating(board, TurnController.getInstance().getCurrentPlayer());
+    }
+
+
+
     /**
      * is called on shake
      * rolls dice if it is your turn
      * performs cheat method if it is not
      */
     private void performOnShake() {
+        /*
+        TO DO: Handle Shake to Cheat at Cheaters and Victims Turn
+         */
         if (board.getPhaseController().getCurrentPhase() != Board.Phase.PRODUCTION)
             return;
         Dice d6 = new DiceSix();

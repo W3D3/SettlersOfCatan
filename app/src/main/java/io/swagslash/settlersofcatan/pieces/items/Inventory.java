@@ -75,6 +75,9 @@ public class Inventory {
         this.deploymentCardHand.put(developmentCard, count--);
     }
 
+
+   
+
     public void randomDiscard() {
         Player player = SettlerApp.getPlayer();
 
@@ -127,5 +130,15 @@ public class Inventory {
             size = size + integer;
         }
         return size;
+
     }
+  
+   /*
+     *
+     * @return sums the number of resourceCards in the Inventory
+    */
+    public int getTotalResourceCount() {
+        return resourceHand.get(Resource.ResourceType.GRAIN) + resourceHand.get(Resource.ResourceType.ORE) +
+                resourceHand.get(Resource.ResourceType.WOOL) + resourceHand.get(Resource.ResourceType.WOOD) +
+                resourceHand.get(Resource.ResourceType.BRICK);}
 }
