@@ -146,4 +146,61 @@ public class GameController {
         }
         return true;
     }
+
+    /**
+     * Calculates longest trade route for specified Player
+     *
+     * @param player Player to calc for
+     * @param e      latest road that got build
+     */
+    public Integer recalcLongestTradeRoute(Player player, Edge e) {
+        Integer sum = 0;
+        for (Vertex neighbor : e.getVertexNeighbors()) {
+
+            sum += findRoute(neighbor, e, sum);
+            System.out.println("LONGEST ROUTE: " + sum);
+
+        }
+        sum += 1; // add current edge as well
+        player.setLongestTradeRoute(sum);
+        return sum;
+    }
+
+    public Integer recalcLongestTradeRoute(Player player) {
+        Integer max = 0;
+        for (Edge edge : board.getEdgesList()) {
+            Integer sum = 0;
+            for (Vertex neighbor : edge.getVertexNeighbors()) {
+
+                sum += findRoute(neighbor, edge, sum);
+                System.out.println(neighbor.toString() + "//" + sum);
+
+            }
+            player.setLongestTradeRoute(sum);
+            if (sum > max) {
+                max = sum;
+            }
+        }
+//        Log.d("ROUTE", "LONGEST ROUTE: " + max);
+        return max;
+    }
+
+
+    private Integer findRoute(Vertex startpoint, Edge startEdge, Integer counter) {
+        Player player = startEdge.getOwner();
+        // check all edges from startpoint
+        for (Edge edge : startpoint.getEdgeNeighbours()) {
+            // if a edge is owned by our player which is not the one we came from look from there
+            if (!edge.equals(startEdge) && edge.isOwnedBy(player)) {
+                counter++;
+                //find the vertex that is not our startvertex or owned by someone else and continue from there
+                for (Vertex vertex : edge.getVertexNeighbors()) {
+                    if (!vertex.equals(startpoint) && !vertex.isOwnedByAnotherPlayer(player)) {
+                        counter = findRoute(vertex, edge, counter);
+                    }
+                }
+            }
+        }
+        return counter;
+    }
 }

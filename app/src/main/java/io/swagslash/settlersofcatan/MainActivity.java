@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected Animation openMenu;
     protected Animation closeMenu;
     protected boolean fabOpen;
+    protected TextView winPoints;
 
     // sensor
     protected SensorManager sensorManager;
@@ -143,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.diceTwo = findViewById(R.id.dice_2);
         this.endOfTurn = findViewById(R.id.end_of_turn);
         this.trading = findViewById(R.id.trading);
+        //victory_points_count
+        this.winPoints = findViewById(R.id.victory_points_count);
 
         // listeners
         this.fab.setOnClickListener(this);
@@ -160,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.resourceVals.add((TextView) findViewById(R.id.brick_count));
         this.resourceVals.add((TextView) findViewById(R.id.grain_count));
         this.resourceVals.add((TextView) findViewById(R.id.ore_count));
+
 
         this.player = SettlerApp.getPlayer();
         updateResources();
@@ -759,6 +763,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void normalTurn() {
+        GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer());
         SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PRODUCTION);
 
         runOnUiThread(new Runnable() {
@@ -766,6 +771,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 Toast.makeText(getApplicationContext(), "YOUR TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
                         Toast.LENGTH_LONG).show();
+
             }
         });
     }
@@ -779,6 +785,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (TextView tv : resourceVals) {
             tv.setText(String.format(FORMAT, inv.countResource(Trade.convertStringToResource(getResourceStringFromView(tv)))));
         }
+//        winPoints.setText(GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer()));
     }
 
     /**

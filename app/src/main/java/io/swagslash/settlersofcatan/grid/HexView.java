@@ -499,6 +499,7 @@ public class HexView extends View {
 
                 if(GameController.getInstance().buildRoad(edge, SettlerApp.getPlayer())) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer(), edge);
                     buildSuccess = true;
                 }
                 generateEdgePaths();
@@ -509,6 +510,7 @@ public class HexView extends View {
 
                 if(GameController.getInstance().buildFreeRoad(edge, SettlerApp.getPlayer())) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer(), edge);
                     buildSuccess = true;
                 }
                 generateEdgePaths();
