@@ -35,6 +35,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final NetworkDevice device = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).deviceName);
+        holder.mIpView.setText(mValues.get(position).address.toString());
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,6 +55,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
+        public final TextView mIpView;
         public Button button;
 
 
@@ -61,6 +63,7 @@ public class MyLobbyServiceRecyclerViewAdapter extends RecyclerView.Adapter<MyLo
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.tvLobbyName);
+            mIpView = view.findViewById(R.id.tvHostAddress);
             button = view.findViewById(R.id.btnConnect);
         }
 

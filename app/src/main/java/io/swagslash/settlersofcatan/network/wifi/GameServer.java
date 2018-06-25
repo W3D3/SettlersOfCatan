@@ -23,6 +23,7 @@ public class GameServer extends AbstractNetworkManager {
 
         server.bind(Network.TCP,Network.UDP);
         server.start();
+        this.setIp(ip());
     }
 
     @Override

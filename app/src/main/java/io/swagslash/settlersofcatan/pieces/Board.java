@@ -41,7 +41,8 @@ public class Board {
         this.edges = new HashMap<>();
         this.players = new ArrayList<>(playerNames.size());
 
-        if (playerNames.size() < 2 || playerNames.size() > 4)
+        //TODO change to 2?
+        if (playerNames.size() < 1 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
         generatePlayers(playerNames);
@@ -119,6 +120,9 @@ public class Board {
             boolean needsNumberToken = terrainsShuffled.peek() != Hex.TerrainType.DESERT;
             Hex hex = new Hex(this, terrainsShuffled.pop(), location);
             if (needsNumberToken) hex.setNumberToken(numberTokens.pop());
+            else {
+                hex.setRobber();
+            }
 
             calculateVerticesAndEdges(hex);
             for (HexPoint point : hex.getVerticesPosition()) {

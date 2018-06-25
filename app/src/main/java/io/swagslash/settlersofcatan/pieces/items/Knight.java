@@ -24,7 +24,7 @@ public class Knight extends DevelopmentCard {
 
     public Board ActivateCard(Board b, Player player, Hex currentField) {
         Robber robber = new Robber(currentField);
-        robber.robPlayer(currentField, player);
+        //robber.robPlayer(player);
 
         player.getInventory().removeDeploymentCardHand(this);
         return b;

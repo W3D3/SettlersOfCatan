@@ -121,6 +121,7 @@
     <string name="btn_play">Play Game</string>
     <string name="btn_discover">Discover Lobbies</string>
     <string name="btn_create_lobby">Create Lobby</string>
+    <string name="btn_direct_connect">Direct Connect</string>
     <string name="btn_finish_choosing">Finish</string>
-    <string name="chooseOneOrMoreResources">Wähle 1 oder mehrere Ressourcen:</string>
+    <string name="chooseOneOrMoreResources">Chose one or more ressources:</string>
 </resources>

@@ -54,9 +54,6 @@
             android:name=".network.wifi.gui.BrowserActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".RobPlayerActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
             android:name=".network.wifi.gui.ClientLobbyActivity"
             android:screenOrientation="portrait"></activity>
         <activity
@@ -79,5 +76,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity android:name=".ResourceDiscardActivity" />
     </application>
 </manifest>

@@ -3,10 +3,12 @@ package io.swagslash.settlersofcatan.pieces;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.Robber;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.AxialHexLocation;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
@@ -21,7 +23,7 @@ public class Hex {
     private NumberToken numberToken;
     private TerrainType terrainType;
     private AxialHexLocation hexLocation;
-    private Boolean hasRobber;
+    private Robber robber;
     private List<HexPoint> verticesPosition;
     private List<HexPointPair> edgePosition;
     private HexPoint center;
@@ -37,7 +39,7 @@ public class Hex {
         this.hexLocation = location;
         this.verticesPosition = new ArrayList<>();
         this.edgePosition = new ArrayList<>();
-        this.hasRobber = false;
+        this.robber = null;
     }
 
     public List<Vertex> getVertices() {
@@ -113,14 +115,14 @@ public class Hex {
     }
 
     public boolean distributeResources(int diceRoll) {
-        if (this.numberToken == null || diceRoll != this.numberToken.getNumber() || hasRobber) {
+        if (this.numberToken == null || diceRoll != this.numberToken.getNumber() || this.hasRobber()) {
             return false;
         }
 
         for (int i = 0; i < 6; i++) {
             //TODO each vertex gets resources
             if (getVertices().get(i).distributeResources(this.getResourceProduced())) {
-//                Log.d("DISTRIBUTION", "DISTRÌBUTED AT LEAST 1 " + getResourceProduced() + " to " + this.toString() + " on Vertex " + getVertices().get(i));
+                Log.d("DISTRIBUTION", "DISTRÌBUTED AT LEAST 1 " + getResourceProduced() + " to " + this.toString() + " on Vertex " + getVertices().get(i));
             }
         }
         return true;
@@ -181,12 +183,20 @@ public class Hex {
         this.terrainType = terrainType;
     }
 
-    public Boolean getHasRobber() {
-        return hasRobber;
+    public Robber getRobber() {
+        return robber;
     }
 
-    public void setHasRobber(Boolean hasRobber) {
-        this.hasRobber = hasRobber;
+    public void setRobber() {
+        this.robber = new Robber(this);
+    }
+
+    public void removeRobber() {
+        robber = null;
+    }
+
+    public Boolean hasRobber() {
+        return robber != null;
     }
 
     public Board getBoard() {

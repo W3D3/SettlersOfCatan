@@ -16,6 +16,7 @@ import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
+import io.swagslash.settlersofcatan.network.wifi.LobbyMemberFragment;
 import io.swagslash.settlersofcatan.network.wifi.Network;
 import io.swagslash.settlersofcatan.network.wifi.NetworkDevice;
 import io.swagslash.settlersofcatan.pieces.Board;
@@ -27,6 +28,8 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
 
     private boolean backAllowed = false;
 
+    private LobbyMemberFragment frag;
+
     private List<NetworkDevice> member;
 
     @Override
@@ -35,6 +38,7 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
         setContentView(R.layout.activity_client_lobby);
         network = SettlerApp.getManager();
         network.switchIn(this);
+        frag = (LobbyMemberFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_lobby);
         member = new ArrayList<>();
 
 
@@ -79,6 +83,7 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
             for(String s: updateNames.names){
                member.add(new NetworkDevice(s, null));
             }
+            frag.setMember(member);
             return;
         }
         if (object instanceof Board) {

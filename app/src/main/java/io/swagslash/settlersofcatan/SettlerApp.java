@@ -38,9 +38,11 @@ public class SettlerApp extends Application {
     public static AbstractNetworkManager getManager() {
         return network;
     }
+
     public static void setNetwork(AbstractNetworkManager newNetwork){
         network = newNetwork;
     }
+
     public static void generateBoard(List<String> players){
         Board b = new Board(players, true, 10);
         Stack<Hex.TerrainType> terrainTypeStack = CatanUtil.getTerrainsShuffled();

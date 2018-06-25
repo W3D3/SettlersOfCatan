@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
 import io.swagslash.settlersofcatan.controller.GameController;
@@ -33,6 +34,7 @@ import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
+import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.utility.Pair;
 
@@ -67,8 +69,14 @@ public class HexView extends View {
     private Paint vertexClickPaint;
     private Paint textPaint;
 
+    MainActivity activity;
+
     public HexView(Context context) {
         super(context);
+
+        if (context instanceof MainActivity) {
+            activity = (MainActivity) context;
+        }
 
         hexes = new ArrayList<>();
         regionList = new ArrayList<>();
@@ -152,28 +160,32 @@ public class HexView extends View {
         offset = new Pair<>(Math.min(maxX, maxY) / 2, Math.min(maxX, maxY) / 2);
         clip = new Region();
 
-        for (Hex hex : hexes) {
-            hex.calculatePath(offset, scale);
-        }
         //TODO ADJUST MIN/MAX HEIGHT/WIDTH VIA PROPERTIES?
         // OR GET IT FROM PARENT?
         setMinimumHeight(maxY);
         setMinimumWidth(maxX);
 
-        // GENERATE PATHS und so
-        for (Hex hex : hexes) {
-            Path path = hex.getPath();
-            Region r = new Region();
-            r.setPath(path, clip);
-            hex.setRegion(r);
-        }
-
+        generateHexPaths();
         generateVerticePaths();
         generateEdgePaths();
 
         //ready to draw
         setWillNotDraw(false);
         invalidate();
+    }
+
+    public void generateHexPaths() {
+        // GENERATE PATHS und so
+        for (Hex hex : hexes) {
+            hex.calculatePath(offset, scale);
+            Path path = hex.getPath();
+            Region r = new Region();
+            r.setPath(path, clip);
+            hex.setRegion(r);
+            if (hex.hasRobber()) {
+                hex.getRobber().calculatePath(offset, scale);
+            }
+        }
     }
 
     public void generateVerticePaths() {
@@ -239,8 +251,12 @@ public class HexView extends View {
                     }
                     break;
                 case SETTLEMENT:
-                    circlePaint.setColor(vertex.getOwner().getColor());
-                    c.drawPath(vertex.getPath(), circlePaint);
+                    if (phaseController.isAllowedToBuildOnVertex(vertex) && phaseController.getCurrentPhase() == Board.Phase.SETUP_CITY) {
+                        c.drawPath(vertex.getPath(), vertexClickPaint);
+                    } else {
+                        circlePaint.setColor(vertex.getOwner().getColor());
+                        c.drawPath(vertex.getPath(), circlePaint);
+                    }
                     break;
                 case CITY:
                     circlePaint.setColor(vertex.getOwner().getColor());
@@ -275,8 +291,12 @@ public class HexView extends View {
 
             final HexPoint coordinates = hex.getCenter().scale(offset, scale);
             if(hex.getNumberToken() != null) {
-                if (hex.getNumberToken().getNumber() > 0) {
+                if (hex.getNumberToken().getNumber() > 0 && !hex.hasRobber()) {
                     c.drawText(hex.getNumberToken().toString(), (float)coordinates.x, (float)coordinates.y, textPaint);
+                    invalidate();
+                } else if (hex.hasRobber()) {
+                    hex.getRobber().calculatePath(offset, scale);
+                    c.drawPath(hex.getRobber().getPath(), textPaint);
                     invalidate();
                 }
 
@@ -309,7 +329,7 @@ public class HexView extends View {
                 public boolean onSingleTapConfirmed(MotionEvent e) {
                     if(handleVertexClick(e)) return true;
                     if(handleEdgeClick(e)) return true;
-                    showHexDetailFromMotionEvent(e, "Single Tap");
+                    handleHexClick(e, "Single Tap");
 
                     return true;
                 }
@@ -322,13 +342,13 @@ public class HexView extends View {
                 @Override
                 public void onLongPress(MotionEvent e) {
                     super.onLongPress(e);
-                    showHexDetailFromMotionEvent(e, "Long Press");
+                    handleHexClick(e, "Long Press");
                 }
 
                 // Keep this in for future use
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
-                    showHexDetailFromMotionEvent(e, "Double Tap");
+                    handleHexClick(e, "Double Tap");
                     return false;
                 }
             });
@@ -387,15 +407,30 @@ public class HexView extends View {
         return null;
     }
 
-    private void showHexDetailFromMotionEvent(MotionEvent event, String msg) {
+    private void handleHexClick(MotionEvent event, String msg) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
         Hex hex = getHexFromCoordinates(coordinates.first, coordinates.second);
         if (hex == null) return;
+
+        switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
+            case MOVING_ROBBER:
+                if (GameController.getInstance().canRob(hex)) {
+
+                    generateHexPaths();
+                    GameController.getInstance().moveRobber(hex);
+                    activity.choosePlayerToRob(hex.getRobber().getRobbablePlayers(SettlerApp.getPlayer()));
+
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                }
+                break;
+        }
+
 
         System.out.println(hex.toString());
         Toast.makeText(getContext().getApplicationContext(), hex.toString() + " ~ " + msg,
                 Toast.LENGTH_SHORT).show();
     }
+
 
     private boolean handleVertexClick(MotionEvent event) {
         Pair<Integer, Integer> coordinates = getCoordinates(event);
@@ -422,11 +457,25 @@ public class HexView extends View {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_ROAD);
                     buildSuccess = true;
                 }
+                //TODO REMOVE!
+                //GameController.getInstance().buildCity(vertex, SettlerApp.getPlayer());
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.BRICK), 5);
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.WOOD), 5);
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.ORE), 5);
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.GRAIN), 5);
+                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.WOOL), 5);
 
                 generateVerticePaths();
                 redraw();
                 break;
             case SETUP_CITY:
+                if (GameController.getInstance().buildCity(vertex, SettlerApp.getPlayer())) {
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    buildSuccess = true;
+                }
+
+                generateVerticePaths();
+                redraw();
                 break;
             default:
                 break;

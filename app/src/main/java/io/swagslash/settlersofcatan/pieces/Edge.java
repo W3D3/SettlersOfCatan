@@ -3,6 +3,9 @@ package io.swagslash.settlersofcatan.pieces;
 import android.graphics.Path;
 import android.graphics.Region;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.pieces.utility.HexPointPair;
@@ -108,7 +111,6 @@ public class Edge {
             return false;
         }
 
-
         // check for edgeUnits between each vertex
         Vertex curVertex = null;
         for (int i = 0; i < 2; i++) {
@@ -141,13 +143,14 @@ public class Edge {
     }
 
     public boolean isOwnedBy(Player p) {
+        if (p == null || this.owner == null) return false;
         return p.equals(this.owner);
     }
 
 
     @Override
     public String toString() {
-        return "Edge: " + coordinates.toString();
+        return this.getUnitType() + coordinates.toString();
 
     }
 
@@ -203,6 +206,28 @@ public class Edge {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public Set<Edge> getAdjacentRoads() {
+        Set<Edge> adj = new HashSet<>();
+        for (Vertex vertex : this.getVertexNeighbors()) {
+            for (Edge edge : vertex.getEdgeNeighbours()) {
+                if (edge.getUnitType() == EdgeType.ROAD) adj.add(edge);
+            }
+        }
+        adj.remove(this);
+        return adj;
+    }
+
+    public Set<Edge> getAdjacentEdges() {
+        Set<Edge> adj = new HashSet<>();
+        for (Vertex vertex : this.getVertexNeighbors()) {
+            for (Edge edge : vertex.getEdgeNeighbours()) {
+                adj.add(edge);
+            }
+        }
+        adj.remove(this);
+        return adj;
     }
 
     public enum EdgeType {
