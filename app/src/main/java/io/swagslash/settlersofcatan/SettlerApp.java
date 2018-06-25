@@ -15,6 +15,12 @@ import io.swagslash.settlersofcatan.pieces.Hex;
 
 public class SettlerApp extends Application {
 
+    public static final int VPSETTLEMENT = 1;
+    public static final int VPCITIES = 2;
+    public static final int VPLONGESTTRADEROUTE = 2;
+    public static final int LONGESTTRADEROUTE = 5;
+    public static final int WONAT = 10;
+
     public static String playerName;
     private static AbstractNetworkManager network;
     public static Board board;
@@ -25,7 +31,7 @@ public class SettlerApp extends Application {
     }
 
     public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+        SettlerApp.playerName = playerName;
     }
 
     @Override
