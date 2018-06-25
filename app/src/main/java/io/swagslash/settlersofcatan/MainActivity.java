@@ -214,8 +214,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (GameController.getInstance().handleDiceRolls(roll1, roll2)) {
             SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
         }
-        // WARNING CANNOT RUN ON UI THREAD HERE
-        // this freezes the app
+        //discardExtraRessources();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateResources();
+                updateDice();
+            }
+        });
     }
 
     /**
@@ -410,7 +416,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
 
-
                 } else {
                     Toast.makeText(getApplicationContext(), "It is not your turn!", Toast.LENGTH_LONG).show();
                 }
@@ -425,11 +430,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void choosePlayerToRob(final List<Player> players) {
 
-        //TODO reactivate this
-//        if(players.size() == 1) {
-//            GameController.getInstance().rob(players.get(0));
-//            return;
-//        }
+        if (players.size() == 0) return;
+        if (players.size() == 1) {
+            GameController.getInstance().rob(players.get(0));
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Choose a player");
 
@@ -830,6 +835,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     trade.getPendingTradeWith().addAll(Trade.createDeserializableList(tui.getSelectedOfferees(), SettlerApp.board));
                 }
             }
+        }
+    }
+
+    private void discardExtraRessources() {
+        if (this.player.getInventory().size() > 7) {
+            Intent i = new Intent(getApplicationContext(), ResourceDiscardActivity.class);
+            startActivity(i);
         }
     }
 }

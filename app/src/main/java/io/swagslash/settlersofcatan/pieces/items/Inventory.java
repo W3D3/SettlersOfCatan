@@ -3,7 +3,9 @@ package io.swagslash.settlersofcatan.pieces.items;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
+
+import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.SettlerApp;
 
 /**
  * Created by Christoph Wedenig (christoph@wedenig.org) on 23.03.18.
@@ -74,27 +76,48 @@ public class Inventory {
     }
 
     public void randomDiscard() {
-        if (size() > 7) {
-            Set<Resource.ResourceType> keys = resourceHand.keySet();
-            Random R = new Random();
-            int rand = R.nextInt(5);
-            Integer amount;
-            boolean empty = true;
-            Resource.ResourceType key;
-            while (empty) {
-                key = (Resource.ResourceType) resourceHand.keySet().toArray()[rand];
-                if (resourceHand.get(key) < 0) {
-                    empty = false;
-                    amount = resourceHand.get(key);
-                    if (amount % 2 == 1) {
-                        amount++;
-                    }
-                    amount = amount / 2;
-                    resourceHand.put(key, amount);
-                } else {
-                    rand = R.nextInt(5);
-                }
+        Player player = SettlerApp.getPlayer();
+
+        int numberWood = player.getInventory().countResource(Resource.ResourceType.WOOD);
+        int numberBrick = player.getInventory().countResource(Resource.ResourceType.BRICK);
+        int numberWool = player.getInventory().countResource(Resource.ResourceType.WOOL);
+        int numberGrain = player.getInventory().countResource(Resource.ResourceType.GRAIN);
+        int numberOre = player.getInventory().countResource(Resource.ResourceType.ORE);
+        int size = player.getInventory().size();
+        int initalSize = size;
+
+        if (size <= 7) return;
+
+        Random R = new Random();
+        int rand;
+        while (size > initalSize / 2) {
+            rand = R.nextInt(size);
+            //Steal Wood
+            if (rand < numberWood) {
+                player.getInventory().removeResource(new Resource(Resource.ResourceType.WOOD));
+                numberWood--;
             }
+            //Steal Brick
+            else if (rand < numberWood + numberBrick) {
+                player.getInventory().removeResource(new Resource(Resource.ResourceType.BRICK));
+                numberBrick--;
+            }
+            //Steal Wool
+            else if (rand < numberWood + numberBrick + numberWool) {
+                player.getInventory().removeResource(new Resource(Resource.ResourceType.WOOL));
+                numberWool--;
+            }
+            //Steal Grain
+            else if (rand < numberWood + numberBrick + numberWool + numberGrain) {
+                player.getInventory().removeResource(new Resource(Resource.ResourceType.GRAIN));
+                numberGrain--;
+            }
+            //Steal Ore
+            else {
+                player.getInventory().removeResource(new Resource(Resource.ResourceType.ORE));
+                numberOre--;
+            }
+            size = numberBrick + numberGrain + numberWood + numberWool + numberOre;
         }
     }
 

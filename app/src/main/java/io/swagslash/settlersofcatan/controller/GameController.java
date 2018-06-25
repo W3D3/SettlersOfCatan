@@ -91,8 +91,7 @@ public class GameController {
             throw new IllegalArgumentException("Invalid Dice roll.");
         Integer num = roll1 + roll2;
         if (num == 7) {
-            //TODO random discard
-            //SettlerApp.getPlayer().getInventory().randomDiscard();
+            SettlerApp.getPlayer().getInventory().randomDiscard();
             SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.MOVING_ROBBER);
             return false;
         }
