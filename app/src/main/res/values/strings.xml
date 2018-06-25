@@ -4,7 +4,11 @@
     <string name="build_settlement">Build Settlement</string>
     <string name="build_city">Build City</string>
     <string name="build_street">Build Street</string>
+    <string name="show_cards">Show Cards</string>
     <string name="victory_points">VP:</string>
+    <string name="close_msg">Do you really want to exit?</string>
+    <string name="close_yay">Exit Game</string>
+    <string name="close_nay">Continue</string>
     <!-- Resources -->
     <string name="resource_ore">Ore</string>
     <string name="resource_wood">Wood</string>
@@ -15,12 +19,18 @@
     <string name="dice_desc">picture of rolled dice</string>
     <string name="end_of_turn_desc">end your turn</string>
     <string name="trading_desc">trade with other players</string>
+    <string name="choose_resource">Choose Resources:</string>
     <!-- Trading -->
-    <string name="offer_header">Your Offer</string>
-    <string name="demand_header">Your Demand</string>
+    <string name="offer_header">You offer</string>
+    <string name="demand_header">You demand</string>
     <string name="trading_submit">Send Offer</string>
     <string name="ic_minus">decrease value by 1</string>
     <string name="ic_plus">increase value by 1</string>
+    <string name="look_trade">View Offer</string>
+    <string name="accept_trade">Accept Offer</string>
+    <string name="decline_trade">Decline to trade</string>
+    <string name="trade_bank">Bank</string>
+    <string name="trade_player">Player</string>
     <!-- Cards -->
     <string name="cards_header">Your Cards</string>
     <string name="cards_submit">Use Cards</string>
@@ -112,4 +122,6 @@
     <string name="btn_discover">Discover Lobbies</string>
     <string name="btn_create_lobby">Create Lobby</string>
     <string name="btn_direct_connect">Direct Connect</string>
+    <string name="btn_finish_choosing">Finish</string>
+    <string name="chooseOneOrMoreResources">Chose one or more ressources:</string>
 </resources>
