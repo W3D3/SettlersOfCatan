@@ -1,5 +1,8 @@
 package io.swagslash.settlersofcatan.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.Robber;
 import io.swagslash.settlersofcatan.SettlerApp;
@@ -27,6 +30,10 @@ public class GameController {
     private GameController() {
         bank = new Bank();
         board = SettlerApp.board;
+    }
+
+    public void destroy() {
+        instance = null;
     }
 
     public static GameController getInstance() {
@@ -153,54 +160,97 @@ public class GameController {
      * @param player Player to calc for
      * @param e      latest road that got build
      */
-    public Integer recalcLongestTradeRoute(Player player, Edge e) {
-        Integer sum = 0;
-        for (Vertex neighbor : e.getVertexNeighbors()) {
+//    public Integer recalcLongestTradeRoute(Player player, Edge e) {
+//        Integer sum = 0;
+//        for (Vertex neighbor : e.getVertexNeighbors()) {
+//
+//            sum += findRoute(neighbor, e, sum);
+//            System.out.println("LONGEST ROUTE: " + sum);
+//
+//        }
+//        sum += 1; // add current edge as well
+//        player.setLongestTradeRoute(sum);
+//        return sum;
+//    }
 
-            sum += findRoute(neighbor, e, sum);
-            System.out.println("LONGEST ROUTE: " + sum);
-
-        }
-        sum += 1; // add current edge as well
-        player.setLongestTradeRoute(sum);
-        return sum;
-    }
+//    public Integer recalcLongestTradeRoute(Player player) {
+//        Integer max = 0;
+//        for (Edge edge : board.getEdgesList()) {
+//            Integer sum = 0;
+//            for (Vertex neighbor : edge.getVertexNeighbors()) {
+//
+//                sum += findRoute(neighbor, edge, sum);
+//                System.out.println(neighbor.toString() + "//" + sum);
+//
+//            }
+//            player.setLongestTradeRoute(sum);
+//            if (sum > max) {
+//                max = sum;
+//            }
+//        }
+////        Log.d("ROUTE", "LONGEST ROUTE: " + max);
+//        return max;
+//    }
+//
+//
+//    private Integer findRoute(Vertex startpoint, Edge startEdge, Integer counter) {
+//        Player player = startEdge.getOwner();
+//        // check all edges from startpoint
+//        for (Edge edge : startpoint.getEdgeNeighbours()) {
+//            // if a edge is owned by our player which is not the one we came from look from there
+//            if (!edge.equals(startEdge) && edge.isOwnedBy(player)) {
+//                counter++;
+//                //find the vertex that is not our startvertex or owned by someone else and continue from there
+//                for (Vertex vertex : edge.getVertexNeighbors()) {
+//                    if (!vertex.equals(startpoint) && !vertex.isOwnedByAnotherPlayer(player)) {
+//                        return findRoute(vertex, edge, counter);
+//                    }
+//                }
+//            }
+//        }
+//        return counter;
+//    }
 
     public Integer recalcLongestTradeRoute(Player player) {
         Integer max = 0;
         for (Edge edge : board.getEdgesList()) {
-            Integer sum = 0;
-            for (Vertex neighbor : edge.getVertexNeighbors()) {
 
-                sum += findRoute(neighbor, edge, sum);
-                System.out.println(neighbor.toString() + "//" + sum);
+            if (edge.isOwnedBy(player)) {
+                Integer sum = 0;
+                HashSet<Edge> visited = new HashSet<>();
+                sum = findRoute(player, visited, edge).size();
+                player.setLongestTradeRoute(sum);
+                if (sum > max) {
+                    max = sum;
+                }
+            }
 
-            }
-            player.setLongestTradeRoute(sum);
-            if (sum > max) {
-                max = sum;
-            }
         }
 //        Log.d("ROUTE", "LONGEST ROUTE: " + max);
         return max;
     }
 
 
-    private Integer findRoute(Vertex startpoint, Edge startEdge, Integer counter) {
-        Player player = startEdge.getOwner();
-        // check all edges from startpoint
-        for (Edge edge : startpoint.getEdgeNeighbours()) {
-            // if a edge is owned by our player which is not the one we came from look from there
-            if (!edge.equals(startEdge) && edge.isOwnedBy(player)) {
-                counter++;
-                //find the vertex that is not our startvertex or owned by someone else and continue from there
-                for (Vertex vertex : edge.getVertexNeighbors()) {
-                    if (!vertex.equals(startpoint) && !vertex.isOwnedByAnotherPlayer(player)) {
-                        counter = findRoute(vertex, edge, counter);
-                    }
-                }
-            }
+    private Set<Edge> findRoute(Player player, Set<Edge> visited, Edge currentEdge) {
+
+        Set<Edge> newVisited = new HashSet<>(visited);
+        newVisited.add(currentEdge);
+
+        final Set<Edge> adjacentRoads = currentEdge.getAdjacentRoads();
+        adjacentRoads.removeAll(newVisited);
+        for (Edge edge : visited) {
+            adjacentRoads.removeAll(edge.getAdjacentRoads());
         }
-        return counter;
+
+
+        if (adjacentRoads.size() == 1) {
+            return findRoute(player, newVisited, (Edge) adjacentRoads.toArray()[0]);
+        } else if (adjacentRoads.size() == 2) {
+            Set<Edge> set1 = findRoute(player, newVisited, (Edge) adjacentRoads.toArray()[0]);
+            Set<Edge> set2 = findRoute(player, newVisited, (Edge) adjacentRoads.toArray()[1]);
+            if (set1.size() > set2.size()) return set1;
+            else return set2;
+        }
+        return newVisited;
     }
 }

@@ -219,7 +219,16 @@ public class Edge {
         return adj;
     }
 
-    ;
+    public Set<Edge> getAdjacentEdges() {
+        Set<Edge> adj = new HashSet<>();
+        for (Vertex vertex : this.getVertexNeighbors()) {
+            for (Edge edge : vertex.getEdgeNeighbours()) {
+                adj.add(edge);
+            }
+        }
+        adj.remove(this);
+        return adj;
+    }
 
     public enum EdgeType {
         NONE, ROAD
