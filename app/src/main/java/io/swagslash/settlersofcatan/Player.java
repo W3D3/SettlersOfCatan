@@ -77,16 +77,24 @@ public class Player {
         return numOwnedSettlements;
     }
 
-    public void setNumOwnedSettlements(int numOwnedSettlements) {
-        this.numOwnedSettlements = numOwnedSettlements;
+    public void increaseNumOwnedSettlements() {
+        this.numOwnedSettlements++;
+    }
+
+    public void decreaseNumOwnedSettlements() {
+        this.numOwnedSettlements--;
     }
 
     public int getNumOwnedCities() {
         return numOwnedCities;
     }
 
-    public void setNumOwnedCities(int numOwnedCities) {
-        this.numOwnedCities = numOwnedCities;
+    public void increaseNumOwnedCities() {
+        this.numOwnedCities++;
+    }
+
+    public void decreaseNumOwnedCities() {
+        this.numOwnedCities--;
     }
 
     public int getLongestTradeRoute() {
@@ -139,6 +147,10 @@ public class Player {
 
     public void setHasLongestRoad(boolean hasLongestRoad) {
         this.hasLongestRoad = hasLongestRoad;
+    }
+
+    public boolean didIWin() {
+        return SettlerApp.WONAT <= this.getVictoryPoints();
     }
 
     @Override

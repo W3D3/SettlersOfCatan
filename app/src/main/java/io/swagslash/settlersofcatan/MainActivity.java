@@ -288,7 +288,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
                 }
-
                 break;
             case R.id.fab_city:
                 if (!itsMyTurn()) {
@@ -361,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("PLAYER", "Turn of Player:" + TurnController.getInstance().getCurrentPlayer());
                     return;
                 }
-                if (trade.getPendingTradeWith().size() != 0) {
+                if (!trade.getPendingTradeWith().isEmpty()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -464,7 +463,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
     private void toogleFabMenu() {
         if (this.fabOpen) {
@@ -578,7 +576,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         hexView.redraw();
                     }
                 });
-
             } else if (object instanceof TurnAction) {
                 if (itIsYou) return;
                 // Another player ended his turn
@@ -721,6 +718,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void advanceTurn() {
         //Log.d("PLAYER", "Player ended his turn. (" +  TurnController.getInstance().getCurrentPlayer() + ")");
 
+        // close fab menu
+        if (this.fabOpen) {
+            this.toogleFabMenu();
+        }
+
         // update victory points on begin of turn and not after everything that gives you vps
         calcVictoryPoints();
         runOnUiThread(new Runnable() {
@@ -731,9 +733,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         // check if I reached the necessary points to win
-        if (didIWin()) {
+        // i just have to check it for myself (as everybody else does for themselves)
+        if (player.didIWin()) {
             // yay
             // show ... stuff ?
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "I won!", Toast.LENGTH_SHORT).show();
+                }
+            });
             // and send if over the network ?
             // and end game ?
         }
@@ -931,10 +940,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         vp = player.calcVictoryPointsWithoutTradeRoute() + offsetLRandLA;
         player.setVictoryPoints(vp);
-    }
-
-    private boolean didIWin() {
-        // i just have to calc it for myself (as everybody else does for themselves)
-        return SettlerApp.WONAT <= player.getVictoryPoints();
     }
 }

@@ -46,6 +46,8 @@ public class GameController {
         if (edge.canBuildRoad(player)) {
             if (bank.payForStreet(player)) {
                 edge.buildRoad(player);
+                // update longest trade route
+                player.setLongestTradeRoute(recalcLongestTradeRoute(player));
                 SettlerApp.getManager().sendToAll(new EdgeBuildAction(player, edge.getCoordinates()));
                 return true;
             }
@@ -56,6 +58,8 @@ public class GameController {
     public boolean buildFreeRoad(Edge edge, Player player) {
         if (edge.canBuildRoad(player)) {
             edge.buildRoad(player);
+            // update longest trade route
+            player.setLongestTradeRoute(recalcLongestTradeRoute(player));
             SettlerApp.getManager().sendToAll(new EdgeBuildAction(player, edge.getCoordinates()));
             return true;
         }
@@ -66,6 +70,8 @@ public class GameController {
         if (vertex.canBuildSettlement(player)) {
             if (bank.payForSettlement(player)) {
                 vertex.buildSettlement(player);
+                // increase builders settlement cnt
+                player.increaseNumOwnedSettlements();
                 SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex.getCoordinates()));
                 return true;
             }
@@ -76,6 +82,8 @@ public class GameController {
     public boolean buildFreeSettlement(Vertex vertex, Player player) {
         if (vertex.canBuildFreeSettlement(player)) {
             vertex.buildSettlement(player);
+            // increase builders settlement cnt
+            player.increaseNumOwnedSettlements();
             SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_SETTLEMENT, vertex.getCoordinates()));
             return true;
         }
@@ -86,6 +94,10 @@ public class GameController {
         if (vertex.canBuildCity(player)) {
             if (bank.payForCity(player)) {
                 vertex.buildCity(player);
+                // increase builders cities cnt
+                player.increaseNumOwnedCities();
+                // decrease builders settlement cnt
+                player.decreaseNumOwnedSettlements();
                 SettlerApp.getManager().sendToAll(new VertexBuildAction(player, VertexBuildAction.ActionType.BUILD_CITY, vertex.getCoordinates()));
                 return true;
             }
@@ -158,7 +170,6 @@ public class GameController {
      * Calculates longest trade route for specified Player
      *
      * @param player Player to calc for
-     * @param e      latest road that got build
      */
 //    public Integer recalcLongestTradeRoute(Player player, Edge e) {
 //        Integer sum = 0;
