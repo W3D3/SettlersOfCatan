@@ -17,8 +17,10 @@ public class SettlerApp extends Application {
 
     public static final int VPSETTLEMENT = 1;
     public static final int VPCITIES = 2;
-    public static final int VPLONGESTTRADEROUTE = 2;
-    public static final int LONGESTTRADEROUTE = 5;
+    public static final int VPLONGESTROAD = 2;
+    public static final int VPLARGESTARMY = 2;
+    public static final int LONGESTROADAT = 5;
+    public static final int LARGESTARMYAT = 3;
     public static final int WONAT = 10;
 
     public static String playerName;

@@ -730,13 +730,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        // check if someone reached the necessary points to win
-        Player winner = didSomeoneWin();
-        if (winner != null) {
+        // check if I reached the necessary points to win
+        if (didIWin()) {
             // yay
             // show ... stuff ?
-        } else {
-            // nay
+            // and send if over the network ?
+            // and end game ?
         }
 
         TurnController.getInstance().advancePlayer();
@@ -878,76 +877,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void calcVictoryPoints() {
         // lr = special card "longest road"
-        List<Player> allPlayers = SettlerApp.board.getPlayers();
+        // la = special card "largest army"
         Player playerWithLongestRoute = null;
-        int longestTradeRoute = SettlerApp.LONGESTTRADEROUTE;
+        int longestRoad = SettlerApp.LONGESTROADAT;
         boolean isLongerThan = false;
-        boolean isHasLongestTradeRouteSet = false;
-        int offset = 0;
+        boolean isHasLongestRoadSet = false;
+        int offsetLRandLA = 0;
 
         // go through all players longest trade routes and find the longest route
-        for (Player p : allPlayers) {
-            if (longestTradeRoute <= p.getLongestTradeRoute()) {
-                longestTradeRoute = p.getLongestTradeRoute();
+        for (Player p : SettlerApp.board.getPlayers()) {
+            if (longestRoad <= p.getLongestTradeRoute()) {
+                longestRoad = p.getLongestTradeRoute();
                 isLongerThan = true;
             }
-            if (p.hasLongestTradeRoute()) {
-                isHasLongestTradeRouteSet = true;
+            if (p.hasLongestRoad()) {
+                isHasLongestRoadSet = true;
+                // is set just once, so this has to be the player with the current lr
+                playerWithLongestRoute = p;
             }
         }
 
-        // has someone a longer (or equal) trade route than LONGESTTRADEROUTE
+        // has someone a longer (or equal) trade route than LONGESTROADAT
         if (isLongerThan) {
-            // find player who has the longest trade route
-            for (Player p : allPlayers) {
-                // does someone already have the lr
-                if (isHasLongestTradeRouteSet) {
-                    if (p.getLongestTradeRoute() == longestTradeRoute && p.hasLongestTradeRoute()) {
-                        // does this player have the longest trade route and has lr set
-                        playerWithLongestRoute = p;
-                        return;
-                    }
-                } else {
-                    if (p.getLongestTradeRoute() == longestTradeRoute) {
-                        // this is the first player with the longest trade route
-                        // so he gets the lr because why not
-                        playerWithLongestRoute = p;
-                        return;
-                    }
+            // does someone already have the lr
+            if (isHasLongestRoadSet) {
+                // is my longest trade route longer than the player with the lr
+                if (playerWithLongestRoute.getLongestTradeRoute() < player.getLongestTradeRoute()) {
+                    playerWithLongestRoute.setHasLongestRoad(false);
+                    player.setHasLongestRoad(true);
+                    playerWithLongestRoute = player;
+                }
+                // if equal the current holder of lr keeps it
+            } else {
+                if (player.getLongestTradeRoute() == longestRoad) {
+                    // this is the first player with the longest trade route
+                    // and the first time that the lr is set
+                    // so he gets the lr
+                    player.setHasLongestRoad(true);
+                    playerWithLongestRoute = player;
                 }
             }
-            // delete hasLongestTradeRoute for everybody
-            for (Player p : allPlayers) {
-                p.setHasLongestTradeRoute(false);
-            }
-            playerWithLongestRoute.setHasLongestTradeRoute(true);
 
             // if the longest one is yours
             // and nobody else has the longest road (can't be, because round based game)
             // add the VPs for that
-            if (player.equals(playerWithLongestRoute)) {
+            if (player.equals(playerWithLongestRoute) && player.hasLongestRoad()) {
                 // all those lines for THAT?
-                offset += SettlerApp.VPLONGESTTRADEROUTE;
+                offsetLRandLA += SettlerApp.VPLONGESTROAD;
             }
         }
 
-        // add knight stuff?
+        // add special card "largest army" stuff?
 
-        vp = player.calcVictoryPointsWithoutTradeRoute() + offset;
+        vp = player.calcVictoryPointsWithoutTradeRoute() + offsetLRandLA;
         player.setVictoryPoints(vp);
     }
 
-    private Player didSomeoneWin() {
-        int highestVictoryPoints = SettlerApp.WONAT;
-        List<Player> allPlayers = SettlerApp.board.getPlayers();
-        Player winner = null;
-
-        for (Player p : allPlayers) {
-            if (highestVictoryPoints <= p.getVictoryPoints()) {
-                highestVictoryPoints = p.getVictoryPoints();
-                winner = p;
-            }
-        }
-        return winner;
+    private boolean didIWin() {
+        // i just have to calc it for myself (as everybody else does for themselves)
+        return SettlerApp.WONAT <= player.getVictoryPoints();
     }
 }
