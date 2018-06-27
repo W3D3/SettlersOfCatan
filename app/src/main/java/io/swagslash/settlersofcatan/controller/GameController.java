@@ -134,6 +134,7 @@ public class GameController {
             hexagon.removeRobber();
         }
         hex.setRobber();
+        SettlerApp.board.setRobberPosition(hex);
         return true;
     }
 
@@ -148,12 +149,14 @@ public class GameController {
         if (type == null) {
             return true;
         }
-        RobAction robbery = new RobAction(SettlerApp.getPlayer(), player, type);
+        RobAction robbery = new RobAction(SettlerApp.getPlayer(), player, type, SettlerApp.board.getRobberPosition().getHexLocation());
         SettlerApp.getManager().sendToAll(robbery);
         return true;
     }
 
     public boolean remoteRob(RobAction robbery) {
+        SettlerApp.board.setRobberPosition(SettlerApp.board.getHexByHexPositon(robbery.getRobberPosition()));
+        moveRobber(SettlerApp.board.getHexByHexPositon(robbery.getRobberPosition()));
         Robber.rob(robbery.getRobber(), robbery.robbedPlayer, robbery.getType());
         return true;
     }

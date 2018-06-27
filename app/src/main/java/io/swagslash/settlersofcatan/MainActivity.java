@@ -711,7 +711,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             } else if (object instanceof RobAction) {
+                hexView.generateHexPaths();
                 GameController.getInstance().remoteRob((RobAction) object);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hexView.redraw();
+                    }
+                });
+
             }
 
         }
