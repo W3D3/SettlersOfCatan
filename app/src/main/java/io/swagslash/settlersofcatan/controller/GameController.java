@@ -237,7 +237,7 @@ public class GameController {
             }
 
         }
-//        Log.d("ROUTE", "LONGEST ROUTE: " + max);
+        player.setLongestTradeRoute(max);
         return max;
     }
 

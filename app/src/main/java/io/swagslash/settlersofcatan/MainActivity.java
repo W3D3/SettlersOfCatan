@@ -456,6 +456,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 Log.d("SELECTED TO ROB", players.get(which) + " will be robbed.");
                 GameController.getInstance().rob(players.get(which));
+                ((MainActivity) getApplicationContext()).updateResources();
             }
         });
 
@@ -807,7 +808,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * updates the resource's views to the player's values
      */
     @SuppressLint("DefaultLocale")
-    private void updateResources() {
+    public void updateResources() {
         Inventory inv = player.getInventory();
         for (TextView tv : resourceVals) {
             tv.setText(String.format(FORMAT, inv.countResource(Trade.convertStringToResource(getResourceStringFromView(tv)))));
