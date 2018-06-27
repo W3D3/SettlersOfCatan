@@ -561,6 +561,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         hexView.redraw();
                     }
                 });
+
+                // update player's longest trade route
+                GameController.getInstance().recalcLongestTradeRoute(SettlerApp.board.getPlayerByName(action.getActor().getPlayerName()));
+                updateVictoryPoints();
             } else if (object instanceof VertexBuildAction) {
                 if (itIsYou) return;
                 // Another player has build on a vertex, show it!
@@ -577,6 +581,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         hexView.redraw();
                     }
                 });
+                updateVictoryPoints();
             } else if (object instanceof TurnAction) {
                 if (itIsYou) return;
                 // Another player ended his turn
@@ -724,14 +729,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             this.toogleFabMenu();
         }
 
-        // update victory points on begin of turn and not after everything that gives you vps
-        calcVictoryPoints();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateVictoryPoints();
-            }
-        });
+        updateVictoryPoints();
 
         // check if I reached the necessary points to win
         // i just have to check it for myself (as everybody else does for themselves)
@@ -824,8 +822,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         diceTwo.setBackgroundResource(getResources().getIdentifier("ic_dice_" + this.roll2, "drawable", getPackageName()));
     }
 
-    @SuppressLint("DefaultLocale")
     private void updateVictoryPoints() {
+        calcVictoryPoints();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateVictoryPointsGUI();
+            }
+        });
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void updateVictoryPointsGUI() {
         victoryPoints.setText(String.format(FORMAT, vp));
     }
 
@@ -888,7 +896,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void calcVictoryPoints() {
         // lr = special card "longest road"
         // la = special card "largest army"
-        Player playerWithLongestRoute = null;
+        Player playerWithLR = null;
+        Player playerWithTheLongestTradeRoute = null;
         int longestRoad = SettlerApp.LONGESTROADAT;
         boolean isLongerThan = false;
         boolean isHasLongestRoadSet = false;
@@ -899,11 +908,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (longestRoad <= p.getLongestTradeRoute()) {
                 longestRoad = p.getLongestTradeRoute();
                 isLongerThan = true;
+                playerWithTheLongestTradeRoute = p;
             }
             if (p.hasLongestRoad()) {
                 isHasLongestRoadSet = true;
                 // is set just once, so this has to be the player with the current lr
-                playerWithLongestRoute = p;
+                playerWithLR = p;
             }
         }
 
@@ -912,26 +922,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // does someone already have the lr
             if (isHasLongestRoadSet) {
                 // is my longest trade route longer than the player with the lr
-                if (playerWithLongestRoute.getLongestTradeRoute() < player.getLongestTradeRoute()) {
-                    playerWithLongestRoute.setHasLongestRoad(false);
-                    player.setHasLongestRoad(true);
-                    playerWithLongestRoute = player;
+                if (playerWithLR.getLongestTradeRoute() < playerWithTheLongestTradeRoute.getLongestTradeRoute()) {
+                    playerWithLR.setHasLongestRoad(false);
+                    playerWithTheLongestTradeRoute.setHasLongestRoad(true);
+                    playerWithLR = playerWithTheLongestTradeRoute;
                 }
                 // if equal the current holder of lr keeps it
             } else {
-                if (player.getLongestTradeRoute() == longestRoad) {
+                if (playerWithTheLongestTradeRoute.getLongestTradeRoute() == longestRoad) {
                     // this is the first player with the longest trade route
                     // and the first time that the lr is set
                     // so he gets the lr
-                    player.setHasLongestRoad(true);
-                    playerWithLongestRoute = player;
+                    playerWithTheLongestTradeRoute.setHasLongestRoad(true);
+                    playerWithLR = playerWithTheLongestTradeRoute;
                 }
             }
+
 
             // if the longest one is yours
             // and nobody else has the longest road (can't be, because round based game)
             // add the VPs for that
-            if (player.equals(playerWithLongestRoute) && player.hasLongestRoad()) {
+            if (player.equals(playerWithLR) && player.hasLongestRoad()) {
                 // all those lines for THAT?
                 offsetLRandLA += SettlerApp.VPLONGESTROAD;
             }
