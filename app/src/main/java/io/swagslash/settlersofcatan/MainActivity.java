@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected Animation openMenu;
     protected Animation closeMenu;
     protected boolean fabOpen;
-    protected TextView winPoints;
+    protected TextView victoryPoints;
 
     // sensor
     protected SensorManager sensorManager;
@@ -90,8 +90,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int roll1;
     private int roll2;
 
+    // victory points
+    int vp;
+
     // trade
-    Trade trade = new Trade();
+    Trade trade;
 
     HexView hexView;
     private Board board;
@@ -106,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         network = SettlerApp.getManager();
         network.switchIn(this);
         this.setupHexView();
+        trade = new Trade();
 
         TabLayout tabs = findViewById(R.id.tabs);
         for (Player p : SettlerApp.board.getPlayers()) {
@@ -144,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.diceTwo = findViewById(R.id.dice_2);
         this.endOfTurn = findViewById(R.id.end_of_turn);
         this.trading = findViewById(R.id.trading);
-        //victory_points_count
-        this.winPoints = findViewById(R.id.victory_points_count);
 
         // listeners
         this.fab.setOnClickListener(this);
@@ -164,6 +166,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.resourceVals.add((TextView) findViewById(R.id.grain_count));
         this.resourceVals.add((TextView) findViewById(R.id.ore_count));
 
+        // victory_points_count
+        this.victoryPoints = findViewById(R.id.victory_points_count);
 
         this.player = SettlerApp.getPlayer();
         updateResources();
@@ -261,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 this.toogleFabMenu();
                 break;
             case R.id.fab_settlement:
-                if(!itsMyTurn()) {
+                if (!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build settlement.");
                     return;
                 }
@@ -284,7 +288,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
                 }
-
                 break;
             case R.id.fab_city:
                 if (!itsMyTurn()) {
@@ -357,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("PLAYER", "Turn of Player:" + TurnController.getInstance().getCurrentPlayer());
                     return;
                 }
-                if (trade.getPendingTradeWith().size() != 0) {
+                if (!trade.getPendingTradeWith().isEmpty()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -418,8 +421,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         });
                     }
-
-
                 } else {
                     Toast.makeText(getApplicationContext(), "It is not your turn!", Toast.LENGTH_LONG).show();
                 }
@@ -455,6 +456,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(DialogInterface dialog, int which) {
                 Log.d("SELECTED TO ROB", players.get(which) + " will be robbed.");
                 GameController.getInstance().rob(players.get(which));
+                ((MainActivity) getApplicationContext()).updateResources();
             }
         });
 
@@ -462,7 +464,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
     private void toogleFabMenu() {
         if (this.fabOpen) {
@@ -560,6 +561,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         hexView.redraw();
                     }
                 });
+
+                // update player's longest trade route
+                GameController.getInstance().recalcLongestTradeRoute(SettlerApp.board.getPlayerByName(action.getActor().getPlayerName()));
+                updateVictoryPoints();
             } else if (object instanceof VertexBuildAction) {
                 if (itIsYou) return;
                 // Another player has build on a vertex, show it!
@@ -576,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         hexView.redraw();
                     }
                 });
-
+                updateVictoryPoints();
             } else if (object instanceof TurnAction) {
                 if (itIsYou) return;
                 // Another player ended his turn
@@ -705,7 +710,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         });
                     }
                 }
-
             } else if (object instanceof RobAction) {
                 GameController.getInstance().remoteRob((RobAction) object);
             }
@@ -719,6 +723,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void advanceTurn() {
         //Log.d("PLAYER", "Player ended his turn. (" +  TurnController.getInstance().getCurrentPlayer() + ")");
+
+        // close fab menu
+        if (this.fabOpen) {
+            this.toogleFabMenu();
+        }
+
+        updateVictoryPoints();
+
+        // check if I reached the necessary points to win
+        // i just have to check it for myself (as everybody else does for themselves)
+        if (player.didIWin()) {
+            // yay
+            // show ... stuff ?
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "I won!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            // and send if over the network ?
+            // and end game ?
+        }
 
         TurnController.getInstance().advancePlayer();
         Log.d("PLAYER", "STARTING TURN of Player (" + TurnController.getInstance().getCurrentPlayer() + ")");
@@ -780,12 +806,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * updates the resource's views to the player's values
      */
     @SuppressLint("DefaultLocale")
-    private void updateResources() {
+    public void updateResources() {
         Inventory inv = player.getInventory();
         for (TextView tv : resourceVals) {
             tv.setText(String.format(FORMAT, inv.countResource(Trade.convertStringToResource(getResourceStringFromView(tv)))));
         }
-//        winPoints.setText(GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer()));
+//        victoryPoints.setText(GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer()));
     }
 
     /**
@@ -794,6 +820,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateDice() {
         diceOne.setBackgroundResource(getResources().getIdentifier("ic_dice_" + this.roll1, "drawable", getPackageName()));
         diceTwo.setBackgroundResource(getResources().getIdentifier("ic_dice_" + this.roll2, "drawable", getPackageName()));
+    }
+
+    private void updateVictoryPoints() {
+        calcVictoryPoints();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateVictoryPointsGUI();
+            }
+        });
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void updateVictoryPointsGUI() {
+        victoryPoints.setText(String.format(FORMAT, vp));
     }
 
     /**
@@ -850,5 +891,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent i = new Intent(getApplicationContext(), ResourceDiscardActivity.class);
             startActivity(i);
         }
+    }
+
+    private void calcVictoryPoints() {
+        // lr = special card "longest road"
+        // la = special card "largest army"
+        Player playerWithLR = null;
+        Player playerWithTheLongestTradeRoute = null;
+        int longestRoad = SettlerApp.LONGESTROADAT;
+        boolean isLongerThan = false;
+        boolean isHasLongestRoadSet = false;
+        int offsetLRandLA = 0;
+
+        // go through all players longest trade routes and find the longest route
+        for (Player p : SettlerApp.board.getPlayers()) {
+            if (longestRoad <= p.getLongestTradeRoute()) {
+                longestRoad = p.getLongestTradeRoute();
+                isLongerThan = true;
+                playerWithTheLongestTradeRoute = p;
+            }
+            if (p.hasLongestRoad()) {
+                isHasLongestRoadSet = true;
+                // is set just once, so this has to be the player with the current lr
+                playerWithLR = p;
+            }
+        }
+
+        // has someone a longer (or equal) trade route than LONGESTROADAT
+        if (isLongerThan) {
+            // does someone already have the lr
+            if (isHasLongestRoadSet) {
+                // is my longest trade route longer than the player with the lr
+                if (playerWithLR.getLongestTradeRoute() < playerWithTheLongestTradeRoute.getLongestTradeRoute()) {
+                    playerWithLR.setHasLongestRoad(false);
+                    playerWithTheLongestTradeRoute.setHasLongestRoad(true);
+                    playerWithLR = playerWithTheLongestTradeRoute;
+                }
+                // if equal the current holder of lr keeps it
+            } else {
+                if (playerWithTheLongestTradeRoute.getLongestTradeRoute() == longestRoad) {
+                    // this is the first player with the longest trade route
+                    // and the first time that the lr is set
+                    // so he gets the lr
+                    playerWithTheLongestTradeRoute.setHasLongestRoad(true);
+                    playerWithLR = playerWithTheLongestTradeRoute;
+                }
+            }
+
+
+            // if the longest one is yours
+            // and nobody else has the longest road (can't be, because round based game)
+            // add the VPs for that
+            if (player.equals(playerWithLR) && player.hasLongestRoad()) {
+                // all those lines for THAT?
+                offsetLRandLA += SettlerApp.VPLONGESTROAD;
+            }
+        }
+
+        // add special card "largest army" stuff?
+
+        vp = player.calcVictoryPointsWithoutTradeRoute() + offsetLRandLA;
+        player.setVictoryPoints(vp);
     }
 }

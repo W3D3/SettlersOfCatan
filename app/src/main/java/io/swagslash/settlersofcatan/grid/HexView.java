@@ -480,6 +480,7 @@ public class HexView extends View {
             default:
                 break;
         }
+        if (buildSuccess) activity.updateResources();
         return buildSuccess;
     }
 
@@ -516,6 +517,7 @@ public class HexView extends View {
 
                 break;
         }
+        if (buildSuccess) activity.updateResources();
         return buildSuccess;
     }
 
