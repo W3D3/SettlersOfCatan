@@ -230,7 +230,6 @@ public class GameController {
                 Integer sum = 0;
                 HashSet<Edge> visited = new HashSet<>();
                 sum = findRoute(player, visited, edge).size();
-                player.setLongestTradeRoute(sum);
                 if (sum > max) {
                     max = sum;
                 }
