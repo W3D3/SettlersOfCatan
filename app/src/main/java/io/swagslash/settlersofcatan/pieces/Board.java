@@ -31,6 +31,7 @@ public class Board {
     private Stack<DevCard.DevCardTyp> cardStack;
     private Hex robberPosition;
 
+    //both of these are useless atm
     private boolean randomDiscard;
     private int winningPoints;
 
@@ -42,7 +43,7 @@ public class Board {
         this.edges = new HashMap<>();
         this.players = new ArrayList<>(playerNames.size());
 
-        //TODO change to 2?
+        //TODO change to 2 again?
         if (playerNames.size() < 1 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 
@@ -195,7 +196,7 @@ public class Board {
     public enum Phase {
         SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY, FREE_SETTLEMENT, FREE_ROAD,
         PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
-        FINISHED_GAME, IDLE, DICE_ROLL;
+        FINISHED_GAME, IDLE, DICE_ROLL, END_TURN;
     }
 
     public Hex getHexByHexPositon(AxialHexLocation position) {

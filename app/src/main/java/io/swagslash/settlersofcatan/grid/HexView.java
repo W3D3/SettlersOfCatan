@@ -17,7 +17,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.otaliastudios.zoom.ZoomLayout;
 
@@ -34,7 +33,6 @@ import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
 import io.swagslash.settlersofcatan.pieces.Vertex;
-import io.swagslash.settlersofcatan.pieces.items.Resource;
 import io.swagslash.settlersofcatan.pieces.utility.HexPoint;
 import io.swagslash.settlersofcatan.utility.Pair;
 
@@ -290,17 +288,17 @@ public class HexView extends View {
         for (Hex hex : hexes) {
 
             final HexPoint coordinates = hex.getCenter().scale(offset, scale);
-            if(hex.getNumberToken() != null) {
-                if (hex.getNumberToken().getNumber() > 0 && !hex.hasRobber()) {
-                    c.drawText(hex.getNumberToken().toString(), (float)coordinates.x, (float)coordinates.y, textPaint);
-                    invalidate();
-                } else if (hex.hasRobber()) {
-                    hex.getRobber().calculatePath(offset, scale);
-                    c.drawPath(hex.getRobber().getPath(), textPaint);
-                    invalidate();
-                }
 
+            if (hex.getNumberToken() != null && !hex.hasRobber()) {
+                c.drawText(hex.getNumberToken().toString(), (float) coordinates.x, (float) coordinates.y, textPaint);
+                invalidate();
+            } else if (hex.hasRobber()) {
+                hex.getRobber().calculatePath(offset, scale);
+                c.drawPath(hex.getRobber().getPath(), textPaint);
+                invalidate();
             }
+
+
 
         }
 
@@ -427,8 +425,8 @@ public class HexView extends View {
 
 
         System.out.println(hex.toString());
-        Toast.makeText(getContext().getApplicationContext(), hex.toString() + " ~ " + msg,
-                Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext().getApplicationContext(), hex.toString() + " ~ " + msg,
+        //        Toast.LENGTH_SHORT).show();
     }
 
 
@@ -438,8 +436,8 @@ public class HexView extends View {
         if (vertex == null) return false;
         boolean buildSuccess = false;
 
-        Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ clicked",
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext().getApplicationContext(), vertex.toString() + " ~ clicked",
+//                Toast.LENGTH_SHORT).show();
 
         switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 
@@ -447,6 +445,8 @@ public class HexView extends View {
                 if(GameController.getInstance().buildSettlement(vertex, SettlerApp.getPlayer())) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                     buildSuccess = true;
+                } else {
+                    activity.cannotBuildHere();
                 }
                 generateVerticePaths();
                 redraw();
@@ -455,15 +455,9 @@ public class HexView extends View {
             case FREE_SETTLEMENT:
                 if(GameController.getInstance().buildFreeSettlement(vertex, SettlerApp.getPlayer())) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.FREE_ROAD);
+                    GameController.getInstance().giveStartingResources(vertex);
                     buildSuccess = true;
                 }
-                //TODO REMOVE!
-                //GameController.getInstance().buildCity(vertex, SettlerApp.getPlayer());
-                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.BRICK), 5);
-                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.WOOD), 5);
-                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.ORE), 5);
-                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.GRAIN), 5);
-                SettlerApp.getPlayer().getInventory().addResource(new Resource(Resource.ResourceType.WOOL), 5);
 
                 generateVerticePaths();
                 redraw();
@@ -472,6 +466,8 @@ public class HexView extends View {
                 if (GameController.getInstance().buildCity(vertex, SettlerApp.getPlayer())) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                     buildSuccess = true;
+                } else {
+                    activity.cannotBuildHere();
                 }
 
                 generateVerticePaths();
@@ -490,8 +486,8 @@ public class HexView extends View {
         if (edge == null) return false;
         boolean buildSuccess = false;
 
-        Toast.makeText(getContext().getApplicationContext(), edge.toString() + " ~ clicked",
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext().getApplicationContext(), edge.toString() + " ~ clicked",
+//                Toast.LENGTH_SHORT).show();
 
         switch (SettlerApp.board.getPhaseController().getCurrentPhase()) {
 
@@ -501,6 +497,8 @@ public class HexView extends View {
                 if(GameController.getInstance().buildRoad(edge, SettlerApp.getPlayer())) {
                     SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
                     buildSuccess = true;
+                } else {
+                    activity.cannotBuildHere();
                 }
                 generateEdgePaths();
                 redraw();
@@ -509,7 +507,7 @@ public class HexView extends View {
             case FREE_ROAD:
 
                 if(GameController.getInstance().buildFreeRoad(edge, SettlerApp.getPlayer())) {
-                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.PLAYER_TURN);
+                    SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.END_TURN);
                     buildSuccess = true;
                 }
                 generateEdgePaths();

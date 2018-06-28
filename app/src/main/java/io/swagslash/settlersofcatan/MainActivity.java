@@ -268,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab_build_options:
                 if (!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant open build options.");
+                    notYourTurn();
                     return;
                 }
                 this.toogleFabMenu();
@@ -275,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab_settlement:
                 if (!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build settlement.");
+                    notYourTurn();
                     return;
                 }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
@@ -295,11 +297,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             hexView.redraw();
                         }
                     });
+                } else {
+                    youCannotDoThisNow();
                 }
                 break;
             case R.id.fab_city:
                 if (!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build city.");
+                    notYourTurn();
                     return;
                 }
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
@@ -307,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            hexView.generateEdgePaths();
+                            hexView.generateVerticePaths();
                             hexView.redraw();
                         }
                     });
@@ -316,15 +321,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            hexView.generateEdgePaths();
+                            hexView.generateVerticePaths();
                             hexView.redraw();
                         }
                     });
+                } else {
+                    youCannotDoThisNow();
                 }
                 break;
             case R.id.fab_street:
                 if (!itsMyTurn()) {
                     Log.d("PLAYER", "NOT MY TURN, cant build street.");
+                    notYourTurn();
                     return;
                 }
 
@@ -346,6 +354,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             hexView.redraw();
                         }
                     });
+                } else {
+                    youCannotDoThisNow();
                 }
                 break;
             case R.id.fab_cards:
@@ -378,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("PLAYER", "NOT HIS TURN!");
                     Log.d("PLAYER", "Current Player:" + player.toString());
                     Log.d("PLAYER", "Turn of Player:" + TurnController.getInstance().getCurrentPlayer());
+                    notYourTurn();
                     return;
                 }
                 if (!trade.getPendingTradeWith().isEmpty()) {
@@ -389,7 +400,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     });
                     return;
                 }
-                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN) {
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN ||
+                        SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.END_TURN) {
                     // end my own turn and tell all others my turn is over
                     // reset trade
                     trade = new Trade();
@@ -397,6 +409,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SettlerApp.getManager().sendToAll(new TurnAction(SettlerApp.getPlayer()));
                 } else {
                     Log.d("PLAYER", "WRONG PHASE FOR END OF TURN! Player is not done yet " + board.getPhaseController().getCurrentPhase());
+                    youCannotDoThisNow();
                 }
                 break;
             case R.id.trading:
@@ -816,7 +829,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "INITIAL TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
+                Toast.makeText(getApplicationContext(), "INITIAL TURN! / You are in phase: " + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
                         Toast.LENGTH_LONG).show();
             }
         });
@@ -829,7 +842,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "YOUR TURN! " + SettlerApp.getPlayer().getPlayerNumber() + "/" + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
+                Toast.makeText(getApplicationContext(), "YOUR TURN! / You are in phase: " + SettlerApp.board.getPhaseController().getCurrentPhase().toString(),
                         Toast.LENGTH_LONG).show();
 
             }
@@ -845,7 +858,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (TextView tv : resourceVals) {
             tv.setText(String.format(FORMAT, inv.countResource(Trade.convertStringToResource(getResourceStringFromView(tv)))));
         }
-//        victoryPoints.setText(GameController.getInstance().recalcLongestTradeRoute(SettlerApp.getPlayer()));
     }
 
     /**
@@ -861,6 +873,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Toast.makeText(getApplicationContext(), "LONGEST ROUTE:" + player.getLongestTradeRoute(), Toast.LENGTH_SHORT).show();
                 updateVictoryPointsGUI();
             }
         });
@@ -920,6 +933,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // DO NOT USE; ACTIVITY NEEDS ADDITIONAL CODE TO ACTUALLY DISCARD...
+    @Deprecated
     private void discardExtraRessources() {
         if (this.player.getInventory().size() > 7) {
             Intent i = new Intent(getApplicationContext(), ResourceDiscardActivity.class);
@@ -987,4 +1002,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         vp = player.calcVictoryPointsWithoutTradeRoute() + offsetLRandLA;
         player.setVictoryPoints(vp);
     }
+
+    private void youCannotDoThisNow() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "You cannot do this now! / Current phase: " + board.getPhaseController().getCurrentPhase(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void notYourTurn() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "It is not your turn!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void cannotBuildHere() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "You don't have enough resources or you can't build here!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 }

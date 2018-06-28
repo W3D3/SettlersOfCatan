@@ -14,6 +14,7 @@ import java.util.List;
 import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
 import io.swagslash.settlersofcatan.network.wifi.LobbyMemberFragment;
@@ -88,6 +89,7 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
         }
         if (object instanceof Board) {
             SettlerApp.board = (Board) object;
+            GameController.getInstance().destroy();
             Intent i = new Intent(getApplicationContext(), MainActivity.class);
             network.switchOut();
             startActivity(i);
@@ -95,6 +97,7 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
         }
         if (object instanceof Network.SetupInfo) {
             SettlerApp.generateBoard((Network.SetupInfo) object);
+            GameController.getInstance().destroy();
             Intent i = new Intent(getApplicationContext(), MainActivity.class);
             network.switchOut();
             startActivity(i);

@@ -278,4 +278,19 @@ public class GameController {
         }
         return newVisited;
     }
+
+    public void giveStartingResources(Vertex v) {
+        if (v == null || v.getOwner() == null) return;
+
+        for (Hex hex : board.getHexagons()) {
+            for (Vertex vertex : hex.getVertices()) {
+                if (v.equals(vertex)) {
+                    v.distributeResources(hex.getResourceProduced());
+                }
+            }
+
+        }
+
+
+    }
 }
