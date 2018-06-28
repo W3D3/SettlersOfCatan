@@ -36,7 +36,8 @@ public class TradingActivity extends AppCompatActivity {
     private ArrayList<TextView> demandTextViews = new ArrayList<>();
 
     private TradeOfferIntent tradeOfferIntent;
-    private List<Player> selectedPlayers = new ArrayList<>();
+    //private List<Player> selectedPlayers = new ArrayList<>();
+    private Player selectedPlayer;
 
     private int min = 0;
     private int max = 99;
@@ -106,7 +107,16 @@ public class TradingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v, int pos) {
                 TextView tv = v.findViewById(R.id.player_name);
-                Player tmp = SettlerApp.board.getPlayerByName(tv.getText().toString());
+                selectedPlayer = SettlerApp.board.getPlayerByName(tv.getText().toString());
+                onSubmit(v);
+                /*
+                if(selectedPlayer.equals(tmp)){
+                    selectedPlayer = null;
+                    v.setBackgroundResource(android.R.drawable.editbox_dropdown_light_frame);
+                } else {
+                    selectedPlayer = tmp;
+                    v.setBackgroundResource(android.R.drawable.editbox_dropdown_dark_frame);
+                }
                 if (selectedPlayers.contains(tmp)) {
                     selectedPlayers.remove(tmp);
                     v.setBackgroundResource(android.R.drawable.editbox_dropdown_light_frame);
@@ -114,6 +124,7 @@ public class TradingActivity extends AppCompatActivity {
                     selectedPlayers.add(tmp);
                     v.setBackgroundResource(android.R.drawable.editbox_dropdown_dark_frame);
                 }
+                */
             }
 
             @Override
@@ -264,6 +275,7 @@ public class TradingActivity extends AppCompatActivity {
         } else {
             if (playerOrBank) {
                 // trade with player
+                /*
                 if (!selectedPlayers.isEmpty()) {
                     TradeOfferAction toa = Trade.createTradeOfferAction(selectedPlayers, SettlerApp.getPlayer());
                     if (this.readValues(toa, true) && this.readValues(toa, false)) {
@@ -279,6 +291,23 @@ public class TradingActivity extends AppCompatActivity {
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "please select player(s)", Toast.LENGTH_SHORT).show();
+                }
+                */
+                if (selectedPlayer == null) {
+                    List<Player> selectedPlayerList = new ArrayList<>();
+                    selectedPlayerList.add(selectedPlayer);
+                    TradeOfferAction toa = Trade.createTradeOfferAction(selectedPlayerList, SettlerApp.getPlayer());
+                    if (this.readValues(toa, true) && this.readValues(toa, false)) {
+                        Toast.makeText(this, "sending ...", Toast.LENGTH_SHORT).show();
+                        SettlerApp.getManager().sendToAll(toa);
+                        Intent i = new Intent();
+                        // workaround for "not receiving your own TradeOfferAction"
+                        i.putExtra(UPDATEAFTERTRADE, Trade.createTradeUpdateIntentFromAction(toa));
+                        setResult(UPDATEAFTERTRADEREQUESTCODE, i);
+                        finish();
+                    } else {
+                        Toast.makeText(this, "please offer and demand something", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } else {
                 // trade with bank

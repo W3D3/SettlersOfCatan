@@ -35,6 +35,7 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         TextView playerName = holder.v.findViewById(R.id.player_name);
         playerName.setText(players.get(position).getPlayerName());
+
     }
 
     @Override
