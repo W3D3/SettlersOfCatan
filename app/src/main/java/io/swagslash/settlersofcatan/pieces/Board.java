@@ -29,6 +29,7 @@ public class Board {
     private List<Player> players;
     private HexGridLayout gridLayout;
     private Stack<ICard> cardStack;
+    private Hex robberPosition;
 
     private boolean randomDiscard;
     private int winningPoints;
@@ -122,6 +123,7 @@ public class Board {
             if (needsNumberToken) hex.setNumberToken(numberTokens.pop());
             else {
                 hex.setRobber();
+                robberPosition = hex;
             }
 
             calculateVerticesAndEdges(hex);
@@ -194,5 +196,23 @@ public class Board {
         SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY, FREE_SETTLEMENT, FREE_ROAD,
         PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
         FINISHED_GAME, IDLE, DICE_ROLL;
+    }
+
+    public Hex getHexByHexPositon(AxialHexLocation position) {
+        for (Hex hexagon : hexagons) {
+            if (hexagon.getHexLocation().equals(position)) {
+                return hexagon;
+            }
+        }
+        return null;
+
+    }
+
+    public Hex getRobberPosition() {
+        return robberPosition;
+    }
+
+    public void setRobberPosition(Hex robberPosition) {
+        this.robberPosition = robberPosition;
     }
 }

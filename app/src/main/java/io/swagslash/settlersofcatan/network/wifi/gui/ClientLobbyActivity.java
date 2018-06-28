@@ -79,11 +79,11 @@ public class ClientLobbyActivity extends AppCompatActivity implements INetworkCa
             Network.UpdateNames updateNames = (Network.UpdateNames)object;
             Log.d(TAG, updateNames.names.toString());
 
-            member.clear();
-            for(String s: updateNames.names){
-               member.add(new NetworkDevice(s, null));
-            }
-            frag.setMember(member);
+//            member.clear();
+//            for(String s: updateNames.names){
+//               member.add(new NetworkDevice(s, null));
+//            }
+//            frag.setMember(member);
             return;
         }
         if (object instanceof Board) {
