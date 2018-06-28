@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            hexView.generateEdgePaths();
+                            hexView.generateVerticePaths();
                             hexView.redraw();
                         }
                     });
@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            hexView.generateEdgePaths();
+                            hexView.generateVerticePaths();
                             hexView.redraw();
                         }
                     });
