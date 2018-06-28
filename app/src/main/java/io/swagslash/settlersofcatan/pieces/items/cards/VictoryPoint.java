@@ -8,6 +8,8 @@ import io.swagslash.settlersofcatan.pieces.Board;
 /**
  * Created by thoma on 11.06.2018.
  *
+ *
+ *
  * This Class has no Activation, when you Buy it, you become an VictoryPoint added
  */
 

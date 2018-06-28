@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Stack;
 
 import io.swagslash.settlersofcatan.Player;
+import io.swagslash.settlersofcatan.controller.actions.CardDrawAction;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
 import io.swagslash.settlersofcatan.controller.actions.RobAction;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
+import io.swagslash.settlersofcatan.controller.actions.WinAction;
 import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.Edge;
 import io.swagslash.settlersofcatan.pieces.Hex;
@@ -95,6 +97,9 @@ public class Network {
         kryo.register(TradeVerifyAction.class);
         kryo.register(List.class);
         kryo.register(RobAction.class);
+        kryo.register(CardDrawAction.class);
+        kryo.register(WinAction.class);
+        kryo.register(DevCard.DevCardTyp.class);
     }
 
     static public class RegisterName {
