@@ -216,8 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(getApplicationContext(), "You rolled a " + shakeValue, Toast.LENGTH_SHORT).show();
 
         Log.d("ROLLED", "Rolled a :" + shakeValue);
-        Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
-        t.show();
+
         DiceRollAction roll = new DiceRollAction(SettlerApp.getPlayer(), roll1, roll2);
         SettlerApp.getManager().sendToAll(roll);
         if (GameController.getInstance().handleDiceRolls(roll1, roll2)) {
@@ -359,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "no cards to choose from", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "No cards to choose from", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -376,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(MainActivity.this, "can't end turn, some trading still pending...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Can't end turn, some trading still pending...", Toast.LENGTH_SHORT).show();
                         }
                     });
                     return;
@@ -431,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MainActivity.this, "some trading still pending...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Some trade is still pending...", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -677,7 +676,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     });
                 } else {
                     // trade wasn't verified by offerer
-                    Toast.makeText(this, "offer isn't available anymore", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Offer isn't available anymore", Toast.LENGTH_SHORT).show();
                 }
             } else if (object instanceof TradeOfferAction) {
                 final TradeOfferAction to = (TradeOfferAction) object;
@@ -764,7 +763,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(), "I won!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "\uD83C\uDFC6 You won! \uD83C\uDFC6", Toast.LENGTH_LONG).show();
                 }
             });
             // and send if over the network ?
@@ -854,7 +853,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "LONGEST ROUTE:" + player.getLongestTradeRoute(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "LONGEST ROUTE:" + player.getLongestTradeRoute(), Toast.LENGTH_SHORT).show();
                 updateVictoryPointsGUI();
             }
         });
