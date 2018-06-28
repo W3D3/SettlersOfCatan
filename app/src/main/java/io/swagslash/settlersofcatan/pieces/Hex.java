@@ -3,6 +3,7 @@ package io.swagslash.settlersofcatan.pieces;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +122,7 @@ public class Hex {
         for (int i = 0; i < 6; i++) {
             //TODO each vertex gets resources
             if (getVertices().get(i).distributeResources(this.getResourceProduced())) {
-//                Log.d("DISTRIBUTION", "DISTRÌBUTED AT LEAST 1 " + getResourceProduced() + " to " + this.toString() + " on Vertex " + getVertices().get(i));
+                Log.d("DISTRIBUTION", "DISTRÌBUTED AT LEAST 1 " + getResourceProduced() + " to " + this.toString() + " on Vertex " + getVertices().get(i));
             }
         }
         return true;
@@ -169,7 +170,7 @@ public class Hex {
             case DESERT:
                 return Color.parseColor("#feffe5"); // desert color
             case PASTURE:
-                return Color.parseColor("#9ce997"); // wool/sheep
+                return Color.parseColor("#a3da9f"); // wool/sheep
         }
         return 0;
     }

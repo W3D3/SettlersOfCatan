@@ -79,7 +79,7 @@ public class GamePlayTests {
             }
         }
 
-        //now p1 can't build anymore
+        //now p1 can'trade build anymore
         Assert.assertFalse(sample.canBuildSettlement(p1));
         Assert.assertFalse(sample.canBuildSettlement(p2));
 

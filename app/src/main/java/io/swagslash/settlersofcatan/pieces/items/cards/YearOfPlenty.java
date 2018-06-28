@@ -18,8 +18,8 @@ public class YearOfPlenty extends DevCard {
     Resource.ResourceType resourceType;
 
     public YearOfPlenty() {
-        this.cardText = "Wenn Sie diese Karte auspielen, nehmen Sie sofort " +
-                "zwei Rohstoffkarten Ihrer Wahl vom Stapel";
+        this.cardText = "Wenn du diese Karte ausspielst, nimm 2 " +
+                "Rohstoffkarten deiner Wahl von der Bank.";
     }
 
     @Override

@@ -14,7 +14,7 @@ import io.swagslash.settlersofcatan.pieces.Hex;
 public class Knight extends DevCard {
 
     public Knight() {
-        this.cardText = "Wenn Sie diese Karte ausspielen versetzen Sie den Räuber und ziehen bei einen der betroffenen Spieler ein Karte";
+        this.cardText = "Wenn du diese Karte ausspielst, versetze den Räuber und ziehe bei EINEM der betroffenen Spieler ein Karte";
     }
 
 

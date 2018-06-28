@@ -173,11 +173,12 @@ public class Vertex {
         HexPoint drawPoint = this.getCoordinates().scale(offset, scale);
         switch (this.getUnitType()) {
             case CITY:
-                path.addRect((float) drawPoint.x - 15, (float) drawPoint.y - 15, (float) drawPoint.x + 15, (float) drawPoint.y + 10, Path.Direction.CCW);
+                path.addRect((float) drawPoint.x - 20, (float) drawPoint.y - 20, (float) drawPoint.x + 20, (float) drawPoint.y + 20, Path.Direction.CCW);
                 break;
             case SETTLEMENT:
-                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY)
-                    path.addCircle((float) drawPoint.x, (float) drawPoint.y, 40, Path.Direction.CW);
+                if (SettlerApp.board.getPhaseController().isAllowedToBuildOnVertex(this) &&
+                        SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.SETUP_CITY)
+                    path.addCircle((float) drawPoint.x, (float) drawPoint.y, 50, Path.Direction.CW);
                 else
                     path.addCircle((float) drawPoint.x, (float) drawPoint.y, 20, Path.Direction.CW);
                 break;

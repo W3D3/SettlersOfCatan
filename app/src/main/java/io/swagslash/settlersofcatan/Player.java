@@ -25,7 +25,10 @@ public class Player {
     private String playerName;
     private int longestTradeRoute;
     private Inventory inventory;
-    private int victoryPoints = 0;
+    private int victoryPoints;
+
+    // hasLongestRoad = special card "longest road"
+    private boolean hasLongestRoad;
 
     public Player() {
     }
@@ -39,6 +42,9 @@ public class Player {
         this.numOwnedCities = 0;
         this.numOwnedSettlements = 0;
         this.longestTradeRoute = 0;
+
+        this.victoryPoints = 0;
+        this.hasLongestRoad = false;
 
         this.inventory = new Inventory();
     }
@@ -71,16 +77,24 @@ public class Player {
         return numOwnedSettlements;
     }
 
-    public void setNumOwnedSettlements(int numOwnedSettlements) {
-        this.numOwnedSettlements = numOwnedSettlements;
+    public void increaseNumOwnedSettlements() {
+        this.numOwnedSettlements++;
+    }
+
+    public void decreaseNumOwnedSettlements() {
+        this.numOwnedSettlements--;
     }
 
     public int getNumOwnedCities() {
         return numOwnedCities;
     }
 
-    public void setNumOwnedCities(int numOwnedCities) {
-        this.numOwnedCities = numOwnedCities;
+    public void increaseNumOwnedCities() {
+        this.numOwnedCities++;
+    }
+
+    public void decreaseNumOwnedCities() {
+        this.numOwnedCities--;
     }
 
     public int getLongestTradeRoute() {
@@ -116,6 +130,27 @@ public class Player {
 
     public int getVictoryPoints() {
         return victoryPoints;
+    }
+
+    public void setVictoryPoints(int vp) {
+        this.victoryPoints = vp;
+    }
+
+    public int calcVictoryPointsWithoutTradeRoute() {
+        // add vps for dev cards in inventory ?
+        return (this.numOwnedSettlements * SettlerApp.VPSETTLEMENT) + (this.numOwnedCities * SettlerApp.VPCITIES);
+    }
+
+    public boolean hasLongestRoad() {
+        return hasLongestRoad;
+    }
+
+    public void setHasLongestRoad(boolean hasLongestRoad) {
+        this.hasLongestRoad = hasLongestRoad;
+    }
+
+    public boolean didIWin() {
+        return SettlerApp.WONAT <= this.getVictoryPoints();
     }
 
     @Override

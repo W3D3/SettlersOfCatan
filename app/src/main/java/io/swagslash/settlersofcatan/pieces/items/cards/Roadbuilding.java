@@ -15,7 +15,7 @@ public class Roadbuilding extends DevCard {
 
 
     public Roadbuilding() {
-        this.cardText = "Wenn Sie diese Karte ausspielen dürfen Sie kostenlos zwei Straßen bauen";
+        this.cardText = "Wenn du diese Karte ausspielst, darfst du kostenlos 2 Straßen bauen.";
     }
 
     @Override

@@ -28,10 +28,6 @@ public class PlayerListAdapter extends RecyclerView.Adapter<PlayerListAdapter.Vi
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View container = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.view_trading_player, parent, false);
-        /*
-        int w = parent.getMeasuredWidth() / 2;
-        container.setMinimumWidth(w);
-        */
         return new ViewHolder(container);
     }
 

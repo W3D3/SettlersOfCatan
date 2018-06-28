@@ -7,7 +7,7 @@ import android.hardware.SensorManager;
 
 public class ShakeDetector implements SensorEventListener {
 
-    private static final float SHAKE_THRESHOLD = 1.65F;
+    private static final float SHAKE_THRESHOLD = 1.35F;
     private static final int SHAKE_TIMEOUT = 2400;
     private long previousShake;
 
@@ -36,7 +36,6 @@ public class ShakeDetector implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-//        throw new UnsupportedOperationException();
         // do nothing
     }
 }

@@ -251,7 +251,7 @@ public class HexView extends View {
                     }
                     break;
                 case SETTLEMENT:
-                    if (phaseController.getCurrentPhase() == Board.Phase.SETUP_CITY) {
+                    if (phaseController.isAllowedToBuildOnVertex(vertex) && phaseController.getCurrentPhase() == Board.Phase.SETUP_CITY) {
                         c.drawPath(vertex.getPath(), vertexClickPaint);
                     } else {
                         circlePaint.setColor(vertex.getOwner().getColor());
@@ -480,6 +480,7 @@ public class HexView extends View {
             default:
                 break;
         }
+        if (buildSuccess) activity.updateResources();
         return buildSuccess;
     }
 
@@ -516,6 +517,7 @@ public class HexView extends View {
 
                 break;
         }
+        if (buildSuccess) activity.updateResources();
         return buildSuccess;
     }
 
