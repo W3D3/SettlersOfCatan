@@ -38,6 +38,7 @@ import io.swagslash.settlersofcatan.controller.actions.GameAction;
 import io.swagslash.settlersofcatan.controller.actions.RobAction;
 import io.swagslash.settlersofcatan.controller.actions.TurnAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
+import io.swagslash.settlersofcatan.controller.actions.WinAction;
 import io.swagslash.settlersofcatan.grid.HexView;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.INetworkCallback;
@@ -212,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         roll2 = d6.roll();
         shakeValue = roll1 + roll2;
 
-        Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "You rolled a " + shakeValue, Toast.LENGTH_SHORT).show();
 
         Log.d("ROLLED", "Rolled a :" + shakeValue);
         Toast t = Toast.makeText(getApplicationContext(), "you rolled a " + shakeValue, Toast.LENGTH_SHORT);
@@ -733,6 +734,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
 
+            } else if (object instanceof WinAction) {
+                final WinAction winner = (WinAction) object;
+                showWinningPlayer(winner.getActor());
             }
 
         }
@@ -760,11 +764,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(), "I won!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "I won!", Toast.LENGTH_LONG).show();
                 }
             });
             // and send if over the network ?
+            WinAction winAction = new WinAction(player);
+            SettlerApp.getManager().sendToAll(winAction);
             // and end game ?
+
         }
 
         TurnController.getInstance().advancePlayer();
@@ -1000,6 +1007,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 Toast.makeText(getApplicationContext(), "You don't have enough resources or you can't build here!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showWinningPlayer(final Player p) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "\uD83C\uDFC6" + p.getPlayerName() + " WON THE GAME!!! \uD83C\uDFC6", Toast.LENGTH_LONG).show();
             }
         });
     }
