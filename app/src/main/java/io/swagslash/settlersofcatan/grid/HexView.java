@@ -288,17 +288,17 @@ public class HexView extends View {
         for (Hex hex : hexes) {
 
             final HexPoint coordinates = hex.getCenter().scale(offset, scale);
-            if(hex.getNumberToken() != null) {
-                if (hex.getNumberToken().getNumber() > 0 && !hex.hasRobber()) {
-                    c.drawText(hex.getNumberToken().toString(), (float)coordinates.x, (float)coordinates.y, textPaint);
-                    invalidate();
-                } else if (hex.hasRobber()) {
-                    hex.getRobber().calculatePath(offset, scale);
-                    c.drawPath(hex.getRobber().getPath(), textPaint);
-                    invalidate();
-                }
 
+            if (hex.getNumberToken() != null && !hex.hasRobber()) {
+                c.drawText(hex.getNumberToken().toString(), (float) coordinates.x, (float) coordinates.y, textPaint);
+                invalidate();
+            } else if (hex.hasRobber()) {
+                hex.getRobber().calculatePath(offset, scale);
+                c.drawPath(hex.getRobber().getPath(), textPaint);
+                invalidate();
             }
+
+
 
         }
 
