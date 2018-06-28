@@ -21,29 +21,36 @@ public class DevCardFactory {
      * @param p
      * @return True if successfully drawn card and added to inventory
      */
-    public static boolean drawCard(Player p) {
+    public static DevCard.DevCardTyp drawCard(Player p) {
         if (canDrawDevCard(p)) {
+            DevCard.DevCardTyp type = DevCard.DevCardTyp.NOTHING;
             DevCard drawnCard;
             try {
                 switch (SettlerApp.board.getCardStack().pop()) {
                     case KNIGHT:
                         drawnCard = new Knight();
+                        type = DevCard.DevCardTyp.KNIGHT;
                         break;
                     case YEAROFPLENTY:
                         drawnCard = new YearOfPlenty();
+                        type = DevCard.DevCardTyp.YEAROFPLENTY;
                         break;
                     case VICTORYPOINT:
                         drawnCard = new VictoryPoint();
+                        type = DevCard.DevCardTyp.VICTORYPOINT;
                         p.addVictorPoint();
                         break;
                     case MONOPOLY:
                         drawnCard = new Monopoly();
+                        type = DevCard.DevCardTyp.MONOPOLY;
                         break;
                     case ROADBUILDING:
                         drawnCard = new Roadbuilding();
+                        type = DevCard.DevCardTyp.ROADBUILDING;
                         break;
                     default:
                         drawnCard = new Knight();
+                        type = DevCard.DevCardTyp.KNIGHT;
                 }
             } catch (EmptyStackException e) {
                 e.printStackTrace();
@@ -51,9 +58,9 @@ public class DevCardFactory {
             }
 
             p.getInventory().addDeploymentCardHand(drawnCard);
-            return true;
+             return type;
         } else
-            return false;
+            return DevCard.DevCardTyp.NOTHING;
     }
 
     private static boolean canDrawDevCard(Player p) {

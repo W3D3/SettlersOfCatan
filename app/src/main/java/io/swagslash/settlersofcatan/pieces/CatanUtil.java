@@ -104,17 +104,17 @@ public class CatanUtil {
 
     private static Stack<DevCard.DevCardTyp> initCardList() {
         Stack<DevCard.DevCardTyp> cardStack = new Stack<>();
-        for (int i = 0; i < 14; i++) {
+        for (int i = 0; i < 18; i++) {
             cardStack.push(DevCard.DevCardTyp.KNIGHT);
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 8; i++) {
             cardStack.push(DevCard.DevCardTyp.VICTORYPOINT);
         }
-        for (int i = 0; i < 2; i++) {
-            cardStack.push(DevCard.DevCardTyp.YEAROFPLENTY);
-            cardStack.push(DevCard.DevCardTyp.MONOPOLY);
-            cardStack.push(DevCard.DevCardTyp.ROADBUILDING);
-        }
+        //for (int i = 0; i < 2; i++) {
+        //    cardStack.push(DevCard.DevCardTyp.YEAROFPLENTY);
+        //  cardStack.push(DevCard.DevCardTyp.MONOPOLY);
+        //    cardStack.push(DevCard.DevCardTyp.ROADBUILDING);
+        //}
         return cardStack;
     }
 

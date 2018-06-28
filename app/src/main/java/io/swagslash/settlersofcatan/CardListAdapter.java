@@ -9,17 +9,18 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Map;
 
-import io.swagslash.settlersofcatan.pieces.items.DevelopmentCard;
+import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
 
 public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHolder> {
 
-    private Map<DevelopmentCard, Integer> cards;
-    private ArrayList<DevelopmentCard> displayedCards;
-    private DevelopmentCard selectedCard = null;
+    private Map<DevCard, Integer> cards;
+    private ArrayList<DevCard> displayedCards;
+    private DevCard selectedCard = null;
 
-    CardListAdapter(Map<DevelopmentCard, Integer> input) {
+    CardListAdapter(Map<DevCard, Integer> input) {
+        displayedCards = new ArrayList<>();
         cards = input;
-        for (DevelopmentCard dc : input.keySet()) {
+        for (DevCard dc : input.keySet()) {
             int cnt = input.get(dc);
             for (int i = 0; i < cnt; i++) {
                 displayedCards.add(dc);
@@ -46,15 +47,15 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.ViewHo
         return displayedCards.size();
     }
 
-    public ArrayList<DevelopmentCard> getDisplayedCards() {
+    public ArrayList<DevCard> getDisplayedCards() {
         return displayedCards;
     }
 
-    public DevelopmentCard getSelectedCard() {
+    public DevCard getSelectedCard() {
         return selectedCard;
     }
 
-    public void setSelectedCard(DevelopmentCard selectedCard) {
+    public void setSelectedCard(DevCard selectedCard) {
         this.selectedCard = selectedCard;
     }
 

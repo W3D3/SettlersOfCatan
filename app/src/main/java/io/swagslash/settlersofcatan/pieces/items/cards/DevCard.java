@@ -90,7 +90,7 @@ public abstract class DevCard {
     }
 
     public enum DevCardTyp {
-        KNIGHT, YEAROFPLENTY, VICTORYPOINT, MONOPOLY, ROADBUILDING
+        KNIGHT, YEAROFPLENTY, VICTORYPOINT, MONOPOLY, ROADBUILDING, NOTHING
 
     }
 

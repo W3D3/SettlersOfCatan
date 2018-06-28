@@ -32,6 +32,7 @@ import java.util.List;
 
 import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.controller.TurnController;
+import io.swagslash.settlersofcatan.controller.actions.CardDrawAction;
 import io.swagslash.settlersofcatan.controller.actions.DiceRollAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.GameAction;
@@ -65,10 +66,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected ImageButton endOfTurn;
     protected ImageButton trading;
     protected FloatingActionButton fab;
+    protected FloatingActionButton fabDrawCard;
     protected FloatingActionButton fabSettlement;
     protected FloatingActionButton fabCity;
     protected FloatingActionButton fabStreet;
     protected FloatingActionButton fabCards;
+    protected LinearLayout layoutDrawCard;
     protected LinearLayout layoutSettlement;
     protected LinearLayout layoutCity;
     protected LinearLayout layoutStreet;
@@ -127,6 +130,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // fabs
         this.fab = findViewById(R.id.fab_build_options);
 
+        this.fabDrawCard = findViewById(R.id.fab_draw_card);
+        this.layoutDrawCard = findViewById(R.id.layout_draw_cards);
+        this.layoutDrawCard.setVisibility(View.INVISIBLE);
+
         this.fabSettlement = findViewById(R.id.fab_settlement);
         this.layoutSettlement = findViewById(R.id.layout_settlement);
         this.layoutSettlement.setVisibility(View.INVISIBLE);
@@ -157,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         this.fabCards.setOnClickListener(this);
         this.endOfTurn.setOnClickListener(this);
         this.trading.setOnClickListener(this);
+        this.fabDrawCard.setOnClickListener(this);
 
         // resource show
         this.resourceVals = new ArrayList<>();
@@ -353,6 +361,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     });
                 }
                 break;
+
+            case R.id.fab_draw_card:
+                if(!itsMyTurn()){
+                    Log.d("PLAYER", "NOT MY TURN, cant build street.");
+                    return;
+                }
+
+                if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN){
+                    GameController.getInstance().drawDevCard(SettlerApp.getPlayer());
+                }
+
+                    break;
             case R.id.end_of_turn:
                 if (!itsMyTurn()) {
                     Log.d("PLAYER", "NOT HIS TURN!");
@@ -467,6 +487,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void toogleFabMenu() {
         if (this.fabOpen) {
+            this.layoutDrawCard.startAnimation(closeMenu);
+            this.layoutDrawCard.animate().translationY(0);
             this.layoutCards.startAnimation(closeMenu);
             this.layoutCards.animate().translationY(0);
             this.layoutSettlement.startAnimation(closeMenu);
@@ -478,6 +500,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         } else {
             byte offset = 1;
+            this.layoutDrawCard.startAnimation(openMenu);
+            this.layoutDrawCard.animate().translationY(-1 * (offset++ * FABMENUDISTANCE));
             this.layoutCards.startAnimation(openMenu);
             this.layoutCards.animate().translationY(-1 * (offset++ * FABMENUDISTANCE));
             this.layoutSettlement.startAnimation(openMenu);
@@ -720,6 +744,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
 
+            }else if(object instanceof CardDrawAction) {
+                GameController.getInstance().drawDevCard(((CardDrawAction) object).getActor());
             }
 
         }

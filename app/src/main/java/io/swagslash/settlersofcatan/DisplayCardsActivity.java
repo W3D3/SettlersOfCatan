@@ -50,23 +50,10 @@ public class DisplayCardsActivity extends AppCompatActivity {
             }
         }));
         rv.setHasFixedSize(true);
-
-        RecyclerView.LayoutManager rvl = new LinearLayoutManager(this);
         rv.setLayoutManager(rvl);
-
-        // TODO: get player's cards
-        String[] test = {"test0", "test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9"};
-        List<String> cards = new ArrayList<>();
         Map<DevCard, Integer> handCards = SettlerApp.getPlayer().getInventory().getDeploymentCardHand();
-        int i;
-        for (DevCard devCard : SettlerApp.getPlayer().getInventory().getDeploymentCardHand().keySet()) {
-            i = handCards.get(devCard);
-            for (int j = 0; j < i; j++) {
-                cards.add(devCard.getCardText());
-            }
-        }
 
-        RecyclerView.Adapter rva = new CardListAdapter(cards);
+        RecyclerView.Adapter rva = new CardListAdapter(handCards);
         rv.setAdapter(rva);
     }
 

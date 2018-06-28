@@ -60,6 +60,7 @@ public class SettlerApp extends Application {
         setupInfo.playerNames = players;
         setupInfo.terrainTypeStack = new Stack<>();
         setupInfo.terrainTypeStack.addAll(terrainTypeStack);
+        setupInfo.devCardTypStack = new Stack<>();
         setupInfo.devCardTypStack.addAll(devCardTypStack);
         SettlerApp.getManager().sendToAll(setupInfo);
         b.setupBoard(terrainTypeStack, devCardTypStack);

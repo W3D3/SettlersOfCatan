@@ -124,4 +124,5 @@
     <string name="btn_direct_connect">Direct Connect</string>
     <string name="btn_finish_choosing">Finish</string>
     <string name="chooseOneOrMoreResources">Chose one or more ressources:</string>
+    <string name="draw_card">Draw Card</string>
 </resources>

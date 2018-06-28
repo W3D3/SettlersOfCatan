@@ -6,6 +6,7 @@ import java.util.Set;
 import io.swagslash.settlersofcatan.Player;
 import io.swagslash.settlersofcatan.Robber;
 import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.controller.actions.CardDrawAction;
 import io.swagslash.settlersofcatan.controller.actions.EdgeBuildAction;
 import io.swagslash.settlersofcatan.controller.actions.RobAction;
 import io.swagslash.settlersofcatan.controller.actions.VertexBuildAction;
@@ -18,6 +19,7 @@ import io.swagslash.settlersofcatan.pieces.items.Bank;
 import io.swagslash.settlersofcatan.pieces.items.IBank;
 import io.swagslash.settlersofcatan.pieces.items.ICard;
 import io.swagslash.settlersofcatan.pieces.items.Resource;
+import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
 
 /**
  * Created by Christoph Wedenig (christoph@wedenig.org) on 07.05.18.
@@ -123,7 +125,7 @@ public class GameController {
         return true;
     }
 
-    public ICard drawCard(Player player) {
+    public DevCard.DevCardTyp drawCard(Player player) {
         if (bank.payForCard(player)) {
             return board.getCardStack().pop();
         }
@@ -171,8 +173,9 @@ public class GameController {
     }
 
     public boolean drawDevCard(Player p) {
-        if (DevCardFactory.drawCard(p)) {
-            //TODO: Notify other about drawn card
+        DevCard.DevCardTyp type = DevCardFactory.drawCard(p);
+        if (type != DevCard.DevCardTyp.NOTHING) {
+            SettlerApp.getManager().sendToAll(new CardDrawAction(p, type));
             return true;
         } else
             return false;
