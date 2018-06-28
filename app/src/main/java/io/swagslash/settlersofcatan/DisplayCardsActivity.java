@@ -12,7 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import io.swagslash.settlersofcatan.pieces.Board;
 import io.swagslash.settlersofcatan.pieces.items.cards.DevCard;
+import io.swagslash.settlersofcatan.pieces.items.cards.Knight;
 
 public class DisplayCardsActivity extends AppCompatActivity {
 
@@ -59,8 +61,15 @@ public class DisplayCardsActivity extends AppCompatActivity {
 
     public void onSubmit(View view) {
         if (rva.getSelectedCard() != null) {
-            // TODO: use cards
-            Toast.makeText(getApplicationContext(), rva.getSelectedCard().toString(), Toast.LENGTH_LONG).show();
+            if(rva.getSelectedCard() instanceof Knight) {
+                SettlerApp.board.getPhaseController().setCurrentPhase(Board.Phase.MOVING_ROBBER);
+                onBackPressed();
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "Victory Points are passive", Toast.LENGTH_SHORT).show();
+            }
+            //Toast.makeText(getApplicationContext(), rva.getSelectedCard().toString(), Toast.LENGTH_LONG).show();
+
         } else {
             Toast.makeText(getApplicationContext(), "please select card(s)", Toast.LENGTH_SHORT).show();
         }

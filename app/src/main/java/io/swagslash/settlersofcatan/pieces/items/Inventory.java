@@ -70,9 +70,9 @@ public class Inventory {
     public void addDeploymentCardHand(DevCard devCard) {
         Integer count = this.deploymentCardHand.get(devCard);
         if (count == null){
-            count =0;
+            count = 0;
         }
-        this.deploymentCardHand.put(devCard, count++);
+        this.deploymentCardHand.put(devCard, count+1);
     }
 
     public void removeDeploymentCardHand(DevCard devCard) {

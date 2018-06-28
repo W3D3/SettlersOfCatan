@@ -380,6 +380,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (SettlerApp.board.getPhaseController().getCurrentPhase() == Board.Phase.PLAYER_TURN){
                     GameController.getInstance().drawDevCard(SettlerApp.getPlayer());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateResources();
+                        }});
                 }
 
                     break;

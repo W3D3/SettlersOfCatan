@@ -38,7 +38,7 @@ public class DevCardFactory {
                     case VICTORYPOINT:
                         drawnCard = new VictoryPoint();
                         type = DevCard.DevCardTyp.VICTORYPOINT;
-                        p.addVictorPoint();
+                        p.addVpCard();
                         break;
                     case MONOPOLY:
                         drawnCard = new Monopoly();

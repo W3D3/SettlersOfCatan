@@ -26,6 +26,7 @@ public class Player {
     private int longestTradeRoute;
     private Inventory inventory;
     private int victoryPoints;
+    private int vpcards;
 
     // hasLongestRoad = special card "longest road"
     private boolean hasLongestRoad;
@@ -42,6 +43,8 @@ public class Player {
         this.numOwnedCities = 0;
         this.numOwnedSettlements = 0;
         this.longestTradeRoute = 0;
+
+        this.vpcards =0;
 
         this.victoryPoints = 0;
         this.hasLongestRoad = false;
@@ -136,9 +139,13 @@ public class Player {
         this.victoryPoints = vp;
     }
 
+    public void addVpCard(){
+        this.vpcards = vpcards+1;
+    }
+
     public int calcVictoryPointsWithoutTradeRoute() {
         // add vps for dev cards in inventory ?
-        return (this.numOwnedSettlements * SettlerApp.VPSETTLEMENT) + (this.numOwnedCities * SettlerApp.VPCITIES);
+        return (this.numOwnedSettlements * SettlerApp.VPSETTLEMENT) + (this.numOwnedCities * SettlerApp.VPCITIES) + this.vpcards;
     }
 
     public boolean hasLongestRoad() {
