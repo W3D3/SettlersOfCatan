@@ -195,7 +195,7 @@ public class Board {
     public enum Phase {
         SETUP_SETTLEMENT, SETUP_ROAD, SETUP_CITY, FREE_SETTLEMENT, FREE_ROAD,
         PRODUCTION, PLAYER_TURN, MOVING_ROBBER, TRADE_PROPOSED, TRADE_RESPONDED,
-        FINISHED_GAME, IDLE, DICE_ROLL;
+        FINISHED_GAME, IDLE, DICE_ROLL, END_TURN;
     }
 
     public Hex getHexByHexPositon(AxialHexLocation position) {
