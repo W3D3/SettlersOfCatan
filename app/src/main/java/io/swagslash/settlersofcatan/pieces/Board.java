@@ -31,6 +31,7 @@ public class Board {
     private Stack<ICard> cardStack;
     private Hex robberPosition;
 
+    //both of these are useless atm
     private boolean randomDiscard;
     private int winningPoints;
 
@@ -42,7 +43,7 @@ public class Board {
         this.edges = new HashMap<>();
         this.players = new ArrayList<>(playerNames.size());
 
-        //TODO change to 2?
+        //TODO change to 2 again?
         if (playerNames.size() < 1 || playerNames.size() > 4)
             throw new IllegalArgumentException("This game supports only 2 to 4 players!");
 

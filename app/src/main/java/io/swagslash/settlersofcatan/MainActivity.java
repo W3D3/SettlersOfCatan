@@ -847,6 +847,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Toast.makeText(getApplicationContext(), "LONGEST ROUTE:" + player.getLongestTradeRoute(), Toast.LENGTH_SHORT).show();
                 updateVictoryPointsGUI();
             }
         });

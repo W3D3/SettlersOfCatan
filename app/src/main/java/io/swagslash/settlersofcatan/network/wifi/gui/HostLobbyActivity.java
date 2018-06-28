@@ -17,6 +17,7 @@ import java.util.List;
 import io.swagslash.settlersofcatan.MainActivity;
 import io.swagslash.settlersofcatan.R;
 import io.swagslash.settlersofcatan.SettlerApp;
+import io.swagslash.settlersofcatan.controller.GameController;
 import io.swagslash.settlersofcatan.network.wifi.AbstractNetworkManager;
 import io.swagslash.settlersofcatan.network.wifi.GameClient;
 import io.swagslash.settlersofcatan.network.wifi.GameServer;
@@ -64,6 +65,7 @@ public class HostLobbyActivity extends AppCompatActivity implements INetworkCall
                         players.add(nd.getDeviceName());
                     }
                     SettlerApp.generateBoard(players);
+                    GameController.getInstance().destroy();
                     Intent i = new Intent(getApplicationContext(), MainActivity.class);
                     if (players.size() == 1) network = new NoNetwork();
                     network.switchOut();
